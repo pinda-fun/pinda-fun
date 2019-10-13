@@ -1,0 +1,25 @@
+jobs:
+  include:
+    - language: elixir
+      sudo: false
+      elixir: 1.9
+      otp_release: 22.0
+      cache:
+        directories:
+          - api/_build
+          - api/deps
+      services:
+        - postgresql
+      env: MIX_ENV=test
+      before_install:
+        - cd api
+      before_script:
+        - mix do ecto.create, ecto.migrate
+      script:
+        - mix test
+        - mix format --check-formatted
+        - mix credo
+
+branches:
+  only:
+    - master
