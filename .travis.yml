@@ -1,6 +1,7 @@
 jobs:
   include:
-    - language: elixir
+    - name: api
+      language: elixir
       sudo: false
       elixir: 1.9
       otp_release: 22.1
@@ -17,7 +18,8 @@ jobs:
         - mix test
         - mix format --check-formatted
         - mix credo
-    - language: node_js
+    - name: Web
+      language: node_js
       node_js: "lts/*"
       cache: yarn
       before_install:
