@@ -1,25 +1,23 @@
 jobs:
   include:
-    - language: elixir
+    - name: api
+      language: elixir
       sudo: false
       elixir: 1.9
-      otp_release: 22.0
+      otp_release: 22.1
       cache:
         directories:
           - api/_build
           - api/deps
-      services:
-        - postgresql
       env: MIX_ENV=test
       before_install:
         - cd api
-      before_script:
-        - mix do ecto.create, ecto.migrate
       script:
         - mix test
         - mix format --check-formatted
         - mix credo
-    - language: node_js
+    - name: Web
+      language: node_js
       node_js: "lts/*"
       cache: yarn
       before_install:

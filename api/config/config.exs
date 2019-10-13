@@ -7,13 +7,10 @@
 # General application configuration
 use Mix.Config
 
-config :api,
-  ecto_repos: [Api.Repo]
-
 # Configures the endpoint
 config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "NvUzuk3cBq0VJCpjdix+4LHaOJMW4SEYWj1PqIJVhzrruClsJiaMio4Lhc27Caky",
+  secret_key_base: "Zk2aqwLZVZyuIPKq+LihTUoxKEG/KBqRYViahXoOub+ixSDnHNMv+MitEZJj6zfo",
   render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Api.PubSub, adapter: Phoenix.PubSub.PG2]
 
