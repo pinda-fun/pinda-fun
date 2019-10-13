@@ -19,6 +19,14 @@ jobs:
         - mix test
         - mix format --check-formatted
         - mix credo
+    - language: node_js
+      node_js: "lts/*"
+      cache: yarn
+      before_install:
+        - cd Web
+      script:
+        - yarn lint
+        - yarn test
 
 branches:
   only:
