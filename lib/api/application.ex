@@ -9,7 +9,8 @@ defmodule Api.Application do
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
-      Api.Repo,
+      # Disable ecto for now
+      # Api.Repo,
       # Start the endpoint when the application starts
       ApiWeb.Endpoint
       # Starts a worker by calling: Api.Worker.start_link(arg)
