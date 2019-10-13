@@ -26,12 +26,6 @@ defmodule ApiWeb.ChannelCase do
   end
 
   setup _tags do
-    # Commented out because ecto is disabled
-    # :ok = Ecto.Adapters.SQL.Sandbox.checkout(Api.Repo)
-    # unless tags[:async] do
-    #   Ecto.Adapters.SQL.Sandbox.mode(Api.Repo, {:shared, self()})
-    # end
-
     :ok
   end
 end
