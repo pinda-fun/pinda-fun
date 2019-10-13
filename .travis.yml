@@ -3,13 +3,11 @@ jobs:
     - language: elixir
       sudo: false
       elixir: 1.9
-      otp_release: 22.0
+      otp_release: 22.1
       cache:
         directories:
           - api/_build
           - api/deps
-      services:
-        - postgresql
       env: MIX_ENV=test
       before_install:
         - cd api
