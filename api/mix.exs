@@ -11,7 +11,13 @@ defmodule Api.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      preferred_cli_env: [credo: :test]
+      preferred_cli_env: [
+        credo: :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -42,7 +48,8 @@ defmodule Api.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
-      {:credo, "~> 1.1.0", only: :test, runtime: false}
+      {:credo, "~> 1.1.0", only: :test, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 
