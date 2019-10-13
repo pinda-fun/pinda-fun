@@ -11,6 +11,7 @@ defmodule Api.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         credo: :test,
         coveralls: :test,
