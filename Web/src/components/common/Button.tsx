@@ -4,12 +4,21 @@ type ButtonProps = {
   primary?: boolean;
 };
 
-const Button = styled.button`
+const FillStyle = css`
+  background: var(--dark-purple);
+  color: white;
+`;
+
+const NoFillStyle = css`
   background: transparent;
+  color: var(--dark-purple);
+`;
+
+const Button = styled.button`
+  ${NoFillStyle}
   border-radius: 0.6rem;
   font-size: 1rem;
   border: 1px solid var(--dark-purple);
-  color: var(--dark-purple);
 
   margin: 0.1rem 1em;
   padding: 0.4em 1em;
@@ -18,20 +27,17 @@ const Button = styled.button`
 
   :hover,
   :active {
-    background: var(--dark-purple);
-    color: white;
+    ${FillStyle}
   }
 
   ${(props: ButtonProps) =>
     props.primary &&
     css`
-      background: var(--dark-purple);
-      color: white;
+      ${FillStyle}
 
       :hover,
       :active {
-        background: transparent;
-        color: var(--dark-purple);
+        ${NoFillStyle}
       }
     `};
 `;
