@@ -2,9 +2,13 @@
 
 [![Build Status](https://travis-ci.com/pinda-fun/pinda-fun.svg?branch=master)](https://travis-ci.com/pinda-fun/pinda-fun)
 
-## Getting up and running
+## Requirements
+- OpenSSL
+- Docker
 
-If this is your first time, run `./generate_https_keys.sh` first.
+## Getting up and running the dev environment
+
+If this is your first time setting up, run `./generate_https_keys.sh` first.
 
 Afterwards, simply `docker-compose up`
 
