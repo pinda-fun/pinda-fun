@@ -1,10 +1,30 @@
 import React from 'react';
+import { createGlobalStyle } from 'styled-components';
 import logo from './logo.svg';
 import './App.css';
 
+const GlobalStyles = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css?family=Fredoka+One');
+  @import url('https://fonts.googleapis.com/css?family=Luckiest+Guy');
+
+  * {
+    font-family: 'Fredoka One', sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Luckiest Guy', sans-serif;
+  }
+`;
+
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <>
+      <GlobalStyles />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -19,7 +39,7 @@ const App: React.FC = () => {
           Learn React
         </a>
       </header>
-    </div>
+    </>
   );
 };
 
