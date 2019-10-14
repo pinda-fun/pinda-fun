@@ -15,9 +15,8 @@ defmodule Api.Application do
       Api.PINGenerator
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Api.Supervisor]
+    # Use :one_for_all strategy to clean up all states should anything crash
+    opts = [strategy: :one_for_all, name: Api.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
