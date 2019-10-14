@@ -5,8 +5,15 @@ services:
       context: ./api
     volumes:
       - ./api:/api
-    expose:
+    ports:
       - "4000:4000"
+      - "5000:5000"
+    secrets:
+      - "server.key"
+      - "server.crt"
+    environment:
+      - SSL_KEY_PATH=/run/secrets/server.key
+      - SSL_CERT_PATH=/run/secrets/server.crt
   web:
     build:
       context: ./Web
