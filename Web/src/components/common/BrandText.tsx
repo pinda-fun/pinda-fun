@@ -5,8 +5,6 @@ const RedText = styled.strong`
   color: var(--red);
 `;
 
-const BrandText: React.FC = () => (
-  <RedText>Pinda!</RedText>
-);
+const BrandText: React.FC = () => <RedText>Pinda!</RedText>;
 
 export default BrandText;

@@ -27,7 +27,9 @@ const Subtitle = styled.span`
 
 const HeaderContent: React.FC = () => (
   <ContentDiv>
-    <Subtitle>Meet <BrandText />, it’s a</Subtitle>
+    <Subtitle>
+      Meet <BrandText />, it’s a
+    </Subtitle>
     <Title>DECISION MAKER.</Title>
     <StartNewGameButton />
   </ContentDiv>

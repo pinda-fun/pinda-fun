@@ -22,8 +22,13 @@ const ContentDiv = styled.div`
 
 const IntroductionContent: React.FC = () => (
   <ContentDiv>
-    <p>Can’t decide whose turn it is to do the chores? Or pay for the next outing?</p>
-    <p>Decide now with FAST and SIMPLE mini game with <BrandText />.</p>
+    <p>
+      Can’t decide whose turn it is to do the chores? Or pay for the next
+      outing?
+    </p>
+    <p>
+      Decide now with FAST and SIMPLE mini game with <BrandText />.
+    </p>
     <StartNewGameButton />
   </ContentDiv>
 );

@@ -20,8 +20,13 @@ const Title = styled.h2`
 const DetailsContent: React.FC = () => (
   <ContentDiv>
     <Title>3</Title>
-    <p>different mini games to play from, <BrandText /> makes decision making fun and enjoyable!</p>
-    <p>What are you waiting for? Make a decision with <BrandText /> now!</p>
+    <p>
+      different mini games to play from, <BrandText /> makes decision making fun
+      and enjoyable!
+    </p>
+    <p>
+      What are you waiting for? Make a decision with <BrandText /> now!
+    </p>
     <StartNewGameButton />
   </ContentDiv>
 );

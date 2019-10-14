@@ -61,12 +61,7 @@ const HeaderSection = styled.section`
 const IntroductionSection = styled.section`
   ${SectionStyle}
   background: var(--pale-yellow);
-  clip-path: polygon(
-    0 0,
-    100% 4rem, 
-    100% calc(100% - 4rem),
-    0 100% 
-  );
+  clip-path: polygon(0 0, 100% 4rem, 100% calc(100% - 4rem), 0 100%);
   margin: -4rem 0;
 
   & > div {
