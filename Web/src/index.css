@@ -23,6 +23,13 @@ button {
   outline: none;
 }
 
+button {
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
 h1,
 h2,
 h3,
