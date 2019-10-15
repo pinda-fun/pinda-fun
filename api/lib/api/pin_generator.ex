@@ -3,7 +3,9 @@ defmodule Api.PINGenerator do
   GenServer for generating PIN's
   """
 
-  @range 0..9999
+  @num_digits 4
+  @range 0..((:math.pow(10, @num_digits) |> round()) - 1)
+  @max_num_pins Enum.count(@range)
 
   use GenServer
 
@@ -20,10 +22,15 @@ defmodule Api.PINGenerator do
   end
 
   @impl true
-  def handle_call(:generate, _from, %{available: available, taken: taken}) do
-    [pin | available] = available
-    taken = MapSet.put(taken, pin)
-    {:reply, pin, %{available: available, taken: taken}}
+  def handle_call(:generate, _from, state = %{available: available, taken: taken}) do
+    case available do
+      [] ->
+        {:reply, nil, state}
+
+      [pin | available] ->
+        taken = MapSet.put(taken, pin)
+        {:reply, pin, %{available: available, taken: taken}}
+    end
   end
 
   @impl true
@@ -37,8 +44,8 @@ defmodule Api.PINGenerator do
     end
   end
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link(opts \\ [name: __MODULE__]) do
+    GenServer.start_link(__MODULE__, nil, opts)
   end
 
   # CLIENT FUNCTIONS
@@ -46,8 +53,8 @@ defmodule Api.PINGenerator do
   Generates PIN or returns `nil` if there is no more PIN available.
   """
   @spec generate_pin :: String.t() | nil
-  def generate_pin do
-    GenServer.call(__MODULE__, :generate)
+  def generate_pin(pin_generator \\ __MODULE__) do
+    GenServer.call(pin_generator, :generate)
   end
 
   @doc """
@@ -57,7 +64,9 @@ defmodule Api.PINGenerator do
   or `:error` if this PIN was not generated of the system or has been marked as available.
   """
   @spec mark_pin_as_available(String.t()) :: :ok | {:error, atom()}
-  def mark_pin_as_available(pin) do
-    GenServer.call(__MODULE__, {:mark_available, pin})
+  def mark_pin_as_available(pin, pin_generator \\ __MODULE__) do
+    GenServer.call(pin_generator, {:mark_available, pin})
   end
+
+  def max_num_pins, do: @max_num_pins
 end
