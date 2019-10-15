@@ -21,6 +21,9 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   outline: none;
+}
+
+body {
   margin: 0;
 }
 
