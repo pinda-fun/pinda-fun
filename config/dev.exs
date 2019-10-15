@@ -8,6 +8,12 @@ use Mix.Config
 # with webpack to recompile .js and .css sources.
 config :api, ApiWeb.Endpoint,
   http: [port: 4000],
+  https: [
+    port: 5000,
+    otp_app: :api,
+    keyfile: System.get_env("SSL_KEY_PATH") || "priv/server.key",
+    certfile: System.get_env("SSL_CERT_PATH") || "priv/server.crt"
+  ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
