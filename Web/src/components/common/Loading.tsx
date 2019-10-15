@@ -21,10 +21,7 @@ const Loading: React.FC = () => {
   return (
     <LoadingDiv>
       <PindaHead />
-      <ReactLoading
-        type="bubbles"
-        color="var(--purple)"
-      />
+      <ReactLoading type="bubbles" color="var(--purple)" />
     </LoadingDiv>
   );
 };
