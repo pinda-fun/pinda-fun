@@ -2,11 +2,7 @@ const warnInDevelopment = process.env.NODE_ENV === 'production' ? 'error' : 'war
 
 module.exports = {
   "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "airbnb-typescript"
   ],
   "plugins": ["react", "@typescript-eslint", "prettier"],
   "env": {
@@ -15,13 +11,6 @@ module.exports = {
     "jest": true
   },
   "rules": {
-    'prettier/prettier': [
-      warnInDevelopment,
-      {
-        'singleQuote': true
-      }
-    ],
-
     // Allow debugger and console statement in development
     'no-debugger': warnInDevelopment,
     'no-console': warnInDevelopment,
