@@ -30,7 +30,7 @@ const BadgeStyle = css`
   }
 `;
 
-const LandingContatiner = styled.div`
+const LandingContainer = styled.div`
   position: relative;
   overflow: hidden;
 `;
@@ -113,7 +113,7 @@ const PindaHappyMid = styled(PindaHappySVG)`
 `;
 
 const LandingPage: React.FC = () => (
-  <LandingContatiner>
+  <LandingContainer>
     <HeaderSection>
       <TwoColumnDiv>
         <HeaderContent />
@@ -131,7 +131,7 @@ const LandingPage: React.FC = () => (
       <PindaHappyMid />
     </DetailsSection>
     <PindaHappySide />
-  </LandingContatiner>
+  </LandingContainer>
 );
 
 export default LandingPage;

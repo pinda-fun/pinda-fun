@@ -27,7 +27,7 @@ const IntroductionContent: React.FC = () => (
       outing?
     </p>
     <p>
-      Decide now with FAST and SIMPLE mini game with <BrandText />.
+      Decide now with FAST and SIMPLE mini games with <BrandText />.
     </p>
     <StartNewGameButton />
   </ContentDiv>
