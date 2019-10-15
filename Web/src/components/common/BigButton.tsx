@@ -9,8 +9,9 @@ const BigButton = styled.button`
   color: white;
   font-size: 1.3rem;
 
-  margin: 6px;
+  margin: 6px 0;
   padding: 0.4em 1.4em;
+  width: fit-content;
 
   transition: 0.2s;
 
