@@ -25,6 +25,7 @@ module.exports = {
     'max-classes-per-file': 'warn',
 
     '@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '^_' }],
+    'import/prefer-default-export': 'off',
   },
   "settings": {
     "react": {

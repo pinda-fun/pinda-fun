@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Observable } from 'rxjs';
 import { scan } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ export default function useCounter<T>(observable: Observable<T>): CounterWithSta
   const [count, setCount] = useState(0);
   const [status, setStatus] = useState<T | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const sub = observable.pipe(
       scan(
         (acc, cur) => ({
