@@ -23,6 +23,7 @@ jobs:
       before_install:
         - cd Web
       script:
+        - yarn typecheck
         - yarn lint
         - yarn test
 
