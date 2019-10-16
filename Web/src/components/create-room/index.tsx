@@ -66,6 +66,7 @@ const GamePinSection = styled.section`
     @media (max-width: ${mdMin}) {
       text-shadow: 3px 3px 0px var(--pink);
       font-size: 4rem;
+      margin-left: 0.5rem;
     }
   }
 `;
