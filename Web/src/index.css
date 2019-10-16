@@ -21,6 +21,14 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   outline: none;
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 h1,
