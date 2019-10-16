@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  fromEvent, Observable, EMPTY, Subject, Operator,
+  fromEvent, Observable, EMPTY,
 } from 'rxjs';
 import {
   filter, map, throttleTime, pluck,
 } from 'rxjs/operators';
-import { FromEventTarget } from 'rxjs/internal/observable/fromEvent';
 import useCounter from './hooks';
 
 async function getShakeObservable(): Promise<Observable<number>> {
@@ -20,7 +19,6 @@ async function getShakeObservable(): Promise<Observable<number>> {
       }
     } catch (e) {
       return new Observable(sub => sub.error(e));
-    } finally {
     }
   }
   return fromEvent(window, 'devicemotion').pipe(
@@ -63,7 +61,7 @@ export default function () {
         {' '}
         {status || 'no status updates'}
       </p>
-      <button onClick={getPermission}>
+      <button onClick={getPermission} type="button">
         PERMISSION
       </button>
     </>

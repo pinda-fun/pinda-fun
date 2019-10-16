@@ -19,7 +19,9 @@ module.exports = {
     'prefer-destructuring': 'off',
 
     // TypeScript lints this for us
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-one-expression-per-line': 'off'
   },
   "settings": {
     "react": {
