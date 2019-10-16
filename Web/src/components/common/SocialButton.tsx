@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import { ReactComponent as TelegramIconSVG } from '../../svg/social/telegram-icon.svg';
 import { ReactComponent as WhatsappIconSVG } from '../../svg/social/whatsapp-icon.svg';
 
+type ButtonProps = {
+  onClick: () => void;
+};
+
 const TelegramIcon = styled(TelegramIconSVG)`
   background: #0173ab;
   border-radius: 50%;
@@ -15,13 +19,13 @@ const WhatsappIcon = styled(WhatsappIconSVG)`
   box-shadow: 0px 3px 0px #17b351;
 `;
 
-export const WhatsappButton: React.FC = props => (
+export const WhatsappButton: React.FC<ButtonProps> = props => (
   <button {...props} type="button">
     <WhatsappIcon />
   </button>
 );
 
-export const TelegramButton: React.FC = props => (
+export const TelegramButton: React.FC<ButtonProps> = props => (
   <button {...props} type="button">
     <TelegramIcon />
   </button>

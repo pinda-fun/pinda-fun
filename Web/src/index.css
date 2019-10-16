@@ -12,12 +12,16 @@
   --pale-yellow: #FFF3CF;
   --red: #FF4F52;
   --pink: #FFBEBE;
+
+  /* brand fonts */
+  --primary-font: 'Fredoka One';
+  --secondary-font: 'Luckiest Guy';
 }
 
 body,
 div,
 button {
-  font-family: 'Fredoka One', sans-serif;
+  font-family: var(--primary-font), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   outline: none;
@@ -40,5 +44,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Luckiest Guy', sans-serif;
+  font-family: var(--secondary-font), sans-serif;
+}
+
+a {
+  color: var(--dark-purple);
 }
