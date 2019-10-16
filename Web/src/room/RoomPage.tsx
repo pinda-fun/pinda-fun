@@ -17,7 +17,6 @@ const RoomPage: React.FC = () => {
       return <p>Establishing connection...</p>;
     }
     if (channel == null) setChannel(newChannel);
-    console.log('renderer', messages);
     return (
       <div>
         <Button onClick={() => newChannel.push('shout', { message: 'Wow!' })}>Shout</Button>
