@@ -1,4 +1,8 @@
 defmodule ApiWeb.RoomChannel do
+  @moduledoc """
+  The channel that manages rooms
+  """
+
   use ApiWeb, :channel
 
   def join("room:lobby", payload, socket) do
