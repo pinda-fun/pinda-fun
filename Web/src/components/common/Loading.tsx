@@ -17,13 +17,11 @@ const PindaHead = styled(PindaHeadSVG)`
   height: 15vh;
 `;
 
-const Loading: React.FC = () => {
-  return (
-    <LoadingDiv>
-      <PindaHead />
-      <ReactLoading type="bubbles" color="var(--purple)" />
-    </LoadingDiv>
-  );
-};
+const Loading: React.FC = () => (
+  <LoadingDiv>
+    <PindaHead />
+    <ReactLoading type="bubbles" color="var(--purple)" />
+  </LoadingDiv>
+);
 
 export default Loading;
