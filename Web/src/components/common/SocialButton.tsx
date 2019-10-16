@@ -19,13 +19,13 @@ const WhatsappIcon = styled(WhatsappIconSVG)`
   box-shadow: 0px 3px 0px #17b351;
 `;
 
-export const WhatsappButton: React.FC = props => (
+export const WhatsappButton: React.FC<ButtonProps> = props => (
   <button {...props} type="button">
     <WhatsappIcon />
   </button>
 );
 
-export const TelegramButton: React.FC = props => (
+export const TelegramButton: React.FC<ButtonProps> = props => (
   <button {...props} type="button">
     <TelegramIcon />
   </button>
