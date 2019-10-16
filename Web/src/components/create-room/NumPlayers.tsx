@@ -21,24 +21,21 @@ const NumPlayersContainer = styled.div`
     justify-content: center;
   }
 
-  ${(props: ContainerProps) => {
-    if (props.hideOnLarge) {
-      return css`
-        display: none;
+  ${(props: ContainerProps) => props.hideOnLarge
+    && css`
+      display: none;
 
-        @media (max-width: ${mdMin}) {
-          display: flex;
-        }
-      `;
-    }
-    if (props.hideOnMedium) {
-      return css`
-        @media (max-width: ${mdMin}) {
-          display: none;
-        }
-      `;
-    }
-  }};
+      @media (max-width: ${mdMin}) {
+        display: flex;
+      }
+    `};
+
+  ${(props: ContainerProps) => props.hideOnMedium
+    && css`
+      @media (max-width: ${mdMin}) {
+        display: none;
+      }
+    `};
 `;
 
 const UsersIcon = styled(Users)`
@@ -55,10 +52,10 @@ type NumPlayersProps = {
   hideOnLarge?: boolean;
 };
 
-export const NumPlayers: React.FC<NumPlayersProps> = ({
+const NumPlayers: React.FC<NumPlayersProps> = ({
   numPlayers,
   hideOnMedium,
-  hideOnLarge
+  hideOnLarge,
 }) => (
   <NumPlayersContainer hideOnMedium={hideOnMedium} hideOnLarge={hideOnLarge}>
     <UsersIcon />

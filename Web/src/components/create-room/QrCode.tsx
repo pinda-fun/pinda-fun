@@ -13,14 +13,14 @@ type QrCodeProps = {
   sharableLink: string;
 };
 
-export const QrCode: React.FC<QrCodeProps> = ({ sharableLink }) => (
+const QrCode: React.FC<QrCodeProps> = ({ sharableLink }) => (
   <QrContainer>
     <QRCode
       value={sharableLink}
       size={128}
-      fgColor={'#3a3a3a'}
-      bgColor={'white'}
-      renderAs={'svg'}
+      fgColor="#3a3a3a"
+      bgColor="white"
+      renderAs="svg"
     />
   </QrContainer>
 );
