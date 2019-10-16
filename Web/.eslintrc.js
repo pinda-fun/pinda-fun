@@ -27,7 +27,10 @@ module.exports = {
     'no-console': warnInDevelopment,
 
     'no-alert': 'off',
-    'prefer-destructuring': 'off'
+    'prefer-destructuring': 'off',
+
+    // TypeScript lints this for us
+    'react/prop-types': 'off'
   },
   "settings": {
     "react": {
