@@ -1,13 +1,44 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css?family=Fredoka+One');
+@import url('https://fonts.googleapis.com/css?family=Luckiest+Guy');
+
+:root {
+  /* brand colors */
+  --purple: #8082FF;
+  --light-purple: #CFD0FF;
+  --pale-purple: #E7E7FF;
+  --deep-purple: #8082FF;
+  --dark-purple: #5153D0;
+  --yellow: #FFD869;
+  --pale-yellow: #FFF3CF;
+  --red: #FF4F52;
+  --pink: #FFBEBE;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body,
+div,
+button {
+  font-family: 'Fredoka One', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  outline: none;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Luckiest Guy', sans-serif;
 }
