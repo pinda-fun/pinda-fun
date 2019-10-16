@@ -2,11 +2,7 @@ const warnInDevelopment = process.env.NODE_ENV === 'production' ? 'error' : 'war
 
 module.exports = {
   "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "airbnb-typescript"
   ],
   "plugins": ["react", "@typescript-eslint", "prettier"],
   "env": {
@@ -15,13 +11,6 @@ module.exports = {
     "jest": true
   },
   "rules": {
-    'prettier/prettier': [
-      warnInDevelopment,
-      {
-        'singleQuote': true
-      }
-    ],
-
     // Allow debugger and console statement in development
     'no-debugger': warnInDevelopment,
     'no-console': warnInDevelopment,
@@ -30,7 +19,10 @@ module.exports = {
     'prefer-destructuring': 'off',
 
     // TypeScript lints this for us
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-one-expression-per-line': 'off',
+    'max-classes-per-file': 'warn'
   },
   "settings": {
     "react": {

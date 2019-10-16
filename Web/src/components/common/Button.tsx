@@ -30,9 +30,8 @@ const Button = styled.button`
     ${FillStyle}
   }
 
-  ${(props: ButtonProps) =>
-    props.primary &&
-    css`
+  ${(props: ButtonProps) => props.primary
+    && css`
       ${FillStyle}
 
       :hover,

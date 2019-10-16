@@ -16,13 +16,13 @@ const WhatsappIcon = styled(WhatsappIconSVG)`
 `;
 
 export const WhatsappButton: React.FC = props => (
-  <button {...props}>
+  <button {...props} type="button">
     <WhatsappIcon />
   </button>
 );
 
 export const TelegramButton: React.FC = props => (
-  <button {...props}>
+  <button {...props} type="button">
     <TelegramIcon />
   </button>
 );
