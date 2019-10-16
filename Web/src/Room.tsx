@@ -1,4 +1,6 @@
-import React, { FunctionComponent, useState, useEffect, useRef } from 'react';
+import React, {
+  FunctionComponent, useState, useEffect, useRef,
+} from 'react';
 import { Socket, Channel } from 'phoenix';
 
 const SOCKET_URL = '/socket';
@@ -29,11 +31,13 @@ enum EventType {
 
 abstract class SocketMessage {
   abstract type: EventType;
+
   abstract payload: object;
 }
 
 class GameFinishedMessage extends SocketMessage {
   type: EventType = EventType.GameFinished;
+
   payload: number[];
 
   constructor(results: number[]) {
@@ -44,33 +48,32 @@ class GameFinishedMessage extends SocketMessage {
 }
 
 export const Room: FunctionComponent<RoomProps> = (props: RoomProps) => {
+  const { roomId } = props;
   const [channel, setChannel] = useState<null | Channel>(null);
   const channelRef = useRef(channel);
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [game, setGame] = useState<null | GameType>(null);
   const gameType = useRef(game);
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
-  /**** HANDLERS ****/
+  /** ** HANDLERS *** */
   const handleConnect = (message: string): void => {
     console.log(CHANNEL_JOIN_OK, message);
   };
 
-  /**** METHODS ****/
+  /** ** METHODS *** */
   const initConnection = (): void => {
     const socket = new Socket(SOCKET_URL, { params: {} });
     socket.connect();
 
-    const channel = socket.channel('room:'.concat(props.roomId));
-    channel
+    const connChannel = socket.channel('room:'.concat(props.roomId));
+    connChannel
       .join(TIMEOUT_DURATION)
       .receive(ChannelResponse.OK, handleConnect)
-      .receive(ChannelResponse.ERROR, ({ reason }) =>
-        console.log(CHANNEL_JOIN_ERROR, reason)
-      )
-      .receive(ChannelResponse.TIMEOUT, () =>
-        console.log(CHANNEL_JOIN_TIMEOUT)
-      );
+      .receive(ChannelResponse.ERROR, ({ reason }) => console.log(CHANNEL_JOIN_ERROR, reason))
+      .receive(ChannelResponse.TIMEOUT, () => console.log(CHANNEL_JOIN_TIMEOUT));
 
-    setChannel(channel);
+    setChannel(connChannel);
   };
 
   const sendMessage = (socketMessage: SocketMessage): void => {
@@ -81,17 +84,18 @@ export const Room: FunctionComponent<RoomProps> = (props: RoomProps) => {
     channelRef.current.push(
       socketMessage.type,
       socketMessage.payload,
-      TIMEOUT_DURATION
+      TIMEOUT_DURATION,
     );
   };
 
-  /**** CALLBACKS ****/
+  /** ** CALLBACKS *** */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const submitResults = (results: number[]): void => {
     const message: SocketMessage = new GameFinishedMessage(results);
     sendMessage(message);
   };
 
-  useEffect(initConnection, [props.roomId]);
+  useEffect(initConnection, [roomId]);
 
   return (
     <div>

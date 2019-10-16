@@ -21,7 +21,8 @@ module.exports = {
     // TypeScript lints this for us
     'react/prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
-    'react/jsx-one-expression-per-line': 'off'
+    'react/jsx-one-expression-per-line': 'off',
+    'max-classes-per-file': 'warn'
   },
   "settings": {
     "react": {
