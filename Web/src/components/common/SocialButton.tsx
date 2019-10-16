@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import { ReactComponent as TelegramIconSVG } from '../../svg/social/telegram-icon.svg';
 import { ReactComponent as WhatsappIconSVG } from '../../svg/social/whatsapp-icon.svg';
 
+type ButtonProps = {
+  onClick: () => void;
+};
+
 const TelegramIcon = styled(TelegramIconSVG)`
   background: #0173ab;
   border-radius: 50%;
