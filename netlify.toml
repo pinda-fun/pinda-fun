@@ -1,0 +1,13 @@
+[Settings]
+
+[build]
+  base = "Web/"
+
+  publish = "Web/build/"
+
+  command = "yarn build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
