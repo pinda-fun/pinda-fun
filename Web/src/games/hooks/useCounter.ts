@@ -21,7 +21,8 @@ export default function useCounter<T>(observable: Observable<T>): CounterWithSta
         {
           count: 0,
           status: null as T | null,
-        })
+        },
+      ),
     ).subscribe(
       x => {
         setCount(x.count);
@@ -29,7 +30,7 @@ export default function useCounter<T>(observable: Observable<T>): CounterWithSta
       },
       x => {
         setStatus(x);
-      }
+      },
     );
     return () => sub.unsubscribe();
   }, [observable]);
