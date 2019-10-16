@@ -13,9 +13,7 @@ type QrCodeProps = {
   sharableLink: string;
 };
 
-export const QrCode: React.FC<QrCodeProps> = ({
-  sharableLink
-}) => (
+export const QrCode: React.FC<QrCodeProps> = ({ sharableLink }) => (
   <QrContainer>
     <QRCode
       value={sharableLink}

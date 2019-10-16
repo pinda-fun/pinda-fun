@@ -89,7 +89,7 @@ const ShareContent = styled.div`
 
   @media (max-width: ${mdMin}) {
     flex-direction: column-reverse;
-  } 
+  }
 `;
 
 const StartButton = styled(BigButton)`
@@ -134,9 +134,7 @@ const CreateRoomPage: React.FC = () => {
         </ShareSection>
       </TwoColumnDiv>
       <StartButton>START!</StartButton>
-      <Link to={{ pathname: '/' }}>
-        Cancel
-      </Link>
+      <Link to={{ pathname: '/' }}>Cancel</Link>
       <PindaHappy />
     </CreateRoomContainer>
   );

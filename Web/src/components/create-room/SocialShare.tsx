@@ -15,9 +15,7 @@ type SocialShareProps = {
   sharableLink: string;
 };
 
-const SocialShare: React.FC<SocialShareProps> = ({
-  sharableLink
-}) => {
+const SocialShare: React.FC<SocialShareProps> = ({ sharableLink }) => {
   const encodedLink = encodeURIComponent(sharableLink);
   const shareWhatsApp = () => {
     const url = `https://wa.me/?text=${defaultPromoText}%20${encodedLink}`;
@@ -25,8 +23,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
   };
 
   const shareTelegram = () => {
-    const url =
-      `https://telegram.me/share/url?url=${encodedLink}&text=${defaultPromoText}`;
+    const url = `https://telegram.me/share/url?url=${encodedLink}&text=${defaultPromoText}`;
     window.open(url, '_blank');
   };
 
