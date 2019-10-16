@@ -3,7 +3,7 @@
 [build]
   base = "Web/"
 
-  publish = "Web/build/"
+  publish = "build/"
 
   command = "yarn build"
 
