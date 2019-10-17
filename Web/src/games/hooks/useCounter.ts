@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Observable } from 'rxjs';
 import { scan } from 'rxjs/operators';
 
@@ -7,11 +7,12 @@ interface CounterWithStatus<T> {
   status: T;
 }
 
-export default function useCounter<T>(observable: Observable<T>): CounterWithStatus<T | null> {
+export default function useCounter<T>(observable: Observable<T>, initCount = 0):
+CounterWithStatus<T | null> {
   const [count, setCount] = useState(0);
   const [status, setStatus] = useState<T | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const sub = observable.pipe(
       scan(
         (acc, cur) => ({
@@ -19,7 +20,7 @@ export default function useCounter<T>(observable: Observable<T>): CounterWithSta
           status: cur,
         }),
         {
-          count: 0,
+          count: initCount,
           status: null as T | null,
         },
       ),
@@ -33,6 +34,6 @@ export default function useCounter<T>(observable: Observable<T>): CounterWithSta
       },
     );
     return () => sub.unsubscribe();
-  }, [observable]);
+  }, [observable, initCount]);
   return { count, status };
 }

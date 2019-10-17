@@ -3,67 +3,93 @@ import {
   fromEvent, Observable, EMPTY,
 } from 'rxjs';
 import {
-  filter, map, throttleTime, pluck,
+  filter, map, pluck, debounceTime, startWith,
 } from 'rxjs/operators';
 import useCounter from './hooks';
+import { unwrap } from './utils/rxhelpers';
+import Button from '../components/common/Button';
 
-async function getShakeObservable(): Promise<Observable<number>> {
-  if (!window.DeviceMotionEvent) {
+enum MotionPermission {
+  NOT_SET = 0,
+  DENIED = 1,
+  GRANTED = 2
+}
+
+/** Generates an observable of the shake event produced by the phone. */
+function getShakeObservable(permission: MotionPermission): Observable<number> {
+  if (permission !== MotionPermission.GRANTED) {
     return new Observable(sub => sub.error('Your device does not support motion.'));
   }
-  if (typeof (window.DeviceMotionEvent as any).requestPermission === 'function') {
-    try {
-      const permissionResult = await (window.DeviceMotionEvent as any).requestPermission();
-      if (permissionResult !== 'granted') {
-        return new Observable(sub => sub.error(permissionResult));
-      }
-    } catch (e) {
-      return new Observable(sub => sub.error(e));
-    }
-  }
   return fromEvent(window, 'devicemotion').pipe(
-    throttleTime(200),
-    map(evt => (evt as DeviceMotionEvent).accelerationIncludingGravity),
-    filter(x => x !== null),
-    map(accel => accel!),
+    map(evt => (evt as DeviceMotionEvent).acceleration),
+    unwrap,
     pluck('y'),
-    filter(x => x !== null),
-    map(y => y!),
-    filter(x => x > 5),
+    unwrap,
+    filter(x => x > 10),
+    debounceTime(100),
+    startWith(0),
   );
 }
 
-export default function () {
+const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
-  const [permissionsSet, setPermissionsSet] = useState(false);
-  const { count, status } = useCounter(obs);
-  useEffect(() => {
-    if (!permissionsSet) return;
-    const getObs = async function getShakeObsAndSet() {
-      setObs(await getShakeObservable());
-    };
-    getObs();
-  }, [permissionsSet]);
+  const [permission, setPermission] = useState(MotionPermission.NOT_SET);
+  const [showPermissionButton, setPermissionButton] = useState(false);
+  const { count, status } = useCounter(obs, -1);
+
+  const getPermissionAvailability = () => {
+    if (!window.DeviceMotionEvent) {
+      setPermission(MotionPermission.DENIED);
+      return;
+    }
+    if (typeof (window.DeviceMotionEvent as any).requestPermission === 'function') {
+      setPermissionButton(true);
+    } else {
+      setPermission(MotionPermission.GRANTED);
+    }
+  };
+
+  useEffect(getPermissionAvailability, []);
+
+  useEffect(() => setObs(getShakeObservable(permission)), [permission]);
 
   const getPermission = async function requestPermission() {
-    const result = await (window.DeviceMotionEvent as any).requestPermission();
-    if (result === 'granted') setPermissionsSet(true);
+    try {
+      const permissionResult = await (window.DeviceMotionEvent as any).requestPermission();
+      if (permissionResult === 'granted') {
+        setPermission(MotionPermission.GRANTED);
+      } else {
+        setPermission(MotionPermission.DENIED);
+      }
+    } catch (e) {
+      setPermission(MotionPermission.DENIED);
+    } finally {
+      setPermissionButton(false);
+    }
   };
+
   return (
     <>
       <p>
-        Aylol:
-        {' '}
-        {count}
+        Aylol: {count}
       </p>
       <p>
-        Status:
-        {' '}
-        {status || 'no status updates'}
+        Status: {status === null ? 'no status updates' : status}
       </p>
-      <button onClick={getPermission} type="button">
-        PERMISSION
-      </button>
+      {permission === MotionPermission.NOT_SET
+        && (
+          <p>
+            Checking if you can play the game...
+          </p>
+        )}
+      {showPermissionButton
+        && (
+          <Button onClick={getPermission} type="button">
+            Set Permission
+          </Button>
+        )}
     </>
   );
-}
+};
+
+export default BalloonShake;
