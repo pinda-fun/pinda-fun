@@ -2,9 +2,9 @@ import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Loading from './components/common/Loading';
 
-const LandingPage = lazy(() => import('./components/landing'));
-const CreateRoomPage = lazy(() => import('./components/create-room'));
-const BalloonShake = lazy(() => import('./games/BalloonShake'));
+const LandingPage = lazy(() => import('components/landing'));
+const CreateRoomPage = lazy(() => import('components/create-room'));
+const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 
 const Routes: React.FC = () => (
   <Suspense fallback={<Loading />}>

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { mdMin } from 'utils/media';
-import { ReactComponent as BalloonSVG } from '../../svg/balloon.svg';
+import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
 
 interface IProps {
   secondsLeft: number;
