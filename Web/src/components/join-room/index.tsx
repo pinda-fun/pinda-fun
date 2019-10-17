@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from '../common/BigButton';
-import { smMin } from '../../utils/media';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
 const JoinRoomContainer = styled.div`
@@ -60,16 +59,6 @@ const JoinRoomButton = styled(BigButton)`
   padding-right: 2em;
 `;
 
-const KeyboardArea = styled.div`
-  // Keyboard is approx 271px, buttons approx 60px
-  height: 211px;
-  display: none;
-
-  @media (max-width: ${smMin}) {
-    display: block;
-  }
-`;
-
 const JoinRoomPage: React.FC = () => {
   const [gamePin, setGamePin] = useState('');
 
@@ -96,7 +85,6 @@ const JoinRoomPage: React.FC = () => {
         <JoinRoomButton type="submit">Let&apos;s Go!</JoinRoomButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
       </JoinRoomForm>
-      <KeyboardArea />
     </JoinRoomContainer>
   );
 };
