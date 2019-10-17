@@ -1,41 +1,38 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Channel } from 'phoenix';
-import RoomContainer, { ErrorCause } from '../RoomContainer';
+import useErrorableChannel from './hooks/useErrorableChannel';
 import Button from '../common/Button';
 
+
 const RoomPage: React.FC = () => {
-  const [channel, setChannel] = useState<Channel | null>(null);
+  const { channel, error } = useErrorableChannel('room:lobby');
   const [messages, setMessages] = useState<string[]>([]);
-  function renderer(newChannel: Channel | null, error: [ErrorCause, any] | null): ReactElement {
-    if (error != null) {
-      const [cause, _] = error;
-      return <p>Error: {cause}</p>;
-    }
-    if (newChannel == null) {
-      return <p>Establishing connection...</p>;
-    }
-    if (channel == null) setChannel(newChannel);
-    return (
-      <div>
-        <Button onClick={() => newChannel.push('shout', { message: 'Wow!' })}>Shout</Button>
-        <h2>Messages</h2>
-        {messages.map((message: string) => (<p>{message}</p>))}
-      </div>
-    );
-  }
 
   useEffect(() => {
     if (channel == null) return;
-    channel.on(
-      'shout',
-      ({ message }: { message: string }) => {
-        setMessages(existingMessages => [...existingMessages, message]);
-      },
-    );
+    channel.on('shout', ({ message }) => setMessages(existingMessages => [...existingMessages, message]));
   }, [channel]);
 
-  return <RoomContainer roomId="lobby" render={renderer} />;
+  if (error != null) {
+    const [cause, _] = error;
+    return <p>Error: {cause}</p>;
+  }
+  if (channel == null) {
+    return <p>Establishing connection...</p>;
+  }
+
+  const buttonHandler = () => {
+    const message = prompt('What do you want to say?', '');
+    channel.push('shout', { message });
+  };
+
+  return (
+    <div>
+      <Button onClick={buttonHandler}>Shout</Button>
+      <h2>Messages</h2>
+      {messages.map((message: string) => (<p>{message}</p>))}
+    </div>
+  );
 };
 
 export default RoomPage;
