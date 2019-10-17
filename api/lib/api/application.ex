@@ -10,7 +10,8 @@ defmodule Api.Application do
     children =
       [
         # Start the endpoint when the application starts
-        ApiWeb.Endpoint
+        ApiWeb.Endpoint,
+        Api.RoomDatabase.Supervisor
         # Starts a worker by calling: Api.Worker.start_link(arg)
         # {Api.Worker, arg},
       ] ++ env_dependent_children(args)

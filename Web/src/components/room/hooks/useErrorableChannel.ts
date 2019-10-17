@@ -5,7 +5,7 @@ import getClientId from '../../../utils/getClientId';
 import ChannelResponse from './ChannelResponse';
 import ErrorCause from './ErrorCause';
 
-const SOCKET_URL = 'ws://localhost:4000/socket';
+const SOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL!;
 const TIMEOUT_DURATION = 5000;
 
 /**
@@ -16,13 +16,14 @@ const TIMEOUT_DURATION = 5000;
 export interface ErrorableChannel {
   channel: Channel | null,
   error: [ErrorCause, any] | null,
+  joinPayload: any | null,
 }
 
 function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
   if (maybeSocket != null && maybeSocket.isConnected()) return maybeSocket;
   const newSocket = new Socket(
     SOCKET_URL,
-    { params: { clientId: getClientId }, timeout: TIMEOUT_DURATION },
+    { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
   );
   newSocket.connect();
   return newSocket;
@@ -32,6 +33,7 @@ export default function useErrorableChannel(channelId: string): ErrorableChannel
   const [_, setSocket] = useState<Socket | null>(null);
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
+  const [joinPayload, setJoinPayload] = useState<any | null>(null);
 
   useEffect(() => {
     setSocket(oldSocket => {
@@ -41,7 +43,10 @@ export default function useErrorableChannel(channelId: string): ErrorableChannel
 
       newChannel
         .join()
-        .receive(ChannelResponse.OK, () => setChannel(newChannel))
+        .receive(ChannelResponse.OK, payload => {
+          setJoinPayload(payload);
+          setChannel(newChannel);
+        })
         .receive(ChannelResponse.ERROR, reasons => setError([ErrorCause.Other, reasons]))
         .receive(ChannelResponse.TIMEOUT, () => setError([ErrorCause.Timeout, null]));
 
@@ -49,5 +54,5 @@ export default function useErrorableChannel(channelId: string): ErrorableChannel
     });
   }, [channelId]);
 
-  return { channel, error };
+  return { channel, error, joinPayload };
 }

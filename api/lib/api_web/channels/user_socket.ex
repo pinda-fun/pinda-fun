@@ -16,6 +16,7 @@ defmodule ApiWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(%{"clientId" => client_id}, socket, _connect_info) do
+    Api.RoomDatabase.create_room("", "5432")
     {:ok, assign(socket, :client_id, client_id)}
   end
 
