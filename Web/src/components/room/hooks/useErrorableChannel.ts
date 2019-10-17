@@ -5,7 +5,7 @@ import getClientId from '../../../utils/getClientId';
 import ChannelResponse from './ChannelResponse';
 import ErrorCause from './ErrorCause';
 
-const SOCKET_URL = 'ws://localhost:4000/socket';
+const SOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL!;
 const TIMEOUT_DURATION = 5000;
 
 /**
