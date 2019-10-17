@@ -3,10 +3,11 @@ import {
   fromEvent, Observable, EMPTY,
 } from 'rxjs';
 import {
-  filter, map, pluck, debounceTime,
+  filter, map, pluck, debounceTime, startWith,
 } from 'rxjs/operators';
 import useCounter from './hooks';
 import { unwrap } from './utils/rxhelpers';
+import Button from '../components/common/Button';
 
 enum MotionPermission {
   NOT_SET = 0,
@@ -15,55 +16,78 @@ enum MotionPermission {
 }
 
 /** Generates an observable of the shake event produced by the phone. */
-function getShakeObservable(): Observable<number> {
-  if (!window.DeviceMotionEvent) {
+function getShakeObservable(permission: MotionPermission): Observable<number> {
+  if (permission !== MotionPermission.GRANTED) {
     return new Observable(sub => sub.error('Your device does not support motion.'));
   }
   return fromEvent(window, 'devicemotion').pipe(
-    map(evt => (evt as DeviceMotionEvent).accelerationIncludingGravity),
+    map(evt => (evt as DeviceMotionEvent).acceleration),
     unwrap,
     pluck('y'),
     unwrap,
     filter(x => x > 10),
     debounceTime(100),
+    startWith(0),
   );
 }
 
 const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
-  const { count, status } = useCounter(obs);
-  useEffect(() => {
-    if (permission !== MotionPermission.GRANTED) return;
-    setObs(getShakeObservable());
-  }, [permission]);
+  const [showPermissionButton, setPermissionButton] = useState(false);
+  const { count, status } = useCounter(obs, -1);
 
-  const getPermission = async function requestPermission() {
+  const getPermissionAvailability = () => {
+    if (!window.DeviceMotionEvent) {
+      setPermission(MotionPermission.DENIED);
+      return;
+    }
     if (typeof (window.DeviceMotionEvent as any).requestPermission === 'function') {
-      try {
-        const permissionResult = await (window.DeviceMotionEvent as any).requestPermission();
-        if (permissionResult === 'granted') {
-          setPermission(MotionPermission.GRANTED);
-        }
-        // TODO: Handle denied/failure case.
-      } catch (e) {
-        console.log(e);
-      }
+      setPermissionButton(true);
     } else {
       setPermission(MotionPermission.GRANTED);
     }
   };
+
+  useEffect(getPermissionAvailability, []);
+
+  useEffect(() => setObs(getShakeObservable(permission)), [permission]);
+
+  const getPermission = async function requestPermission() {
+    try {
+      const permissionResult = await (window.DeviceMotionEvent as any).requestPermission();
+      if (permissionResult === 'granted') {
+        setPermission(MotionPermission.GRANTED);
+      } else {
+        setPermission(MotionPermission.DENIED);
+      }
+    } catch (e) {
+      setPermission(MotionPermission.DENIED);
+    } finally {
+      setPermissionButton(false);
+    }
+  };
+
   return (
     <>
       <p>
         Aylol: {count}
       </p>
       <p>
-        Status: {status || 'no status updates'}
+        Status: {status === null ? 'no status updates' : status}
       </p>
-      <button onClick={getPermission} type="button">
-        PERMISSION
-      </button>
+      {permission === MotionPermission.NOT_SET
+        && (
+          <p>
+            Checking if you can play the game...
+          </p>
+        )}
+      {showPermissionButton
+        && (
+          <Button onClick={getPermission} type="button">
+            Set Permission
+          </Button>
+        )}
     </>
   );
 };
