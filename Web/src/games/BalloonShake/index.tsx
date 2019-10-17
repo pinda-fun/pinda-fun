@@ -5,15 +5,14 @@ import {
 import {
   filter, map, pluck, debounceTime, startWith, takeUntil, share, last,
 } from 'rxjs/operators';
-import useCounter from './hooks';
-import { unwrap, createTimerObservable } from './rxhelpers';
-import Button from '../components/common/Button';
+import useCounter from '../hooks';
+import { unwrap, createTimerObservable } from '../rxhelpers';
+import { GameState, MotionPermission } from './GameStates';
+import GameDisplay from './GameDisplay';
+import GameResults from './GameResults';
+import GamePrep from './GamePrep';
 
-enum MotionPermission {
-  NOT_SET = 0,
-  DENIED = 1,
-  GRANTED = 1
-}
+const GAME_TIME = 30; // Total shake time given
 
 /** Generates an observable of the shake event produced by the phone. */
 function getShakeObservable(permission: MotionPermission): Observable<number> {
@@ -35,9 +34,9 @@ const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionButton, setPermissionButton] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(0);
-  const [gameStarted, startGame] = useState(false);
-  const { count, status } = useCounter(obs, -1);
+  const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
+  const [gameState, setGameState] = useState(GameState.WAITING_START);
+  const { count } = useCounter(obs, -1);
 
   const getPermissionAvailability = () => {
     if (!window.DeviceMotionEvent) {
@@ -54,15 +53,20 @@ const BalloonShake: React.FC = () => {
   useEffect(getPermissionAvailability, []);
 
   useEffect(() => {
-    if (permission !== MotionPermission.GRANTED || !gameStarted) return;
-    const timer = createTimerObservable(60).pipe(share());
-    timer.subscribe(left => setSecondsLeft(left));
+    if (permission !== MotionPermission.GRANTED
+      || gameState !== GameState.IN_PROGRESS) return;
+    const timer = createTimerObservable(GAME_TIME).pipe(share());
+    timer.subscribe(
+      left => setSecondsLeft(left),
+      null,
+      () => setGameState(GameState.WAITING_RESULTS)
+    );
     setObs(getShakeObservable(permission).pipe(
       takeUntil(timer.pipe(last())),
     ));
-  }, [permission, gameStarted]);
+  }, [permission, gameState]);
 
-  const getPermission = async function requestPermission() {
+  const getUserPermission = async function requestPermission() {
     try {
       const permissionResult = await (window.DeviceMotionEvent as any).requestPermission();
       if (permissionResult === 'granted') {
@@ -79,33 +83,20 @@ const BalloonShake: React.FC = () => {
 
   return (
     <>
-      <p>
-        Shakes: {count}
-      </p>
-      <p>
-        Last shake: {status === null ? 'no status updates' : status}
-      </p>
-      <h1>
-        {secondsLeft}
-      </h1>
-      {permission === MotionPermission.NOT_SET
-        && (
-          <p>
-            Checking if you can play the game...
-          </p>
-        )}
-      {showPermissionButton
-        && (
-          <Button onClick={getPermission} type="button">
-            Set Permission
-          </Button>
-        )}
-      {permission === MotionPermission.GRANTED
-        && (
-          <Button onClick={() => startGame(true)} type="button">
-            Start Game!
-          </Button>
-        )}
+      {gameState === GameState.WAITING_START
+        && <GamePrep
+          permission={permission}
+          showPermissionRequest={showPermissionButton}
+          requestPermissionCallback={getUserPermission}
+          startGame={() => setGameState(GameState.IN_PROGRESS)}
+        />
+      }
+      {gameState === GameState.IN_PROGRESS
+        && <GameDisplay secondsLeft={secondsLeft} count={count} />
+      }
+      {gameState === GameState.WAITING_RESULTS
+        && <GameResults finalCount={count} />
+      }
     </>
   );
 };
