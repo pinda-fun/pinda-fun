@@ -22,7 +22,9 @@ module.exports = {
     'react/prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-one-expression-per-line': 'off',
-    'max-classes-per-file': 'warn'
+    'max-classes-per-file': 'warn',
+
+    '@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '^_' }],
   },
   "settings": {
     "react": {
