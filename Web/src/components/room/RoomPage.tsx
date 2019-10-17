@@ -1,8 +1,8 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import { Channel } from 'phoenix';
-import RoomContainer, { ErrorCause } from '../components/RoomContainer';
-import Button from '../components/common/Button';
+import RoomContainer, { ErrorCause } from '../RoomContainer';
+import Button from '../common/Button';
 
 const RoomPage: React.FC = () => {
   const [channel, setChannel] = useState<Channel | null>(null);

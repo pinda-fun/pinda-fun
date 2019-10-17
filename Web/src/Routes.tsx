@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Loading from './components/common/Loading';
-import RoomPage from './room/RoomPage';
+import RoomPage from './components/room/RoomPage';
 
 const LandingPage = lazy(() => import('./components/landing'));
 const CreateRoomPage = lazy(() => import('./components/create-room'));
