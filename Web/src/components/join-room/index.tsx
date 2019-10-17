@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import BigButton from '../common/BigButton';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
+const PIN_LENGTH = 4;
+
 const JoinRoomContainer = styled.div`
   background: var(--pale-purple);
   min-height: 100vh;
@@ -46,12 +48,6 @@ const StyledInput = styled.input`
   letter-spacing: 1rem;
   padding: 0 0 0.5rem 1rem;
   margin-bottom: 1.5rem;
-
-  ::-webkit-inner-spin-button,
-  ::-webkit-outer-spin-button {
-    display: none;
-    margin: 0;
-  }
 `;
 
 const JoinRoomButton = styled(BigButton)`
@@ -74,15 +70,19 @@ const JoinRoomPage: React.FC = () => {
       <JoinRoomForm onSubmit={onJoinRoomFormSubmit}>
         <StyledInput
           name="gamepin"
-          type="number"
+          type="text"
+          pattern="[0-9]*"
+          inputMode="numeric"
+          maxLength={PIN_LENGTH}
           placeholder="XXXX"
           value={gamePin}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => (
-            setGamePin(event.target.value)
+            setGamePin(event.target.value.replace(/\D/g, ''))
           )}
-          required
         />
-        <JoinRoomButton type="submit">Let&apos;s Go!</JoinRoomButton>
+        <JoinRoomButton type="submit" disabled={gamePin.length < PIN_LENGTH}>
+          Let&apos;s Go!
+        </JoinRoomButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
       </JoinRoomForm>
     </JoinRoomContainer>
