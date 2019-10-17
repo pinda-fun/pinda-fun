@@ -14,7 +14,7 @@ const LoadingDiv = styled.div`
 `;
 
 const PindaHead = styled(PindaHeadSVG)`
-  height: 15vh;
+  height: 5rem;
 `;
 
 const Loading: React.FC = () => (
