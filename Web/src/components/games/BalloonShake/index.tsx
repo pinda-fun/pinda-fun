@@ -12,7 +12,7 @@ import GameDisplay from './GameDisplay';
 import GameResults from './GameResults';
 import GamePrep from './GamePrep';
 
-const GAME_TIME = 30; // Total shake time given
+const GAME_TIME = 20; // Total shake time given
 
 /** Generates an observable of the shake event produced by the phone. */
 function getShakeObservable(permission: MotionPermission): Observable<number> {
@@ -85,12 +85,12 @@ const BalloonShake: React.FC = () => {
     <>
       {gameState === GameState.WAITING_START
         && (
-        <GamePrep
-          permission={permission}
-          showPermissionRequest={showPermissionButton}
-          requestPermissionCallback={getUserPermission}
-          startGame={() => setGameState(GameState.IN_PROGRESS)}
-        />
+          <GamePrep
+            permission={permission}
+            showPermissionRequest={showPermissionButton}
+            requestPermissionCallback={getUserPermission}
+            startGame={() => setGameState(GameState.IN_PROGRESS)}
+          />
         )}
       {gameState === GameState.IN_PROGRESS
         && <GameDisplay secondsLeft={secondsLeft} count={count} />}

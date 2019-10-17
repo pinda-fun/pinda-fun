@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { mdMin } from 'utils/media';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -8,22 +7,10 @@ const Container = styled.div`
   overflow: hidden;
   height: 100vh;
   width: 100vw;
-`;
-
-const Section = styled.div`
   display: flex;
   justify-content: center;
-  padding: 7rem 1rem;
   flex-direction: column;
   align-items: center;
-
-  & > div {
-  width: ${mdMin};
-
-  @media (max-width: ${mdMin}) {
-    width: calc(100% - 0.5em);
-    }
-  }
 `;
 
 const Result = styled.h2`
@@ -36,11 +23,9 @@ const Result = styled.h2`
 
 const GameResults: FC<{ finalCount: number }> = ({ finalCount }) => (
   <Container>
-    <Section>
-      <h2>You shook:</h2>
-      <Result>{finalCount}</Result>
-      <h2>times!</h2>
-    </Section>
+    <h2>You shook:</h2>
+    <Result>{finalCount}</Result>
+    <h2>times!</h2>
   </Container>
 );
 
