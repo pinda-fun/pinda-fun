@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { Users } from 'react-feather';
-import { mdMin } from '../../utils/media';
+import { mdMin } from '../../../utils/media';
 
 type ContainerProps = {
   hideOnMedium?: boolean;

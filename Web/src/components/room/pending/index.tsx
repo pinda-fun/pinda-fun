@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import BigButton from '../common/BigButton';
+import BigButton from '../../common/BigButton';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
-import { mdMin } from '../../utils/media';
-import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
+import { mdMin } from '../../../utils/media';
+import { ReactComponent as PindaHappySVG } from '../../../svg/pinda-happy.svg';
 
-const CreateRoomContainer = styled.div`
+const PendingContainer = styled.div`
   background: var(--pale-yellow);
   min-height: 100vh;
   position: relative;
@@ -108,14 +108,20 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-const CreateRoomPage: React.FC = () => {
+interface LobbyProps {
+  startGame:() => void,
+}
+
+const PendingPage: React.FC<LobbyProps> = (props:LobbyProps) => {
+  const { startGame } = props;
+
   // TODO: get real data instead
   const gamePin = 3456;
   const sharableLink = '/';
   const numPlayers = 10;
 
   return (
-    <CreateRoomContainer>
+    <PendingContainer>
       <TwoColumnDiv>
         <div>
           <GamePinSection>
@@ -133,11 +139,11 @@ const CreateRoomPage: React.FC = () => {
           <NumPlayers numPlayers={numPlayers} hideOnLarge />
         </ShareSection>
       </TwoColumnDiv>
-      <StartButton>START!</StartButton>
+      <StartButton onClick={startGame}>START!</StartButton>
       <Link to={{ pathname: '/' }}>Cancel</Link>
       <PindaHappy />
-    </CreateRoomContainer>
+    </PendingContainer>
   );
 };
 
-export default CreateRoomPage;
+export default PendingPage;
