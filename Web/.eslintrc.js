@@ -25,12 +25,18 @@ module.exports = {
     'max-classes-per-file': 'warn',
 
     '@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '^_' }],
+    'import/prefer-default-export': 'off',
   },
   "settings": {
     "react": {
       "pragma": "React",
       "version": "detect"
-    }
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    },
   },
   "parser": "@typescript-eslint/parser"
 };

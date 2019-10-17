@@ -20,7 +20,8 @@
 
 body,
 div,
-button {
+button,
+input {
   font-family: var(--primary-font), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
