@@ -18,10 +18,10 @@ const RoomPage: React.FC = () => {
   useEffect(() => {
     if (channel == null) return;
     channel.on('startGame', () => setState(State.IN_PROGRESS));
-    channel.on('result', ({ newResult }) => {
+    channel.on('result', ({ result: newResult }) => {
       console.log(newResult);
       setState(State.COMPLETED);
-      setResult(newResult);
+      setResult(newResult.toString());
     });
   }, [channel]);
 
