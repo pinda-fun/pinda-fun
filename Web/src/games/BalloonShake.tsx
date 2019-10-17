@@ -3,10 +3,10 @@ import {
   fromEvent, Observable, EMPTY,
 } from 'rxjs';
 import {
-  filter, map, pluck, debounceTime, startWith,
+  filter, map, pluck, debounceTime, startWith, takeUntil, share, last,
 } from 'rxjs/operators';
 import useCounter from './hooks';
-import { unwrap } from './utils/rxhelpers';
+import { unwrap, createTimerObservable } from './rxhelpers';
 import Button from '../components/common/Button';
 
 enum MotionPermission {
@@ -35,6 +35,8 @@ const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionButton, setPermissionButton] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [gameStarted, startGame] = useState(false);
   const { count, status } = useCounter(obs, -1);
 
   const getPermissionAvailability = () => {
@@ -51,7 +53,14 @@ const BalloonShake: React.FC = () => {
 
   useEffect(getPermissionAvailability, []);
 
-  useEffect(() => setObs(getShakeObservable(permission)), [permission]);
+  useEffect(() => {
+    if (permission !== MotionPermission.GRANTED || !gameStarted) return;
+    const timer = createTimerObservable(60).pipe(share());
+    timer.subscribe(left => setSecondsLeft(left));
+    setObs(getShakeObservable(permission).pipe(
+      takeUntil(timer.pipe(last())),
+    ));
+  }, [permission, gameStarted]);
 
   const getPermission = async function requestPermission() {
     try {
@@ -71,11 +80,14 @@ const BalloonShake: React.FC = () => {
   return (
     <>
       <p>
-        Aylol: {count}
+        Shakes: {count}
       </p>
       <p>
-        Status: {status === null ? 'no status updates' : status}
+        Last shake: {status === null ? 'no status updates' : status}
       </p>
+      <h1>
+        {secondsLeft}
+      </h1>
       {permission === MotionPermission.NOT_SET
         && (
           <p>
@@ -86,6 +98,12 @@ const BalloonShake: React.FC = () => {
         && (
           <Button onClick={getPermission} type="button">
             Set Permission
+          </Button>
+        )}
+      {permission === MotionPermission.GRANTED
+        && (
+          <Button onClick={() => startGame(true)} type="button">
+            Start Game!
           </Button>
         )}
     </>
