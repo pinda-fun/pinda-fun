@@ -133,7 +133,9 @@ const CreateRoomPage: React.FC = () => {
           <NumPlayers numPlayers={numPlayers} hideOnLarge />
         </ShareSection>
       </TwoColumnDiv>
-      <StartButton>START!</StartButton>
+      <Link to={{ pathname: '/room' }}>
+        <StartButton>START!</StartButton>
+      </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
       <PindaHappy />
     </CreateRoomContainer>
