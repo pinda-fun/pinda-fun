@@ -15,10 +15,16 @@ const BigButton = styled.button`
 
   transition: 0.2s;
 
-  :hover,
-  :active {
+  :hover:enabled,
+  :active:enabled {
     transform: translateY(6px);
     box-shadow: 0px 0px 0px var(--dark-purple);
+  }
+
+  :disabled {
+    cursor: not-allowed;
+    background: darkgrey;
+    box-shadow: 0px 6px 0px grey;
   }
 `;
 
