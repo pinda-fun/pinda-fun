@@ -1,8 +1,14 @@
 defmodule Api.RoomDatabase.Room do
   @enforce_keys [:pin, :admin_id]
-  defstruct pin: nil, admin_id: nil, user_ids: MapSet.new()
+  defstruct pin: nil, admin_id: nil, user_ids: MapSet.new(), result: [], game_on?: false
 
-  @type t :: %__MODULE__{pin: String.t(), admin_id: String.t(), user_ids: MapSet.t()}
+  @type t :: %__MODULE__{
+          pin: String.t(),
+          admin_id: String.t(),
+          user_ids: MapSet.t(),
+          result: [any()],
+          game_on?: boolean()
+        }
 
   use GenServer, restart: :transient
 
@@ -21,6 +27,28 @@ defmodule Api.RoomDatabase.Room do
     user_ids = MapSet.put(user_ids, user_id)
     state = %{state | user_ids: user_ids}
     {:reply, {:ok, state}, state}
+  end
+
+  @impl true
+  def handle_call({:remove_user_id, user_id}, _from, state = %__MODULE__{user_ids: user_ids}) do
+    user_ids = MapSet.delete(user_ids, user_id)
+    state = %{state | user_ids: user_ids}
+    {:reply, {:ok, state}, state}
+  end
+
+  @impl true
+  def handle_call(:start_game, _from, state = %__MODULE__{}) do
+    {:reply, :ok, %{state | result: [], game_on?: true}}
+  end
+
+  @impl true
+  def handle_call(:end_game, _from, state = %__MODULE__{}) do
+    {:reply, :ok, %{state | result: [], game_on?: false}}
+  end
+
+  @impl true
+  def handle_call({:add_result, client_id, score}, _from, state = %__MODULE__{result: result}) do
+    {:reply, :ok, %{state | result: [{score, client_id} | result]}}
   end
 
   @impl true
