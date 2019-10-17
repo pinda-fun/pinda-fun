@@ -24,7 +24,7 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'max-classes-per-file': 'warn',
 
-    // import preferences
+    '@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '^_' }],
     'import/prefer-default-export': 'off',
   },
   "settings": {

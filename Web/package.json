@@ -13,17 +13,19 @@
     "@types/react-router": "^5.1.1",
     "@types/react-router-dom": "^5.1.0",
     "@types/styled-components": "^4.1.19",
+    "@types/uuid": "^3.4.5",
     "phoenix": "^1.4.10",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-feather": "^2.0.3",
-    "react-router-dom": "^5.0.1",
     "react-loading": "^2.0.3",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.2.0",
     "rxjs": "^6.5.3",
     "styled-components": "^4.4.0",
-    "typescript": "3.6.4"
+    "typescript": "3.6.4",
+    "uuid": "^3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,9 +34,6 @@
     "typecheck": "tsc --noEmit",
     "eject": "react-scripts eject",
     "lint": "eslint './src/**/*.{ts,tsx}'"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
