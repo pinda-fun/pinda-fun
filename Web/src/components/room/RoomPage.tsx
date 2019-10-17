@@ -7,7 +7,7 @@ import RoomState from './RoomState';
 import getClientId from '../../utils/getClientId';
 
 const RoomPage: React.FC = () => {
-  const { channel, error } = useErrorableChannel('room:lobby');
+  const { channel, error } = useErrorableChannel('room:5432');
   const [roomState, setRoomState] = useState<RoomState>();
   const [rank, setRank] = useState<number>();
 
