@@ -4,7 +4,6 @@ import { Channel } from 'phoenix';
 import RoomContainer, { ErrorCause } from '../components/RoomContainer';
 import Button from '../components/common/Button';
 
-
 const RoomPage: React.FC = () => {
   const [channel, setChannel] = useState<Channel | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
