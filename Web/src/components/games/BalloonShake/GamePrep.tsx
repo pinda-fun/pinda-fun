@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
-import { MotionPermission } from './GameStates';
 import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import styled from 'styled-components';
 import { mdMin } from 'utils/media';
+import { MotionPermission } from './GameStates';
 
 interface IProps {
   permission: MotionPermission;
@@ -13,29 +13,30 @@ interface IProps {
 }
 
 const Container = styled.div`
-    background: var(--pale-purple);
-    position: relative;
-    overflow: hidden;
-    height: 100%;
+  background: var(--pale-purple);
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 `;
 
 const Section = styled.div`
-    display: flex;
-    justify-content: center;
-    padding: 7rem 1rem;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 7rem 1rem;
+  flex-direction: column;
+  align-items: center;
 
-    & > div {
+  & > div {
     width: ${mdMin};
 
     @media (max-width: ${mdMin}) {
-    width: calc(100% - 0.5em);
+      width: calc(100% - 0.5em);
     }
-    }
+  }
 `;
 
-const GamePrep: FC<IProps> = (props) => {
+const GamePrep: FC<IProps> = props => {
   const {
     permission, showPermissionRequest, requestPermissionCallback, startGame,
   } = props;
@@ -63,6 +64,6 @@ const GamePrep: FC<IProps> = (props) => {
       </Section>
     </Container>
   );
-}
+};
 
 export default GamePrep;

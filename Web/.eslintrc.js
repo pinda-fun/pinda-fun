@@ -31,7 +31,12 @@ module.exports = {
     "react": {
       "pragma": "React",
       "version": "detect"
-    }
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    },
   },
   "parser": "@typescript-eslint/parser"
 };

@@ -6,8 +6,7 @@ export enum GameState {
 }
 
 export enum MotionPermission {
-  NOT_SET = 0,
-  DENIED = 1,
-  GRANTED = 1
+  NOT_SET,
+  DENIED,
+  GRANTED
 }
-

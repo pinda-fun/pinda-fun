@@ -59,7 +59,7 @@ const BalloonShake: React.FC = () => {
     timer.subscribe(
       left => setSecondsLeft(left),
       null,
-      () => setGameState(GameState.WAITING_RESULTS)
+      () => setGameState(GameState.WAITING_RESULTS),
     );
     setObs(getShakeObservable(permission).pipe(
       takeUntil(timer.pipe(last())),
@@ -84,19 +84,18 @@ const BalloonShake: React.FC = () => {
   return (
     <>
       {gameState === GameState.WAITING_START
-        && <GamePrep
+        && (
+        <GamePrep
           permission={permission}
           showPermissionRequest={showPermissionButton}
           requestPermissionCallback={getUserPermission}
           startGame={() => setGameState(GameState.IN_PROGRESS)}
         />
-      }
+        )}
       {gameState === GameState.IN_PROGRESS
-        && <GameDisplay secondsLeft={secondsLeft} count={count} />
-      }
+        && <GameDisplay secondsLeft={secondsLeft} count={count} />}
       {gameState === GameState.WAITING_RESULTS
-        && <GameResults finalCount={count} />
-      }
+        && <GameResults finalCount={count} />}
     </>
   );
 };

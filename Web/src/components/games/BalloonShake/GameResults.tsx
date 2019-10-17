@@ -3,10 +3,11 @@ import { mdMin } from 'utils/media';
 import styled from 'styled-components';
 
 const Container = styled.div`
-    background: var(--pale-purple);
-    position: relative;
-    overflow: hidden;
-    height: 100%;
+  background: var(--pale-purple);
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 `;
 
 const Section = styled.div`
@@ -26,11 +27,11 @@ const Section = styled.div`
 `;
 
 const Result = styled.h2`
-    font-size: 6rem;
-    color: var(--purple);
-    margin: 1rem 0 0 0;
-    justify-content: center;
-    z-index: 1;
+  font-size: 6rem;
+  color: var(--purple);
+  margin: 1rem 0 0 0;
+  justify-content: center;
+  z-index: 1;
 `;
 
 const GameResults: FC<{ finalCount: number }> = ({ finalCount }) => (
@@ -41,6 +42,6 @@ const GameResults: FC<{ finalCount: number }> = ({ finalCount }) => (
       <h2>times!</h2>
     </Section>
   </Container>
-)
+);
 
 export default GameResults;

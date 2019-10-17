@@ -12,7 +12,8 @@ const GameContainer = styled.div`
   background: var(--pale-yellow);
   position: relative;
   overflow: hidden;
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
 `;
 
 const Section = styled.div`
