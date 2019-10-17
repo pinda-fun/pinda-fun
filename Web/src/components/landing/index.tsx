@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import HeaderContent from './HeaderContent';
 import IntroductionContent from './IntroductionContent';
 import DetailsContent from './DetailsContent';
+import NavBar from './NavBar';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappyBadgeSVG } from '../../svg/pinda-happy-badge.svg';
 import { ReactComponent as PindaShockedBadgeSVG } from '../../svg/pinda-shocked-badge.svg';
@@ -113,25 +114,28 @@ const PindaHappyMid = styled(PindaHappySVG)`
 `;
 
 const LandingPage: React.FC = () => (
-  <LandingContainer>
-    <HeaderSection>
-      <TwoColumnDiv>
-        <HeaderContent />
-        <PindaHappyBadge />
-      </TwoColumnDiv>
-    </HeaderSection>
-    <IntroductionSection>
-      <TwoColumnDiv>
-        <PindaShockedBadge />
-        <IntroductionContent />
-      </TwoColumnDiv>
-    </IntroductionSection>
-    <DetailsSection>
-      <DetailsContent />
-      <PindaHappyMid />
-    </DetailsSection>
-    <PindaHappySide />
-  </LandingContainer>
+  <>
+    <NavBar />
+    <LandingContainer>
+      <HeaderSection>
+        <TwoColumnDiv>
+          <HeaderContent />
+          <PindaHappyBadge />
+        </TwoColumnDiv>
+      </HeaderSection>
+      <IntroductionSection>
+        <TwoColumnDiv>
+          <PindaShockedBadge />
+          <IntroductionContent />
+        </TwoColumnDiv>
+      </IntroductionSection>
+      <DetailsSection>
+        <DetailsContent />
+        <PindaHappyMid />
+      </DetailsSection>
+      <PindaHappySide />
+    </LandingContainer>
+  </>
 );
 
 export default LandingPage;
