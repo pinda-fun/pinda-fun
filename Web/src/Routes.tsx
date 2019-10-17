@@ -4,10 +4,10 @@ import Loading from './components/common/Loading';
 import RoomPage from './components/room/RoomPage';
 import RoomTestPage from './components/room/RoomTestPage';
 
-const LandingPage = lazy(() => import('components/landing'));
-const CreateRoomPage = lazy(() => import('components/create-room'));
-const JoinRoomPage = lazy(() => import('components/join-room'));
-const BalloonShake = lazy(() => import('components/games/BalloonShake'));
+const LandingPage = lazy(() => import('./components/landing'));
+const CreateRoomPage = lazy(() => import('./components/room/pending/index'));
+const JoinRoomPage = lazy(() => import('./components/join-room'));
+const BalloonShake = lazy(() => import('./components/games/BalloonShake'));
 
 const Routes: React.FC = () => (
   <Suspense fallback={<Loading />}>

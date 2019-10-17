@@ -19,7 +19,6 @@ const RoomPage: React.FC = () => {
     if (channel == null) return;
     channel.on('startGame', () => setState(State.IN_PROGRESS));
     channel.on('result', ({ newResult }) => {
-      console.log(newResult);
       setState(State.COMPLETED);
       setResult(newResult);
     });

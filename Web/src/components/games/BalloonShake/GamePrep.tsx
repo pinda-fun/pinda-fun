@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import Button from 'components/common/Button';
-import BigButton from 'components/common/BigButton';
 import styled from 'styled-components';
+import Button from '../../common/Button';
+import BigButton from '../../common/BigButton';
 import { MotionPermission } from './GameStates';
 
 interface IProps {

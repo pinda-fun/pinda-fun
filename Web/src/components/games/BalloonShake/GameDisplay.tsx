@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
+import { ReactComponent as BalloonSVG } from '../../../svg/balloon.svg';
 
 interface IProps {
   secondsLeft: number;

@@ -30,13 +30,19 @@ function getShakeObservable(permission: MotionPermission): Observable<number> {
   );
 }
 
-const BalloonShake: React.FC = () => {
+interface GameProps {
+  submit:(res: number) => void,
+  beginTimer:() => void,
+}
+
+const BalloonShake: React.FC<GameProps> = (props: GameProps) => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionButton, setPermissionButton] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [gameState, setGameState] = useState(GameState.WAITING_START);
   const { count } = useCounter(obs, -1);
+  const { submit, beginTimer } = props;
 
   const getPermissionAvailability = () => {
     if (!window.DeviceMotionEvent) {
@@ -59,7 +65,10 @@ const BalloonShake: React.FC = () => {
     timer.subscribe(
       left => setSecondsLeft(left),
       null,
-      () => setGameState(GameState.WAITING_RESULTS),
+      () => {
+        setGameState(GameState.WAITING_RESULTS);
+        submit(count);
+      },
     );
     setObs(getShakeObservable(permission).pipe(
       takeUntil(timer.pipe(last())),
@@ -89,7 +98,10 @@ const BalloonShake: React.FC = () => {
             permission={permission}
             showPermissionRequest={showPermissionButton}
             requestPermissionCallback={getUserPermission}
-            startGame={() => setGameState(GameState.IN_PROGRESS)}
+            startGame={() => {
+              setGameState(GameState.IN_PROGRESS);
+              beginTimer();
+            }}
           />
         )}
       {gameState === GameState.IN_PROGRESS

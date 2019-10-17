@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import useErrorableChannel from './hooks/useErrorableChannel';
-import BalloonShake from '../../games/BalloonShake';
+import BalloonShake from '../games/BalloonShake';
 import PendingPage from './pending/index';
 import RoomState from './RoomState';
 import getClientId from '../../utils/getClientId';
@@ -32,16 +32,21 @@ const RoomPage: React.FC = () => {
   const startGame = ():void => {
     if (roomState !== RoomState.PENDING) throw new Error();
     setRoomState(RoomState.IN_PROGRESS);
-    pushMessage('start', {});
+  };
+
+  const beginTimer = ():void => {
+    if (roomState !== RoomState.IN_PROGRESS) throw new Error();
+    // inform backend only when permission has been granted
+    pushMessage('startGame', {});
   };
 
   const submitResult = (res: number) => {
     pushMessage('result', { score: res });
     channel.on('result', ({ result }) => {
-      result.sort((a:string[], b:string[]) => parseInt(a[0]) - parseInt(b[0]));
+      result.sort((a:string[], b:string[]) => parseInt(a[0], 10) - parseInt(b[0], 10));
       setRank(result.findIndex((x:string) => x[1] === getClientId()) + 1);
+      setRoomState(RoomState.COMPLETED);
     });
-    setRoomState(RoomState.COMPLETED);
   };
 
   if (roomState === RoomState.PENDING) {
@@ -51,7 +56,7 @@ const RoomPage: React.FC = () => {
   } if (roomState === RoomState.IN_PROGRESS) {
     return (
       <div>
-        <BalloonShake />
+        <BalloonShake beginTimer={beginTimer} submit={submitResult} />
       </div>
     );
   } if (roomState === RoomState.COMPLETED) {

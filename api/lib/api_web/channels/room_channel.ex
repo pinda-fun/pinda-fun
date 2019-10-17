@@ -37,7 +37,7 @@ defmodule ApiWeb.RoomChannel do
 
   def handle_in("startGame", _payload, socket) do
     RoomDatabase.start_game("5432")
-    Process.send_after(self(), :end_game, 40_000)
+    Process.send_after(self(), :end_game, 22_500)
     broadcast(socket, "startGame", %{})
     {:noreply, socket}
   end
