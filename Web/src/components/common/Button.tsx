@@ -20,7 +20,6 @@ const Button = styled.button`
   font-size: 1rem;
   border: 1px solid var(--dark-purple);
 
-  margin: 0.1rem 1em;
   padding: 0.4em 1em;
 
   transition: 0.2s;
