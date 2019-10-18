@@ -79,6 +79,7 @@ const JoinRoomPage: React.FC = () => {
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => (
             setGamePin(event.target.value.replace(/\D/g, ''))
           )}
+          autoFocus
         />
         <JoinRoomButton type="submit" disabled={gamePin.length < PIN_LENGTH}>
           Let&apos;s Go!
