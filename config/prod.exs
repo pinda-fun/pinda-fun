@@ -12,7 +12,7 @@ use Mix.Config
 config :api, ApiWeb.Endpoint,
   url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["//*.pinda.fun"]
+  check_origin: {ApiWeb.Endpoint, :origin_ok?, []}
 
 # Do not print debug messages in production
 config :logger, level: :info
