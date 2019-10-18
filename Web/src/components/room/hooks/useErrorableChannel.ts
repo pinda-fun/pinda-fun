@@ -23,7 +23,7 @@ function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
   if (maybeSocket != null && maybeSocket.isConnected()) return maybeSocket;
   const newSocket = new Socket(
     SOCKET_URL,
-    { params: { clientId: getClientId }, timeout: TIMEOUT_DURATION },
+    { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
   );
   newSocket.connect();
   return newSocket;
@@ -44,6 +44,7 @@ export default function useErrorableChannel<T>(channelId: string): ErrorableChan
       newChannel
         .join()
         .receive(ChannelResponse.OK, (payload: T) => {
+          setError(null);
           setJoinPayload(payload);
           setChannel(oldChannel => {
             if (oldChannel != null) oldChannel.leave();

@@ -5,12 +5,15 @@ defmodule ApiWeb.RoomChannel do
 
   use ApiWeb, :channel
 
-  def join("room:lobby", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
+  def join("room:lobby", _payload, socket) do
+    case Api.PINGenerator.generate_pin() do
+      nil -> {:error, %{reason: "Ran out of PIN"}}
+      pin -> {:ok, %{"pin" => pin}, socket}
     end
+  end
+
+  def join("room:" <> _pin, _payload, socket) do
+    {:ok, socket}
   end
 
   # Channels can be used in a request/response fashion
@@ -24,10 +27,5 @@ defmodule ApiWeb.RoomChannel do
   def handle_in("shout", payload, socket) do
     broadcast(socket, "shout", payload)
     {:noreply, socket}
-  end
-
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
   end
 end
