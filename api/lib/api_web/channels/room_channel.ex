@@ -12,8 +12,7 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  def join("room:" <> pin, _payload, socket) do
-    Api.RoomDatabase.add_user_id(pin, socket.assigns.client_id)
+  def join("room:" <> _pin, _payload, socket) do
     {:ok, socket}
   end
 

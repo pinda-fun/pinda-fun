@@ -44,6 +44,7 @@ export default function useErrorableChannel<T>(channelId: string): ErrorableChan
       newChannel
         .join()
         .receive(ChannelResponse.OK, (payload: T) => {
+          setError(null);
           setJoinPayload(payload);
           setChannel(oldChannel => {
             if (oldChannel != null) oldChannel.leave();
