@@ -14,8 +14,8 @@ Afterwards, simply `docker-compose up`
 
 The frontend is accessible at https://localhost, while the backend is at http://localhost:4000/ or https://localhost:5000/
 
-## API
-Backend
-
 ## Web
-Frontend
+Production frontend is hosted at https://pinda.fun/
+
+## API
+Production backend is hosted at https://sizzling-tiny-wrenchbird.gigalixirapp.com/
