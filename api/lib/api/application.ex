@@ -10,8 +10,7 @@ defmodule Api.Application do
     children =
       [
         # Start the endpoint when the application starts
-        ApiWeb.Endpoint,
-        Api.RoomDatabase.Supervisor
+        ApiWeb.Endpoint
         # Starts a worker by calling: Api.Worker.start_link(arg)
         # {Api.Worker, arg},
       ] ++ env_dependent_children(args)
@@ -31,7 +30,7 @@ defmodule Api.Application do
   defp env_dependent_children(args) do
     case Keyword.get(args, :env) do
       :test -> []
-      _ -> [Api.PINGenerator]
+      _ -> [{Api.PINGenerator, name: Api.PINGenerator}]
     end
   end
 end
