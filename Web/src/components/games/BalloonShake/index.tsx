@@ -5,6 +5,7 @@ import {
 import {
   filter, map, pluck, debounceTime, startWith, takeUntil, share, last,
 } from 'rxjs/operators';
+import { Channel } from 'phoenix';
 import useCounter from '../hooks';
 import { unwrap, createTimerObservable } from '../rxhelpers';
 import { GameState, MotionPermission } from './GameStates';
@@ -31,8 +32,9 @@ function getShakeObservable(permission: MotionPermission): Observable<number> {
 }
 
 interface GameProps {
-  submit:(res: number) => void,
-  beginTimer:() => void,
+  channel: Channel,
+  submit: (res: number) => void,
+  beginTimer: () => void,
 }
 
 const BalloonShake: React.FC<GameProps> = (props: GameProps) => {
@@ -42,7 +44,7 @@ const BalloonShake: React.FC<GameProps> = (props: GameProps) => {
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [gameState, setGameState] = useState(GameState.WAITING_START);
   const { count } = useCounter(obs, -1);
-  const { submit, beginTimer } = props;
+  const { submit, beginTimer, channel } = props;
 
   const getPermissionAvailability = () => {
     if (!window.DeviceMotionEvent) {
@@ -89,6 +91,12 @@ const BalloonShake: React.FC<GameProps> = (props: GameProps) => {
       setPermissionButton(false);
     }
   };
+
+
+  useEffect(() => {
+    if (permission !== MotionPermission.GRANTED && gameState !== GameState.WAITING_START) return;
+    channel.on('startGame', () => setGameState(GameState.IN_PROGRESS));
+  }, [permission, gameState]);
 
   return (
     <>
