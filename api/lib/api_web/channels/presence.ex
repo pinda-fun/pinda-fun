@@ -68,6 +68,7 @@ defmodule ApiWeb.Presence do
   information, while maintaining the required `:metas` field from the
   original presence data.
   """
-  use Phoenix.Presence, otp_app: :api,
-                        pubsub_server: Api.PubSub
+  use Phoenix.Presence,
+    otp_app: :api,
+    pubsub_server: Api.PubSub
 end
