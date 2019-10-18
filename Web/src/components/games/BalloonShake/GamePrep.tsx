@@ -30,23 +30,23 @@ const GamePrep: FC<IProps> = props => {
   return (
     <Container>
       {permission === MotionPermission.NOT_SET && !showPermissionRequest
-          && (
-            <h3>
-              Checking if you can play the game...
-            </h3>
-          )}
+        && (
+          <h3>
+            Checking if you can play the game...
+          </h3>
+        )}
       {permission === MotionPermission.NOT_SET && showPermissionRequest
-          && (
-            <Button onClick={() => requestPermissionCallback()} type="button">
-              Set Permission
-            </Button>
-          )}
+        && (
+          <Button onClick={() => requestPermissionCallback()} type="button">
+            Set Permission
+          </Button>
+        )}
       {permission === MotionPermission.GRANTED
-          && (
-            <BigButton onClick={startGame} type="button">
-              Start Game!
-            </BigButton>
-          )}
+        && (
+          <BigButton onClick={startGame} type="button">
+            Start Game!
+          </BigButton>
+        )}
     </Container>
   );
 };
