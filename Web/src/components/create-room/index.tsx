@@ -116,7 +116,10 @@ interface PINJoinPayload {
 
 const CreateRoomPage: React.FC = () => {
   const [pin, setPin] = useState<string | null>(null);
-  const { channel, error, joinPayload } = useErrorableChannel<PINJoinPayload>(pin == null ? 'room:lobby' : `room:${pin}`);
+  const [numPlayers, setNumPlayers] = useState<number>(0);
+  const {
+    channel, error, joinPayload, presence,
+  } = useErrorableChannel<PINJoinPayload>(pin == null ? 'room:lobby' : `room:${pin}`);
 
   useEffect(() => {
     if (channel == null) return;
@@ -125,9 +128,15 @@ const CreateRoomPage: React.FC = () => {
     }
   }, [channel]);
 
+  useEffect(() => {
+    if (presence == null) return;
+    presence.onSync(() => {
+      setNumPlayers(presence.list().length);
+    });
+  }, [presence]);
+
   // TODO: get real data instead
   const sharableLink = '/';
-  const numPlayers = 10;
 
   // TODO: stylise error
   if (error != null) {

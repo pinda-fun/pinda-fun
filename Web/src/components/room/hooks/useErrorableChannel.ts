@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Socket, Channel } from 'phoenix';
+import { Socket, Channel, Presence } from 'phoenix';
 
 import getClientId from '../../../utils/getClientId';
 import ChannelResponse from './ChannelResponse';
@@ -17,6 +17,7 @@ export interface ErrorableChannel<T> {
   channel: Channel | null,
   error: [ErrorCause, any] | null,
   joinPayload: T | null,
+  presence: Presence | null,
 }
 
 function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
@@ -34,6 +35,7 @@ export default function useErrorableChannel<T>(channelId: string | null): Errora
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
   const [joinPayload, setJoinPayload] = useState<T | null>(null);
+  const [presence, setPresence] = useState<Presence | null>(null);
 
   useEffect(() => {
     if (channelId == null) return;
@@ -41,23 +43,34 @@ export default function useErrorableChannel<T>(channelId: string | null): Errora
       const currentSocket = maybeReconnectSocket(oldSocket);
 
       const newChannel = currentSocket.channel(channelId);
+      const newPresence = new Presence(newChannel);
 
       newChannel
         .join()
         .receive(ChannelResponse.OK, (payload: T) => {
           setError(null);
           setJoinPayload(payload);
+          setPresence(newPresence);
           setChannel(oldChannel => {
-            if (oldChannel != null) oldChannel.leave();
+            if (oldChannel != null) {
+              oldChannel.leave();
+              currentSocket.remove(oldChannel);
+            }
             return newChannel;
           });
         })
-        .receive(ChannelResponse.ERROR, reasons => setError([ErrorCause.Other, reasons]))
+        .receive(ChannelResponse.ERROR, reasons => {
+          setError([ErrorCause.Other, reasons]);
+          newChannel.leave();
+          currentSocket.remove(newChannel);
+        })
         .receive(ChannelResponse.TIMEOUT, () => setError([ErrorCause.Timeout, null]));
 
       return currentSocket;
     });
   }, [channelId]);
 
-  return { channel, error, joinPayload };
+  return {
+    channel, error, joinPayload, presence,
+  };
 }
