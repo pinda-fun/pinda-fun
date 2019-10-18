@@ -23,7 +23,7 @@ function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
   if (maybeSocket != null && maybeSocket.isConnected()) return maybeSocket;
   const newSocket = new Socket(
     SOCKET_URL,
-    { params: { clientId: getClientId }, timeout: TIMEOUT_DURATION },
+    { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
   );
   newSocket.connect();
   return newSocket;
