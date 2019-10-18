@@ -9,7 +9,8 @@ const SOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL!;
 const TIMEOUT_DURATION = 5000;
 
 /**
- * if (error != null) { There is an error }
+ * if (channelId == null) { No connection }
+ * else if (error != null) { There is an error }
  * else if (channel == null) { Connecting }
  * else { Channel ready to use }
  */
@@ -30,6 +31,9 @@ function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
   return newSocket;
 }
 
+/**
+ * @param channelId if null, will not establish connection.
+ */
 export default function useErrorableChannel<T>(channelId: string | null): ErrorableChannel<T> {
   const [_, setSocket] = useState<Socket | null>(null);
   const [channel, setChannel] = useState<Channel | null>(null);
@@ -38,7 +42,14 @@ export default function useErrorableChannel<T>(channelId: string | null): Errora
   const [presence, setPresence] = useState<Presence | null>(null);
 
   useEffect(() => {
-    if (channelId == null) return;
+    if (channelId == null) {
+      setError(null);
+      setJoinPayload(null);
+      setPresence(null);
+      setChannel(null);
+      setSocket(null);
+      return;
+    }
     setSocket(oldSocket => {
       const currentSocket = maybeReconnectSocket(oldSocket);
 
