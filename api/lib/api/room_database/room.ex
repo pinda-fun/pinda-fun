@@ -2,7 +2,7 @@ defmodule Api.RoomDatabase.Room do
   @enforce_keys [:pin, :admin_id]
   defstruct pin: nil, admin_id: nil, user_ids: MapSet.new()
 
-  @type t :: %__MODULE__{pin: String.t(), admin_id: String.t(), user_ids: MapSet.t()}
+  @type t :: %__MODULE__{pin: String.t(), user_ids: MapSet.t()}
 
   use GenServer, restart: :transient
 
@@ -24,15 +24,10 @@ defmodule Api.RoomDatabase.Room do
   end
 
   @impl true
-  def handle_call(:redesignate_admin, _from, state = %__MODULE__{user_ids: user_ids}) do
-    case Enum.take(user_ids, 1) do
-      [admin_id] ->
-        user_ids = MapSet.delete(user_ids, admin_id)
-        {:reply, {:ok, admin_id}, %{state | admin_id: admin_id, user_ids: user_ids}}
-
-      [] ->
-        {:stop, :normal, {:ok, :deleted}, nil}
-    end
+  def handle_call({:remove_user_id, user_id}, _from, state = %__MODULE__{user_ids: user_ids}) do
+    user_ids = MapSet.delete(user_ids, user_id)
+    state = %{state | user_ids: user_ids}
+    {:reply, {:ok, state}, state}
   end
 
   def start_link(args = %{pin: pin, admin_id: admin_id})

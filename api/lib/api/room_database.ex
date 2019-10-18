@@ -1,5 +1,4 @@
 defmodule Api.RoomDatabase do
-  # TODO make room_pin come from the PIN generator
   def create_room(admin_id, room_pin) when is_binary(admin_id) and is_binary(room_pin) do
     case DynamicSupervisor.start_child(
            Api.RoomDatabase.DynamicSupervisor,
@@ -24,9 +23,9 @@ defmodule Api.RoomDatabase do
     end
   end
 
-  def redesignate_admin(room_pin) do
+  def remove_user_id(user_id, room_pin) when is_binary(user_id) and is_binary(room_pin) do
     case Registry.lookup(Api.RoomDatabase.Registry, room_pin) do
-      [{pid, _}] -> GenServer.call(pid, :redesignate_admin)
+      [{pid, _}] -> GenServer.call(pid, {:remove_user_id, user_id})
       [] -> {:error, {:not_found, :room}}
     end
   end
