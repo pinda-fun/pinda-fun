@@ -29,13 +29,14 @@ function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
   return newSocket;
 }
 
-export default function useErrorableChannel<T>(channelId: string): ErrorableChannel<T> {
+export default function useErrorableChannel<T>(channelId: string | null): ErrorableChannel<T> {
   const [_, setSocket] = useState<Socket | null>(null);
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
   const [joinPayload, setJoinPayload] = useState<T | null>(null);
 
   useEffect(() => {
+    if (channelId == null) return;
     setSocket(oldSocket => {
       const currentSocket = maybeReconnectSocket(oldSocket);
 
