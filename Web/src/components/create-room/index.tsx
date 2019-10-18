@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import BigButton from '../common/BigButton';
+import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
+import BigButton from 'components/common/BigButton';
+import Loading from 'components/common/Loading';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -108,11 +110,33 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
+interface PINJoinPayload {
+  pin: string
+}
+
 const CreateRoomPage: React.FC = () => {
+  const [pin, setPin] = useState<string | null>(null);
+  const { channel, error, joinPayload } = useErrorableChannel<PINJoinPayload>(pin == null ? 'room:lobby' : `room:${pin}`);
+
+  useEffect(() => {
+    if (channel == null) return;
+    if (pin == null && joinPayload != null) {
+      setPin(joinPayload.pin);
+    }
+  }, [channel]);
+
   // TODO: get real data instead
-  const gamePin = 3456;
   const sharableLink = '/';
   const numPlayers = 10;
+
+  // TODO: stylise error
+  if (error != null) {
+    return <p>Error: {error[0].toString()}</p>;
+  }
+
+  if (channel == null) {
+    return <Loading />;
+  }
 
   return (
     <CreateRoomContainer>
@@ -120,7 +144,7 @@ const CreateRoomPage: React.FC = () => {
         <div>
           <GamePinSection>
             <h2>Game PIN:</h2>
-            <h1>{gamePin}</h1>
+            <h1>{pin}</h1>
           </GamePinSection>
           <NumPlayers numPlayers={numPlayers} hideOnMedium />
         </div>
