@@ -13,9 +13,10 @@ const TIMEOUT_DURATION = 5000;
  * else if (channel == null) { Connecting }
  * else { Channel ready to use }
  */
-export interface ErrorableChannel {
+export interface ErrorableChannel<T> {
   channel: Channel | null,
   error: [ErrorCause, any] | null,
+  joinPayload: T | null,
 }
 
 function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
@@ -28,10 +29,11 @@ function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
   return newSocket;
 }
 
-export default function useErrorableChannel(channelId: string): ErrorableChannel {
+export default function useErrorableChannel<T>(channelId: string): ErrorableChannel<T> {
   const [_, setSocket] = useState<Socket | null>(null);
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
+  const [joinPayload, setJoinPayload] = useState<T | null>(null);
 
   useEffect(() => {
     setSocket(oldSocket => {
@@ -41,7 +43,13 @@ export default function useErrorableChannel(channelId: string): ErrorableChannel
 
       newChannel
         .join()
-        .receive(ChannelResponse.OK, () => setChannel(newChannel))
+        .receive(ChannelResponse.OK, (payload: T) => {
+          setJoinPayload(payload);
+          setChannel(oldChannel => {
+            if (oldChannel != null) oldChannel.leave();
+            return newChannel;
+          });
+        })
         .receive(ChannelResponse.ERROR, reasons => setError([ErrorCause.Other, reasons]))
         .receive(ChannelResponse.TIMEOUT, () => setError([ErrorCause.Timeout, null]));
 
@@ -49,5 +57,5 @@ export default function useErrorableChannel(channelId: string): ErrorableChannel
     });
   }, [channelId]);
 
-  return { channel, error };
+  return { channel, error, joinPayload };
 }
