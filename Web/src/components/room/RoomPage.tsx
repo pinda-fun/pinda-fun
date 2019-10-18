@@ -24,17 +24,17 @@ const RoomPage: React.FC = () => {
     return <p>Establishing connection...</p>;
   }
 
-  const pushMessage = (type:string, payload:object) => {
+  const pushMessage = (type: string, payload: object) => {
     if (!channel) return;
     channel.push(type, payload);
   };
 
-  const startGame = ():void => {
+  const startGame = (): void => {
     if (roomState !== RoomState.PENDING) throw new Error();
     setRoomState(RoomState.IN_PROGRESS);
   };
 
-  const beginTimer = ():void => {
+  const beginTimer = (): void => {
     if (roomState !== RoomState.IN_PROGRESS) throw new Error();
     // inform backend only when permission has been granted
     pushMessage('startGame', {});
@@ -43,8 +43,8 @@ const RoomPage: React.FC = () => {
   const submitResult = (res: number) => {
     pushMessage('result', { score: res });
     channel.on('result', ({ result }) => {
-      result.sort((a:string[], b:string[]) => parseInt(a[0], 10) - parseInt(b[0], 10));
-      setRank(result.findIndex((x:string) => x[1] === getClientId()) + 1);
+      result.sort((a: string[], b: string[]) => parseInt(a[0], 10) - parseInt(b[0], 10));
+      setRank(result.findIndex((x: string) => x[1] === getClientId()) + 1);
       setRoomState(RoomState.COMPLETED);
     });
   };
@@ -56,18 +56,18 @@ const RoomPage: React.FC = () => {
   } if (roomState === RoomState.IN_PROGRESS) {
     return (
       <div>
-        <BalloonShake beginTimer={beginTimer} submit={submitResult} />
+        <BalloonShake beginTimer={beginTimer} submit={submitResult} channel={channel} />
       </div>
     );
   } if (roomState === RoomState.COMPLETED) {
     return (
       <div>
-        <h2>Your rank: { rank }</h2>
+        <h2>Your rank: {rank}</h2>
       </div>
     );
   }
   return (
-    <h2>Room State: { roomState }</h2>
+    <h2>Room State: {roomState}</h2>
   );
 };
 
