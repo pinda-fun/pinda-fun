@@ -11,7 +11,9 @@ import { GameState, MotionPermission } from './GameStates';
 import GameCountdown from './GameCountdown';
 import GameDisplay from './GameDisplay';
 import GameResults from './GameResults';
+import BalloonShakeInstructions from './BalloonShakeInstructions';
 import GamePrep from './GamePrep';
+import Countdown from '../Countdown';
 
 const GAME_TIME = 20; // Total shake time given
 const COUNTDOWN_TIME = 4; // Total time to countdown
@@ -117,7 +119,21 @@ const BalloonShake: React.FC = () => {
             permission={permission}
             showPermissionRequest={showPermissionButton}
             requestPermissionCallback={getUserPermission}
-            startGame={() => setGameState(GameState.COUNTING_DOWN)}
+            startGame={() => setGameState(GameState.INSTRUCTIONS)}
+          />
+        )}
+      {gameState === GameState.INSTRUCTIONS
+        && (
+          <BalloonShakeInstructions
+            seconds={5}
+            onComplete={() => setGameState(GameState.COUNTING_DOWN)}
+          />
+        )}
+      {gameState === GameState.COUNTDOWN
+        && (
+          <Countdown
+            seconds={3}
+            onComplete={() => setGameState(GameState.IN_PROGRESS)}
           />
         )}
       {gameState === GameState.COUNTING_DOWN

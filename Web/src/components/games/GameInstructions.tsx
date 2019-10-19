@@ -1,0 +1,86 @@
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { smMin } from 'utils/media';
+
+const InstructionsDiv = styled.div`
+  background-color: var(--deep-purple);
+  color: white;
+  min-height: 100vh;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    text-shadow: 3px 3px 0px var(--dark-purple);
+    font-size: 1.2rem;
+    width: ${smMin};
+
+    @media (max-width: ${smMin}) {
+      width: 85vw;
+    }
+  }
+
+  svg {
+    height: 14em;
+  }
+`;
+
+const GameTitle = styled.h1`
+  font-size: 2.8rem;
+  text-shadow: 4px 4px 0px var(--dark-purple);
+  margin-bottom: 0;
+`;
+
+const InstructionsTitle = styled.h2`
+  font-size: 1.4rem;
+  font-family: var(--primary-font);
+  font-weight: normal;
+  text-shadow: 3px 3px 0px var(--dark-purple);
+  margin-bottom: 0;
+`;
+
+type GameInstructionsProps = {
+  title: string;
+  seconds?: number;
+  onComplete?: () => void;
+};
+
+const GameInstructions: React.FC<GameInstructionsProps> = ({
+  children,
+  title,
+  seconds,
+  onComplete,
+}) => {
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    /* eslint-disable consistent-return */
+    if (isCompleted && onComplete) {
+      onComplete();
+      return;
+    }
+
+    if (!seconds) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      setIsCompleted(true);
+    }, seconds * 1000);
+    return () => clearInterval(intervalId);
+    /* eslint-enable consistent-return */
+  }, [isCompleted]);
+
+  return (
+    <InstructionsDiv>
+      <GameTitle>{title}</GameTitle>
+      <InstructionsTitle>Instructions:</InstructionsTitle>
+      {children}
+    </InstructionsDiv>
+  );
+};
+
+export default GameInstructions;
