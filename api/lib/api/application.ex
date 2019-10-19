@@ -11,14 +11,14 @@ defmodule Api.Application do
       # Start the Ecto repository
       Api.Repo,
       # Start the endpoint when the application starts
-      ApiWeb.Endpoint
+      ApiWeb.Endpoint,
+      {Api.PINGenerator, name: Api.PINGenerator}
       # Starts a worker by calling: Api.Worker.start_link(arg)
       # {Api.Worker, arg},
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Api.Supervisor]
+    # Use :one_for_all strategy to clean up all states should anything crash
+    opts = [strategy: :one_for_all, name: Api.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
