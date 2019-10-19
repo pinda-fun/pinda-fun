@@ -72,12 +72,17 @@ defmodule Api.PINGenerator do
   def handle_info({:cleanup, pin}, state = %__MODULE__{}) do
     # Check whether the given room is actually taken
     # If it is not, then free the pin up.
-    with true <- Presence.list("room:#{pin}") |> Enum.empty?(),
-         {:ok, new_state} <- do_mark_available(pin, state) do
-      {:noreply, new_state}
-    else
-      false -> {:noreply, state}
-      :error -> {:noreply, state}
+    try do
+      with true <- Presence.list("room:#{pin}") |> Enum.empty?(),
+           {:ok, new_state} <- do_mark_available(pin, state) do
+        {:noreply, new_state}
+      else
+        false -> {:noreply, state}
+        :error -> {:noreply, state}
+      end
+    catch
+      # Do not exit just because we can't check presence
+      :exit, _ -> {:noreply, state}
     end
   end
 
@@ -95,6 +100,12 @@ defmodule Api.PINGenerator do
 
     Process.send_after(self(), :cleanup, @cleanup_interval)
     {:noreply, %__MODULE__{available: available, taken: taken}}
+  end
+
+  @impl true
+  def handle_info({ref, _}, state) when is_reference(ref) do
+    # Ignore timed-out GenServer call to Presence
+    {:noreply, state}
   end
 
   def start_link(opts) do
