@@ -1,5 +1,15 @@
 version: "3.7"
 services:
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pinda
+    expose:
+      - "5432"
   api:
     build:
       context: ./api
@@ -12,8 +22,11 @@ services:
       - "server.key"
       - "server.crt"
     environment:
-      - SSL_KEY_PATH=/run/secrets/server.key
-      - SSL_CERT_PATH=/run/secrets/server.crt
+      SSL_KEY_PATH: /run/secrets/server.key
+      SSL_CERT_PATH: /run/secrets/server.crt
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/pinda
+    depends_on:
+      - postgres
   web:
     build:
       context: ./Web

@@ -1,13 +1,14 @@
 use Mix.Config
 
+database_credential =
+  if System.get_env("DATABASE_URL"),
+    do: [url: System.get_env("DATABASE_URL")],
+    else: [username: "postgres", password: "postgres", database: "api_dev", hostname: "localhost"]
+
 # Configure your database
-config :api, Api.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "api_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+config :api,
+       Api.Repo,
+       database_credential ++ [show_sensitive_data_on_connection_error: true, pool_size: 10]
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
