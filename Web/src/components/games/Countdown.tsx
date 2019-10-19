@@ -11,9 +11,12 @@ const CountdownDiv = styled.div`
 `;
 
 const Text = styled.h1`
-  font-size: 13rem;
+  font-size: 12rem;
   color: white;
   text-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
+
+  // Add padding to curb font rendering bug
+  padding-top: 8px;
 `;
 
 type CountdownProps = {
