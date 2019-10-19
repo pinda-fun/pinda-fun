@@ -16,7 +16,8 @@ import GamePrep from './GamePrep';
 import Countdown from '../Countdown';
 
 const GAME_TIME = 20; // Total shake time given
-const COUNTDOWN_TIME = 4; // Total time to countdown
+const INSTRUCTIONS_TIME = 5; // Total time to read instructions
+const COUNTDOWN_TIME = 3; // Total time to countdown
 
 /** Generates an observable of the shake event produced by the phone. */
 function getShakeObservable(permission: MotionPermission): Observable<number> {
@@ -125,14 +126,14 @@ const BalloonShake: React.FC = () => {
       {gameState === GameState.INSTRUCTIONS
         && (
           <BalloonShakeInstructions
-            seconds={5}
+            seconds={INSTRUCTIONS_TIME}
             onComplete={() => setGameState(GameState.COUNTING_DOWN)}
           />
         )}
       {gameState === GameState.COUNTDOWN
         && (
           <Countdown
-            seconds={3}
+            seconds={COUNTDOWN_TIME}
             onComplete={() => setGameState(GameState.IN_PROGRESS)}
           />
         )}
