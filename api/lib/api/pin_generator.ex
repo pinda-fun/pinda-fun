@@ -87,19 +87,24 @@ defmodule Api.PINGenerator do
   end
 
   @impl true
-  def handle_info(:cleanup, %__MODULE__{available: available, taken: taken}) do
-    result = Enum.group_by(taken, fn pin -> Presence.list("room:#{pin}") |> Enum.empty?() end)
+  def handle_info(:cleanup, state = %__MODULE__{available: available, taken: taken}) do
+    try do
+      result = Enum.group_by(taken, fn pin -> Presence.list("room:#{pin}") |> Enum.empty?() end)
 
-    can_be_freed = Map.get(result, true, [])
-    still_taken = Map.get(result, false, [])
+      can_be_freed = Map.get(result, true, [])
+      still_taken = Map.get(result, false, [])
 
-    available = can_be_freed ++ available
-    taken = MapSet.new(still_taken)
+      available = can_be_freed ++ available
+      taken = MapSet.new(still_taken)
 
-    Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
+      Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
 
-    Process.send_after(self(), :cleanup, @cleanup_interval)
-    {:noreply, %__MODULE__{available: available, taken: taken}}
+      Process.send_after(self(), :cleanup, @cleanup_interval)
+      {:noreply, %__MODULE__{available: available, taken: taken}}
+    catch
+      # Do not exit just because we can't check presence
+      :exit, _ -> {:noreply, state}
+    end
   end
 
   @impl true
