@@ -9,15 +9,8 @@ defmodule Api.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        credo: :test,
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test
-      ]
+      aliases: aliases(),
+      deps: deps()
     ]
   end
 
@@ -26,7 +19,7 @@ defmodule Api.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Api.Application, [env: Mix.env()]},
+      mod: {Api.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -40,13 +33,28 @@ defmodule Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
       {:phoenix, "~> 1.4.10"},
       {:phoenix_pubsub, "~> 1.1"},
-      {:plug_cowboy, "~> 2.0"},
-      {:credo, "~> 1.1.0", only: :test, runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:phoenix_ecto, "~> 4.0"},
+      {:ecto_sql, "~> 3.1"},
+      {:postgrex, ">= 0.0.0"},
+      {:gettext, "~> 0.11"},
+      {:jason, "~> 1.0"},
+      {:plug_cowboy, "~> 2.0"}
+    ]
+  end
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to create, migrate and run the seeds file at once:
+  #
+  #     $ mix ecto.setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  defp aliases do
+    [
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

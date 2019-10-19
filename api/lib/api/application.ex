@@ -8,15 +8,17 @@ defmodule Api.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      # Start the Ecto repository
+      Api.Repo,
       # Start the endpoint when the application starts
-      ApiWeb.Endpoint,
-      {Api.PINGenerator, name: Api.PINGenerator}
+      ApiWeb.Endpoint
       # Starts a worker by calling: Api.Worker.start_link(arg)
       # {Api.Worker, arg},
     ]
 
-    # Use :one_for_all strategy to clean up all states should anything crash
-    opts = [strategy: :one_for_all, name: Api.Supervisor]
+    # See https://hexdocs.pm/elixir/Supervisor.html
+    # for other strategies and supported options
+    opts = [strategy: :one_for_one, name: Api.Supervisor]
     Supervisor.start_link(children, opts)
   end
 

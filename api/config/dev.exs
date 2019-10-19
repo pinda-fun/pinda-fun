@@ -1,5 +1,14 @@
 use Mix.Config
 
+# Configure your database
+config :api, Api.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "api_dev",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -8,12 +17,6 @@ use Mix.Config
 # with webpack to recompile .js and .css sources.
 config :api, ApiWeb.Endpoint,
   http: [port: 4000],
-  https: [
-    port: 5000,
-    otp_app: :api,
-    keyfile: System.get_env("SSL_KEY_PATH") || "priv/server.key",
-    certfile: System.get_env("SSL_CERT_PATH") || "priv/server.crt"
-  ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
