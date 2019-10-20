@@ -14,6 +14,8 @@ defmodule Api.PINGenerator do
 
   use GenServer
 
+  alias ApiWeb.Presence
+
   require Logger
 
   @impl true
@@ -67,41 +69,48 @@ defmodule Api.PINGenerator do
   end
 
   @impl true
-  def handle_info({:cleanup, _pin}, state = %__MODULE__{}) do
-    # TODO
+  def handle_info({:cleanup, pin}, state = %__MODULE__{}) do
     # Check whether the given room is actually taken
     # If it is not, then free the pin up.
-    # with nil <- Api.RoomDatabase.get_room(pin),
-    #      {:ok, new_state} <- do_mark_available(pin, state) do
-    #   {:noreply, new_state}
-    # else
-    #   %Room{} -> {:noreply, state}
-    #   :error -> {:noreply, state}
-    # end
-    {:noreply, state}
+    try do
+      with true <- Presence.list("room:#{pin}") |> Enum.empty?(),
+           {:ok, new_state} <- do_mark_available(pin, state) do
+        {:noreply, new_state}
+      else
+        false -> {:noreply, state}
+        :error -> {:noreply, state}
+      end
+    catch
+      # Do not exit just because we can't check presence
+      :exit, _ -> {:noreply, state}
+    end
   end
 
   @impl true
-  def handle_info(:cleanup, %__MODULE__{available: available, taken: taken}) do
-    # TODO
-    # result =
-    #   Enum.group_by(taken, fn pin ->
-    #     case Api.RoomDatabase.get_room(pin) do
-    #       nil -> false
-    #       %Room{user_ids: user_ids} -> not Enum.empty?(user_ids)
-    #     end
-    #   end)
+  def handle_info(:cleanup, state = %__MODULE__{available: available, taken: taken}) do
+    try do
+      result = Enum.group_by(taken, fn pin -> Presence.list("room:#{pin}") |> Enum.empty?() end)
 
-    # can_be_freed = Map.get(result, true, [])
-    # still_taken = Map.get(result, false, [])
+      can_be_freed = Map.get(result, true, [])
+      still_taken = Map.get(result, false, [])
 
-    # available = can_be_freed ++ available
-    # taken = MapSet.new(still_taken)
+      available = can_be_freed ++ available
+      taken = MapSet.new(still_taken)
 
-    # Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
+      Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
 
-    Process.send_after(self(), :cleanup, @cleanup_interval)
-    {:noreply, %__MODULE__{available: available, taken: taken}}
+      Process.send_after(self(), :cleanup, @cleanup_interval)
+      {:noreply, %__MODULE__{available: available, taken: taken}}
+    catch
+      # Do not exit just because we can't check presence
+      :exit, _ -> {:noreply, state}
+    end
+  end
+
+  # Ignore timed-out GenServer call to Presence
+  @impl true
+  def handle_info({ref, _}, state) when is_reference(ref) do
+    {:noreply, state}
   end
 
   def start_link(opts) do
