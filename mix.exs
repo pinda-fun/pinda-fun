@@ -49,6 +49,7 @@ defmodule Api.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
+      {:sentry, "~> 7.0"},
       {:credo, "~> 1.1.0", only: :test, runtime: false},
       {:excoveralls, "~> 0.10", only: :test}
     ]
@@ -64,7 +65,8 @@ defmodule Api.MixProject do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      sentry_recompile: ["compile", "deps.compile sentry --force"]
     ]
   end
 end
