@@ -15,7 +15,7 @@ const ModalBackground = styled.div`
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
 
-  display: ${({ isVisible }: ModalBackgroundProps) => isVisible ? 'block' : 'none'};
+  display: ${({ isVisible }: ModalBackgroundProps) => (isVisible ? 'block' : 'none')};
 `;
 
 const OverlayModalCard = styled.section`
@@ -67,7 +67,7 @@ const enableBodyScroll = () => {
   const scrollY = document.body.style.top;
   document.body.style.position = '';
   document.body.style.top = '';
-  // tslint:disable-next-line: radix
+  // eslint:disable-next-line: radix
   window.scrollTo(0, parseInt(scrollY || '0') * -1);
 };
 /* end prevent body scroll code from https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/ */
