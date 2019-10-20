@@ -20,6 +20,9 @@ defmodule Api.Application do
 
     # Use :one_for_all strategy to clean up all states should anything crash
     opts = [strategy: :one_for_all, name: Api.Supervisor]
+
+    {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
+
     Supervisor.start_link(children, opts)
   end
 

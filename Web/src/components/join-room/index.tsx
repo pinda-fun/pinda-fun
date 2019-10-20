@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
@@ -58,12 +58,19 @@ const JoinRoomButton = styled(BigButton)`
   padding-right: 2em;
 `;
 
+
 const ErrorText = styled.p`
-  color: red;
+    color: red;
 `;
 
-const JoinRoomPage: React.FC = () => {
-  const [gamePin, setGamePin] = useState('');
+type JoinRoomProps = {
+  match: match<{ id?: string }>;
+};
+
+const JoinRoomPage: React.FC<JoinRoomProps> = ({
+  match: { params: { id } },
+}) => {
+  const [gamePin, setGamePin] = useState(id ? id.substring(0, 4) : '');
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionDialog, setPermissionDialog] = useState(false);
   const [joinRequested, setJoinRequested] = useState(false);
