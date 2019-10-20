@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import Modal from 'components/common/Modal';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
+import { MotionPermission } from 'components/games/BalloonShake/GameStates';
 
 const PIN_LENGTH = 4;
 
@@ -56,13 +58,57 @@ const JoinRoomButton = styled(BigButton)`
   padding-right: 2em;
 `;
 
+const ErrorText = styled.p`
+  color: red;
+`;
+
 const JoinRoomPage: React.FC = () => {
   const [gamePin, setGamePin] = useState('');
+  const [permission, setPermission] = useState(MotionPermission.NOT_SET);
+  const [showPermissionDialog, setPermissionDialog] = useState(false);
+  const [joinRequested, setJoinRequested] = useState(false);
+
+  const getUserPermission = async function requestPermission() {
+    try {
+      const permissionResult = await (window.DeviceMotionEvent as any).requestPermission();
+      if (permissionResult === 'granted') {
+        setPermission(MotionPermission.GRANTED);
+      } else {
+        setPermission(MotionPermission.DENIED);
+      }
+    } catch (e) {
+      setPermission(MotionPermission.DENIED);
+    } finally {
+      setPermissionDialog(false);
+    }
+  };
+
+  const getPermissionAvailability = () => {
+    if (!window.DeviceMotionEvent) {
+      setPermission(MotionPermission.DENIED);
+      return;
+    }
+    if (typeof (window.DeviceMotionEvent as any).requestPermission === 'function') {
+      setPermissionDialog(true);
+    } else {
+      setPermission(MotionPermission.GRANTED);
+    }
+  };
 
   const onJoinRoomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Perform join room with gamePin
+    if (gamePin.length < PIN_LENGTH) return;
+    setJoinRequested(true);
   };
+
+  useEffect(() => {
+    if (joinRequested && permission === MotionPermission.NOT_SET) {
+      getPermissionAvailability();
+    }
+    if (joinRequested && permission === MotionPermission.GRANTED) {
+      console.log('join success!');
+    }
+  }, [permission, joinRequested]);
 
   return (
     <JoinRoomContainer>
@@ -82,14 +128,35 @@ const JoinRoomPage: React.FC = () => {
           )}
           autoFocus
         />
-        <JoinRoomButton type="submit" disabled={gamePin.length < PIN_LENGTH}>
+        <JoinRoomButton
+          type="submit"
+          disabled={gamePin.length < PIN_LENGTH
+            || permission === MotionPermission.DENIED}
+        >
           Let&apos;s Go!
         </JoinRoomButton>
+        {permission === MotionPermission.DENIED
+          && (
+            <ErrorText>
+              Unable to get permissions to play Pinda.
+            </ErrorText>
+          )}
         <Link to={{ pathname: '/' }}>Cancel</Link>
       </JoinRoomForm>
-      {<Modal>
-
-      </Modal>}
+      {showPermissionDialog
+        && (
+          <Modal>
+            <h3>
+              Give Permissions?
+            </h3>
+            <p>
+              Pinda requires some device permissions in order to play some games.
+            </p>
+            <Button primary onClick={getUserPermission}>
+              Sure!
+            </Button>
+          </Modal>
+        )}
     </JoinRoomContainer>
   );
 };
