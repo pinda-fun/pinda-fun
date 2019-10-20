@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import BigButton from '../common/BigButton';
+import BigButton from 'components/common/BigButton';
+import Modal from 'components/common/Modal';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
 const PIN_LENGTH = 4;
@@ -86,6 +87,9 @@ const JoinRoomPage: React.FC = () => {
         </JoinRoomButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
       </JoinRoomForm>
+      {<Modal>
+
+      </Modal>}
     </JoinRoomContainer>
   );
 };
