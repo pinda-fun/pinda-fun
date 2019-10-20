@@ -5,6 +5,8 @@ defmodule ApiWeb.RoomChannel do
 
   use ApiWeb, :channel
 
+  alias ApiWeb.Presence
+
   def join("room:lobby", _payload, socket) do
     case Api.PINGenerator.generate_pin() do
       nil -> {:error, %{reason: "Ran out of PIN"}}
@@ -12,20 +14,39 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  def join("room:" <> _pin, _payload, socket) do
-    {:ok, socket}
+  def join(topic = "room:" <> _pin, payload, socket) do
+    try do
+      socket
+      |> Presence.list()
+      |> Map.get(socket.assigns.client_id)
+      |> case do
+        nil ->
+          send(self(), :after_join)
+          {:ok, socket}
+
+        _ ->
+          {:error, %{reason: "Existing connection"}}
+      end
+    catch
+      # Keep on trying even if Presence does not respond in time
+      :exit, _ -> join(topic, payload, socket)
+    end
   end
 
-  # Channels can be used in a request/response fashion
-  # by sending replies to requests from the client
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+  def handle_info(:after_join, socket) do
+    try do
+      push(socket, "presence_state", Presence.list(socket))
+      Presence.track(socket, socket.assigns.client_id, %{})
+      {:noreply, socket}
+    catch
+      :exit, _ ->
+        send(self(), :after_join)
+        {:noreply, socket}
+    end
   end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (room:lobby).
-  def handle_in("shout", payload, socket) do
-    broadcast(socket, "shout", payload)
+  # Ignore timed-out GenServer calls
+  def handle_info({ref, _}, socket) when is_reference(ref) do
     {:noreply, socket}
   end
 end
