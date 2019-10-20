@@ -75,7 +75,7 @@ const BalloonShake: React.FC = () => {
       null,
       () => setGameState(GameState.IN_PROGRESS),
     );
-    return timerSub.unsubscribe;
+    return () => timerSub.unsubscribe();
   }, [permission, gameState]);
 
   /** IN_PROGRESS state handler. */
@@ -91,7 +91,7 @@ const BalloonShake: React.FC = () => {
     setObs(getShakeObservable(permission).pipe(
       takeUntil(timer.pipe(last())),
     ));
-    return timerSub.unsubscribe;
+    return () => timerSub.unsubscribe();
   }, [permission, gameState]);
 
   const getUserPermission = async function requestPermission() {
