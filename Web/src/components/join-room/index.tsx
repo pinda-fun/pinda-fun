@@ -3,6 +3,7 @@ import { match } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/BalloonShake/GameStates';
+import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import JoinRoomForm from './JoinRoomForm';
 
@@ -37,9 +38,14 @@ type JoinRoomProps = {
 const JoinRoomPage: React.FC<JoinRoomProps> = ({
   match: { params: { id } },
 }) => {
+  const [gamePin, setGamePin] = useState('');
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionDialog, setPermissionDialog] = useState(false);
   const [joinRequested, setJoinRequested] = useState(false);
+  const [numPlayers, setNumPlayers] = useState(0);
+
+  const [channelName, setChannelName] = useState<string | null>(null);
+  const { channel, error, presence } = useErrorableChannel(channelName);
 
   const getUserPermission = async function requestPermission() {
     try {
@@ -68,9 +74,10 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
     }
   };
 
-  const onJoinRoomFormSubmit = (gamePin: string) => {
-    if (gamePin.length < PIN_LENGTH) return;
+  const onJoinRoomFormSubmit = (newGamePin: string) => {
+    if (newGamePin.length !== PIN_LENGTH) return;
     setJoinRequested(true);
+    setGamePin(newGamePin);
   };
 
   useEffect(() => {
@@ -78,9 +85,14 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       getPermissionAvailability();
     }
     if (joinRequested && permission === MotionPermission.GRANTED) {
-      // Perform game join logic here.
+      setChannelName(`room:${gamePin}`);
     }
   }, [permission, joinRequested]);
+
+  useEffect(() => {
+    if (presence == null) return;
+    presence.onSync(() => setNumPlayers(presence.list().length));
+  }, [presence]);
 
   return (
     <JoinRoomContainer>
@@ -90,6 +102,8 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
         initialId={id}
         permission={permission}
       />
+      <p>{channel != null && `Connected, numPlayers = ${numPlayers}`}</p>
+      <p>{error != null && `Error: ${error[0].toString()} -- ${JSON.stringify(error[1])}`}</p>
       <Modal
         isVisible={showPermissionDialog}
         title="Give Permissions?"

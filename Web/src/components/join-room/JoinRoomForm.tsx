@@ -7,16 +7,16 @@ import { MotionPermission } from 'components/games/BalloonShake/GameStates';
 const PIN_LENGTH = 4;
 
 const StyledInput = styled.input`
-    font-size: 3rem;
-    text-align: center;
-    background: none;
-    outline: none;
-    border: none;
-    border-bottom: 2px solid;
-    width: 13rem;
-    letter-spacing: 1rem;
-    padding: 0 0 0.5rem 1rem;
-    margin-bottom: 1.5rem;
+  font-size: 3rem;
+  text-align: center;
+  background: none;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid;
+  width: 13rem;
+  letter-spacing: 1rem;
+  padding: 0 0 0.5rem 1rem;
+  margin-bottom: 1.5rem;
 `;
 
 const JoinRoomButton = styled(BigButton)`
@@ -25,18 +25,18 @@ const JoinRoomButton = styled(BigButton)`
 `;
 
 const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 
-    & > * {
+  & > * {
     margin: 10px 0;
-    }
+  }
 `;
 
 const ErrorText = styled.p`
-    color: red;
+  color: red;
 `;
 
 interface JoinRoomFormProps {
