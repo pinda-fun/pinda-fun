@@ -107,9 +107,9 @@ defmodule Api.PINGenerator do
     end
   end
 
+  # Ignore timed-out GenServer call to Presence
   @impl true
   def handle_info({ref, _}, state) when is_reference(ref) do
-    # Ignore timed-out GenServer call to Presence
     {:noreply, state}
   end
 

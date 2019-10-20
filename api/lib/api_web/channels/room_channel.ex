@@ -45,6 +45,7 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
+  # Ignore timed-out GenServer calls
   def handle_info({ref, _}, socket) when is_reference(ref) do
     {:noreply, socket}
   end
