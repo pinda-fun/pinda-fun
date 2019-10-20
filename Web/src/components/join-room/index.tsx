@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, match } from 'react-router-dom';
 import styled from 'styled-components';
 import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
-import { getMetas } from 'components/room/Meta';
+import { getMetas, findHostMeta } from 'components/room/Meta';
 import BigButton from '../common/BigButton';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
@@ -100,10 +100,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       setNumPlayers(metas.length);
       setNames(metas.map(([clientId, meta]) => [clientId, meta.name]));
       if (gameName != null) return;
-      const hostMeta = getMetas(presence).filter(([_, meta]) => meta.isHost);
-      if (hostMeta.length !== 1) throw new Error('There should only be 1 host');
-      const [_, { game }] = hostMeta[0];
-      if (game == null) throw new Error("Why host don't have game :(");
+      const [_, { game }] = findHostMeta(metas);
       setGameName(game);
     });
   }, [presence]);
