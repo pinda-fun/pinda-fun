@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from '../common/BigButton';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
@@ -55,8 +55,14 @@ const JoinRoomButton = styled(BigButton)`
   padding-right: 2em;
 `;
 
-const JoinRoomPage: React.FC = () => {
-  const [gamePin, setGamePin] = useState('');
+type JoinRoomProps = {
+  match: match<{ id?: string }>;
+};
+
+const JoinRoomPage: React.FC<JoinRoomProps> = ({
+  match: { params: { id } },
+}) => {
+  const [gamePin, setGamePin] = useState(id ? id.substring(0, 4) : '');
 
   const onJoinRoomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

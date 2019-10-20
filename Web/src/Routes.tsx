@@ -13,7 +13,8 @@ const Routes: React.FC = () => (
     <Switch>
       <Route exact path="/" component={LandingPage} />
       <Route path="/new" component={CreateRoomPage} />
-      <Route path="/join" component={JoinRoomPage} />
+      <Route exact path="/join" component={JoinRoomPage} />
+      <Route path="/join/:id" component={JoinRoomPage} />
       <Route exact path="/balloon-game" component={BalloonShake} />
       <Route exact path="/test/joinroom" component={TestJoinRoomPage} />
     </Switch>
