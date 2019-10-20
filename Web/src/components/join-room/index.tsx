@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import Modal from 'components/common/Modal';
-import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import { MotionPermission } from 'components/games/BalloonShake/GameStates';
+import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
 const PIN_LENGTH = 4;
 
@@ -106,7 +106,7 @@ const JoinRoomPage: React.FC = () => {
       getPermissionAvailability();
     }
     if (joinRequested && permission === MotionPermission.GRANTED) {
-      console.log('join success!');
+      // Perform game join logic here.
     }
   }, [permission, joinRequested]);
 

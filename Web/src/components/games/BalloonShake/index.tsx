@@ -43,7 +43,7 @@ function getShakeObservable(permission: MotionPermission): Observable<number> {
  */
 const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
-  const [permission, setPermission] = useState(MotionPermission.NOT_SET);
+  const [permission, setPermission] = useState(MotionPermission.GRANTED);
   const [showPermissionButton, setPermissionButton] = useState(false);
   const [countdownLeft, setCountdownLeft] = useState(COUNTDOWN_TIME);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
