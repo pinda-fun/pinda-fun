@@ -8,7 +8,7 @@
 
 ## Getting up and running the dev environment
 
-If this is your first time setting up, run `./generate_https_keys.sh` first.
+If this is your first time setting up, run `./scripts/generate_https_keys` first.
 
 Afterwards, simply `docker-compose up`
 

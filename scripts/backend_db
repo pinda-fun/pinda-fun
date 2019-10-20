@@ -1,0 +1,21 @@
+#!/bin/sh
+
+case "$1" in
+  --seed)
+    echo Seeding database
+    docker-compose run api mix run priv/repo/seeds.exs
+    ;;
+
+  --reset)
+    echo Resetting database
+    docker-compose run api mix ecto.reset
+    ;;
+
+  *)
+    echo Usage:
+    echo "$0" \(option\)
+    echo
+    echo Options:
+    echo --seed      seed the database
+    echo --reset     reset the database
+esac

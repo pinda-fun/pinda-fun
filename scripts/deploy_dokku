@@ -9,11 +9,14 @@ gitpush() {
   fi
 }
 
+cd "$(git rev-parse --show-toplevel)" || (echo Failed to cd to repository root; exit 1)
+
 if [ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]
 then
   echo Not on "master" branch
   echo Try "git checkout master"
-  exit 1
+  echo Press enter to continue, or C-c to abort
+  read -r
 fi
 if [ "$(git branch --list api)" ]
 then
