@@ -7,6 +7,7 @@ const InstructionsDiv = styled.div`
   color: white;
   min-height: 100vh;
   text-align: center;
+  overflow: hidden;
 
   display: flex;
   flex-direction: column;

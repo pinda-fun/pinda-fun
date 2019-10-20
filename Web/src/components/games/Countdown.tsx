@@ -5,6 +5,7 @@ import { createTimerObservable } from './rxhelpers';
 const CountdownDiv = styled.div`
   background-color: var(--yellow);
   height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
