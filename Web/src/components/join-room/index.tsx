@@ -73,6 +73,8 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
 
   const [names, setNames] = useState<[string, string][]>([]);
 
+  const [gameName, setGameName] = useState<string | null>(null);
+
   const [numPlayers, setNumPlayers] = useState(0);
 
   const [channelName, setChannelName] = useState<string | null>(null);
@@ -97,6 +99,12 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       const metas = getMetas(presence);
       setNumPlayers(metas.length);
       setNames(metas.map(([clientId, meta]) => [clientId, meta.name]));
+      if (gameName != null) return;
+      const hostMeta = getMetas(presence).filter(([_, meta]) => meta.isHost);
+      if (hostMeta.length !== 1) throw new Error('There should only be 1 host');
+      const [_, { game }] = hostMeta[0];
+      if (game == null) throw new Error("Why host don't have game :(");
+      setGameName(game);
     });
   }, [presence]);
 
@@ -124,6 +132,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
         <Link to={{ pathname: '/' }}>Cancel</Link>
         <p>{channel != null && `Connected, numPlayers = ${numPlayers}`}</p>
         <p>{error != null && `Error: ${error[0].toString()} -- ${JSON.stringify(error[1])}`}</p>
+        <p>{gameName != null && `Game: ${gameName}`}</p>
         <p>UserMetas: {JSON.stringify(names)}</p>
       </JoinRoomForm>
     </JoinRoomContainer>
