@@ -9,6 +9,8 @@ gitpush() {
   fi
 }
 
+cd "$(git rev-parse --show-toplevel)" || (echo Failed to cd to repository root; exit 1)
+
 if [ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]
 then
   echo Not on "master" branch
