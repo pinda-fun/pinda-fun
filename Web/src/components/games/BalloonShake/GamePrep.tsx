@@ -55,7 +55,7 @@ const GamePrep: React.FC<IProps> = ({
             </h1>
             <p>
               Permissions to your device&apos;s motion sensor was not granted, so
-              you cannot play this game.
+              you can&apos;t play this game.
             </p>
           </>
         )}
