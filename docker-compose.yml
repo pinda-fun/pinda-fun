@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:12-alpine
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -55,6 +55,7 @@ services:
 
 volumes:
   yarn:
+  postgres:
 
 secrets:
   "server.key":
