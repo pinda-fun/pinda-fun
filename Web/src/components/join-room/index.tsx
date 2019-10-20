@@ -105,7 +105,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
         </JoinRoomButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
         <p>{channel != null && `Connected, numPlayers = ${numPlayers}`}</p>
-        <p>{error != null && `Error: ${error[0].toString()} -- ${error[1].toString()}`}</p>
+        <p>{error != null && `Error: ${error[0].toString()} -- ${JSON.stringify(error[1])}`}</p>
       </JoinRoomForm>
     </JoinRoomContainer>
   );
