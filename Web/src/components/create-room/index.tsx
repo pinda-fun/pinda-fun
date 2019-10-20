@@ -116,17 +116,19 @@ interface Payload {
   game: string
 }
 
-interface ReturnPayload {
+interface LobbyReturnPayload {
   pin: string
 }
 
 const CreateRoomPage: React.FC = () => {
   const [pin, setPin] = useState<string | null>(null);
   const [numPlayers, setNumPlayers] = useState(0);
+
   const {
     channel, error, returnPayload, presence,
-  } = useErrorableChannel<Payload, ReturnPayload>(
-    pin == null ? 'room:lobby' : `room:${pin}`, { name: 'Julius', game: 'Shake' },
+  } = useErrorableChannel<Payload | {}, LobbyReturnPayload | {}>(
+    pin == null ? 'room:lobby' : `room:${pin}`,
+    pin == null ? {} : { name: 'Julius', game: 'Shake' },
   );
   const [names, setNames] = useState<[string, string][]>([]);
 
@@ -134,10 +136,10 @@ const CreateRoomPage: React.FC = () => {
 
   useEffect(() => {
     if (channel == null) return;
-    if (pin == null && returnPayload != null) {
+    if (pin == null && returnPayload != null && 'pin' in returnPayload) {
       setPin(returnPayload.pin);
     }
-  }, [channel]);
+  }, [channel, returnPayload, pin]);
 
   useEffect(() => {
     if (presence == null) return;

@@ -87,7 +87,14 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   };
 
   const onJoinRoomFormSubmit = (newGamePin: string) => {
+    if (joinRequested && newGamePin === gamePin) return;
     if (newGamePin.length !== PIN_LENGTH) return;
+
+    // Reset state
+    setChannelName(null);
+    setGameName(null);
+    setNames([]);
+
     setJoinRequested(true);
 
     setGamePin(newGamePin);
@@ -101,12 +108,13 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       const newName = prompt('What is your name?');
       if (newName == null || newName === '') {
         alert('Name cannot be empty');
+        setJoinRequested(false);
         return;
       }
       setName(newName);
       setChannelName(`room:${gamePin}`);
     }
-  }, [permission, joinRequested]);
+  }, [permission, joinRequested, gamePin]);
 
   useEffect(() => {
     if (presence == null) return;
@@ -125,7 +133,11 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       const [_, { game }] = maybeHostMeta;
       setGameName(game);
     });
-  }, [presence]);
+  }, [presence, gameName]);
+
+  useEffect(() => {
+    if (error != null) setJoinRequested(false);
+  }, [error]);
 
   return (
     <JoinRoomContainer>
