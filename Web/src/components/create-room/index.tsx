@@ -136,9 +136,6 @@ const CreateRoomPage: React.FC = () => {
     });
   }, [presence]);
 
-  // TODO: get real data instead
-  const numPlayers = 10;
-
   // TODO: stylise error
   if (error != null) {
     return <p>Error: {error[0].toString()}</p>;
