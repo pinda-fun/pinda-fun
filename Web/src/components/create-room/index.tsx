@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import BigButton from 'components/common/BigButton';
 import Loading from 'components/common/Loading';
+import { getMetas } from 'components/room/Meta';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -110,7 +111,12 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-interface PINJoinPayload {
+interface Payload {
+  name: string,
+  game: string
+}
+
+interface ReturnPayload {
   pin: string
 }
 
@@ -118,21 +124,27 @@ const CreateRoomPage: React.FC = () => {
   const [pin, setPin] = useState<string | null>(null);
   const [numPlayers, setNumPlayers] = useState(0);
   const {
-    channel, error, joinPayload, presence,
-  } = useErrorableChannel<PINJoinPayload>(pin == null ? 'room:lobby' : `room:${pin}`);
+    channel, error, returnPayload, presence,
+  } = useErrorableChannel<Payload, ReturnPayload>(
+    pin == null ? 'room:lobby' : `room:${pin}`, { name: 'Julius', game: 'Shake' },
+  );
+  const [names, setNames] = useState<[string, string][]>([]);
+
   const sharableLink = `${window.location.origin}/join/${pin}`;
 
   useEffect(() => {
     if (channel == null) return;
-    if (pin == null && joinPayload != null) {
-      setPin(joinPayload.pin);
+    if (pin == null && returnPayload != null) {
+      setPin(returnPayload.pin);
     }
   }, [channel]);
 
   useEffect(() => {
     if (presence == null) return;
     presence.onSync(() => {
-      setNumPlayers(presence.list().length);
+      const metas = getMetas(presence);
+      setNumPlayers(metas.length);
+      setNames(metas.map(([id, meta]) => [id, meta.name]));
     });
   }, [presence]);
 
@@ -168,6 +180,7 @@ const CreateRoomPage: React.FC = () => {
         <StartButton>START!</StartButton>
       </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
+      <p>{channel != null && `UserMetas: ${JSON.stringify(names)}`}</p>
       <PindaHappy />
     </CreateRoomContainer>
   );

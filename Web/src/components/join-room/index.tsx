@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, match } from 'react-router-dom';
 import styled from 'styled-components';
 import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
+import { getMetas } from 'components/room/Meta';
 import BigButton from '../common/BigButton';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
@@ -56,6 +57,10 @@ const JoinRoomButton = styled(BigButton)`
   padding-right: 2em;
 `;
 
+interface Payload {
+  name: string,
+}
+
 type JoinRoomProps = {
   match: match<{ id?: string }>;
 };
@@ -64,22 +69,35 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   match: { params: { id } },
 }) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
+  const [name, setName] = useState('Caryn');
+
+  const [names, setNames] = useState<[string, string][]>([]);
 
   const [numPlayers, setNumPlayers] = useState(0);
 
   const [channelName, setChannelName] = useState<string | null>(null);
-  const { channel, error, presence } = useErrorableChannel(channelName);
+  const { channel, error, presence } = useErrorableChannel(channelName, { name });
 
   const onJoinRoomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Perform join room with gamePin
     if (gamePin.length !== PIN_LENGTH) return;
+    const newName = prompt('What is your name?');
+    if (newName == null || newName === '') {
+      alert('Name cannot be empty');
+      return;
+    }
+    setName(newName);
     setChannelName(`room:${gamePin}`);
   };
 
   useEffect(() => {
     if (presence == null) return;
-    presence.onSync(() => setNumPlayers(presence.list().length));
+    presence.onSync(() => {
+      const metas = getMetas(presence);
+      setNumPlayers(metas.length);
+      setNames(metas.map(([clientId, meta]) => [clientId, meta.name]));
+    });
   }, [presence]);
 
   return (
@@ -106,6 +124,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
         <Link to={{ pathname: '/' }}>Cancel</Link>
         <p>{channel != null && `Connected, numPlayers = ${numPlayers}`}</p>
         <p>{error != null && `Error: ${error[0].toString()} -- ${JSON.stringify(error[1])}`}</p>
+        <p>UserMetas: {JSON.stringify(names)}</p>
       </JoinRoomForm>
     </JoinRoomContainer>
   );

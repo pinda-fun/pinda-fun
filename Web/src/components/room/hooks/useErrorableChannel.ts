@@ -23,7 +23,7 @@ const TIMEOUT_DURATION = 5000;
 export interface ErrorableChannel<T> {
   channel: Channel | null,
   error: [ErrorCause, any] | null,
-  joinPayload: T | null,
+  returnPayload: T | null,
   presence: Presence | null,
 }
 
@@ -40,18 +40,21 @@ function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
 /**
  * @param channelId if null, will not establish connection.
  */
-export default function useErrorableChannel<T>(channelId: string | null): ErrorableChannel<T> {
+export default function useErrorableChannel<T extends object, U extends object>(
+  channelId: string | null,
+  payload: T,
+): ErrorableChannel<U> {
   const [_, setSocket] = useState<Socket | null>(null);
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
-  const [joinPayload, setJoinPayload] = useState<T | null>(null);
+  const [returnPayload, setReturnPayload] = useState<U | null>(null);
   const [presence, setPresence] = useState<Presence | null>(null);
 
   useEffect(() => {
     if (channelId == null) {
       setSocket(oldSocket => {
         setError(null);
-        setJoinPayload(null);
+        setReturnPayload(null);
         setPresence(null);
         setChannel(oldChannel => {
           if (oldChannel != null) {
@@ -68,14 +71,14 @@ export default function useErrorableChannel<T>(channelId: string | null): Errora
     setSocket(oldSocket => {
       const currentSocket = maybeReconnectSocket(oldSocket);
 
-      const newChannel = currentSocket.channel(channelId);
+      const newChannel = currentSocket.channel(channelId, payload);
       const newPresence = new Presence(newChannel);
 
       newChannel
         .join()
-        .receive(ChannelResponse.OK, (payload: T) => {
+        .receive(ChannelResponse.OK, (currentReturnPayload: U) => {
           setError(null);
-          setJoinPayload(payload);
+          setReturnPayload(currentReturnPayload);
           setPresence(newPresence);
           setChannel(oldChannel => {
             if (oldChannel != null) {
@@ -97,6 +100,6 @@ export default function useErrorableChannel<T>(channelId: string | null): Errora
   }, [channelId]);
 
   return {
-    channel, error, joinPayload, presence,
+    channel, error, returnPayload, presence,
   };
 }
