@@ -59,8 +59,6 @@ export default function useErrorableChannel<T extends object | undefined, U exte
       setReturnPayload(null);
       setPresence(null);
       setChannel(null);
-      const socket = socketRef.current;
-      if (socket != null) socket.disconnect();
       return undefined;
     }
     const socket = maybeReconnectSocket();
