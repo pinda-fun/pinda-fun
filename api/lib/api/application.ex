@@ -12,6 +12,7 @@ defmodule Api.Application do
       Api.Repo,
       # Start the endpoint when the application starts
       ApiWeb.Endpoint,
+      ApiWeb.Presence,
       {Api.PINGenerator, name: Api.PINGenerator}
       # Starts a worker by calling: Api.Worker.start_link(arg)
       # {Api.Worker, arg},
