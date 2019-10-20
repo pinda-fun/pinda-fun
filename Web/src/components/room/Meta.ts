@@ -23,8 +23,8 @@ export function getMetas(presence: Presence): [string, Meta][] {
   return presence.list((id, { metas }) => [id, metas[0]]);
 }
 
-export function findHostMeta(metas: [string, Meta][]): [string, HostMeta] {
+export function findHostMeta(metas: [string, Meta][]): [string, HostMeta] | null {
   const maybeHostMeta = metas.find(([_, meta]) => meta.isHost);
-  if (maybeHostMeta == null) throw new Error('Cannot find host');
+  if (maybeHostMeta == null) return null;
   return maybeHostMeta as [string, HostMeta];
 }

@@ -115,7 +115,14 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       setNumPlayers(metas.length);
       setNames(metas.map(([clientId, meta]) => [clientId, meta.name]));
       if (gameName != null) return;
-      const [_, { game }] = findHostMeta(metas);
+      const maybeHostMeta = findHostMeta(metas);
+
+      if (maybeHostMeta == null) {
+        // Handle the case when the host left
+        setGameName('Unknown, host left us :(');
+        return;
+      }
+      const [_, { game }] = maybeHostMeta;
       setGameName(game);
     });
   }, [presence]);
