@@ -67,8 +67,7 @@ const enableBodyScroll = () => {
   const scrollY = document.body.style.top;
   document.body.style.position = '';
   document.body.style.top = '';
-  // eslint:disable-next-line: radix
-  window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
 };
 /* end prevent body scroll code from https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/ */
 
