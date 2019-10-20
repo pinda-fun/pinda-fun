@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { createTimerObservable } from './rxhelpers';
 
 const CountdownDiv = styled.div`
   background-color: var(--yellow);
@@ -11,12 +12,12 @@ const CountdownDiv = styled.div`
 `;
 
 const Text = styled.h1`
-  font-size: 12rem;
+  font-size: 10rem;
   color: white;
   text-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
 
   // Add padding to curb font rendering bug
-  padding-top: 20px;
+  padding-top: 1rem;
 `;
 
 type CountdownProps = {
@@ -28,21 +29,17 @@ const Countdown: React.FC<CountdownProps> = ({ seconds, onComplete }) => {
   const [count, setCount] = useState(seconds);
   let display = count.toString();
   if (count === 0) {
-    display = 'GO';
+    display = 'GO!';
   }
 
   useEffect(() => {
-    /* eslint-disable consistent-return */
-    if (count < 0) {
-      onComplete();
-      return;
-    }
-
-    const intervalId = setInterval(() => {
-      setCount(count - 1);
-    }, 1000);
-    return () => clearInterval(intervalId);
-    /* eslint-enable consistent-return */
+    const timer = createTimerObservable(count + 1);
+    const timerSub = timer.subscribe(
+      timeLeft => setCount(timeLeft - 1),
+      null,
+      onComplete,
+    );
+    return () => timerSub.unsubscribe();
   }, [count]);
 
   return (
