@@ -1,6 +1,6 @@
-import { Observable, interval, defer } from 'rxjs';
+import { Observable, timer } from 'rxjs';
 import {
-  takeWhile, map,
+  map, take,
 } from 'rxjs/operators';
 
 
@@ -18,19 +18,9 @@ export function unwrap<T>(observable: Observable<T | null>) {
   });
 }
 
-function immediateTimerObservable(ticks: number, timerInterval = 1000): Observable<number> {
-  const startTime = new Date().getTime();
-  return interval(timerInterval).pipe(
-    map(() => new Date().getTime() - startTime),
-    takeWhile(x => x <= timerInterval * ticks),
-    map(x => Math.max(0, ticks - Math.floor(x / timerInterval))),
+export function createTimerObservable(ticks: number, timerInterval = 1000): Observable<number> {
+  return timer(0, timerInterval).pipe(
+    take(ticks),
+    map(x => ticks - x),
   );
 }
-
-/**
-   Defers creation of observable until subscribed to. Required for wall-clock relative
-   timing in order support phone browser going inactive.
- */
-export const createTimerObservable = (ticks: number, timerInterval?: number) => defer(
-  () => immediateTimerObservable(ticks, timerInterval),
-);

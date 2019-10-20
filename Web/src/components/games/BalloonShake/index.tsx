@@ -8,11 +8,13 @@ import {
 import useCounter from '../hooks';
 import { unwrap, createTimerObservable } from '../rxhelpers';
 import { GameState, MotionPermission } from './GameStates';
+import GameCountdown from './GameCountdown';
 import GameDisplay from './GameDisplay';
 import GameResults from './GameResults';
 import GamePrep from './GamePrep';
 
 const GAME_TIME = 20; // Total shake time given
+const COUNTDOWN_TIME = 4; // Total time to countdown
 
 /** Generates an observable of the shake event produced by the phone. */
 function getShakeObservable(permission: MotionPermission): Observable<number> {
@@ -30,10 +32,20 @@ function getShakeObservable(permission: MotionPermission): Observable<number> {
   );
 }
 
+/**
+   BalloonShake uses an underlying state machine to manage the different stages in
+   the game. There are the following stages:
+   GameState:
+     WAITING_START -> COUNTING_DOWN -> IN_PROGRESS -> WAITING_RESULT -> RESULT
+   MotionPermission:
+     NOT_SET -> GRANTED
+             |-> DENIED
+ */
 const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionButton, setPermissionButton] = useState(false);
+  const [countdownLeft, setCountdownLeft] = useState(COUNTDOWN_TIME);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [gameState, setGameState] = useState(GameState.WAITING_START);
   const { count } = useCounter(obs, -1);
@@ -50,13 +62,28 @@ const BalloonShake: React.FC = () => {
     }
   };
 
+  /** Game initialisation effect. */
   useEffect(getPermissionAvailability, []);
 
+  /** COUNTING_DOWN state handler. */
   useEffect(() => {
     if (permission !== MotionPermission.GRANTED
-      || gameState !== GameState.IN_PROGRESS) return;
+      || gameState !== GameState.COUNTING_DOWN) return undefined;
+    const timer = createTimerObservable(COUNTDOWN_TIME);
+    const timerSub = timer.subscribe(
+      timeLeft => setCountdownLeft(timeLeft),
+      null,
+      () => setGameState(GameState.IN_PROGRESS),
+    );
+    return () => timerSub.unsubscribe();
+  }, [permission, gameState]);
+
+  /** IN_PROGRESS state handler. */
+  useEffect(() => {
+    if (permission !== MotionPermission.GRANTED
+      || gameState !== GameState.IN_PROGRESS) return undefined;
     const timer = createTimerObservable(GAME_TIME).pipe(share());
-    timer.subscribe(
+    const timerSub = timer.subscribe(
       left => setSecondsLeft(left),
       null,
       () => setGameState(GameState.WAITING_RESULTS),
@@ -64,6 +91,7 @@ const BalloonShake: React.FC = () => {
     setObs(getShakeObservable(permission).pipe(
       takeUntil(timer.pipe(last())),
     ));
+    return () => timerSub.unsubscribe();
   }, [permission, gameState]);
 
   const getUserPermission = async function requestPermission() {
@@ -89,9 +117,11 @@ const BalloonShake: React.FC = () => {
             permission={permission}
             showPermissionRequest={showPermissionButton}
             requestPermissionCallback={getUserPermission}
-            startGame={() => setGameState(GameState.IN_PROGRESS)}
+            startGame={() => setGameState(GameState.COUNTING_DOWN)}
           />
         )}
+      {gameState === GameState.COUNTING_DOWN
+        && <GameCountdown secondsLeft={countdownLeft} />}
       {gameState === GameState.IN_PROGRESS
         && <GameDisplay secondsLeft={secondsLeft} count={count} />}
       {gameState === GameState.WAITING_RESULTS

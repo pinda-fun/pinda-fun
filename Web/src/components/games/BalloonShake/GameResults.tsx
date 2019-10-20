@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -21,7 +21,7 @@ const Result = styled.h2`
   z-index: 1;
 `;
 
-const GameResults: FC<{ finalCount: number }> = ({ finalCount }) => (
+const GameResults: React.FC<{ finalCount: number }> = ({ finalCount }) => (
   <Container>
     <h2>You shook:</h2>
     <Result>{finalCount}</Result>
