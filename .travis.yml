@@ -9,9 +9,13 @@ jobs:
         directories:
           - api/_build
           - api/deps
+      services:
+        - postgresql
       env: MIX_ENV=test
       before_install:
         - cd api
+      before_script:
+        - mix do ecto.create, ecto.migrate
       script:
         - mix test
         - mix format --check-formatted
