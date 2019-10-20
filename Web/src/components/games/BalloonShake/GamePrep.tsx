@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import styled from 'styled-components';
@@ -23,32 +23,29 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const GamePrep: FC<IProps> = props => {
-  const {
-    permission, showPermissionRequest, requestPermissionCallback, startGame,
-  } = props;
-  return (
-    <Container>
-      {permission === MotionPermission.NOT_SET && !showPermissionRequest
+const GamePrep: React.FC<IProps> = ({
+  permission, showPermissionRequest, requestPermissionCallback, startGame,
+}) => (
+  <Container>
+    {permission === MotionPermission.NOT_SET && !showPermissionRequest
         && (
           <h3>
             Checking if you can play the game...
           </h3>
         )}
-      {permission === MotionPermission.NOT_SET && showPermissionRequest
+    {permission === MotionPermission.NOT_SET && showPermissionRequest
         && (
           <Button onClick={() => requestPermissionCallback()} type="button">
             Set Permission
           </Button>
         )}
-      {permission === MotionPermission.GRANTED
+    {permission === MotionPermission.GRANTED
         && (
           <BigButton onClick={startGame} type="button">
             Start Game!
           </BigButton>
         )}
-    </Container>
-  );
-};
+  </Container>
+);
 
 export default GamePrep;
