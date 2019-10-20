@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link, match } from 'react-router-dom';
+import { match } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from 'components/common/Button';
-import BigButton from 'components/common/BigButton';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/BalloonShake/GameStates';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
+import JoinRoomForm from './JoinRoomForm';
 
 const PIN_LENGTH = 4;
 
 const JoinRoomContainer = styled.div`
   background: var(--pale-purple);
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,39 +29,6 @@ const PindaHead = styled(PindaHeadSVG)`
   height: 5.5rem;
 `;
 
-const JoinRoomForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-
-  & > * {
-    margin: 10px 0;
-  }
-`;
-
-const StyledInput = styled.input`
-  font-size: 3rem;
-  text-align: center;
-  background: none;
-  outline: none;
-  border: none;
-  border-bottom: 2px solid;
-  width: 13rem;
-  letter-spacing: 1rem;
-  padding: 0 0 0.5rem 1rem;
-  margin-bottom: 1.5rem;
-`;
-
-const JoinRoomButton = styled(BigButton)`
-  padding-left: 2em;
-  padding-right: 2em;
-`;
-
-
-const ErrorText = styled.p`
-    color: red;
-`;
 
 type JoinRoomProps = {
   match: match<{ id?: string }>;
@@ -70,7 +37,6 @@ type JoinRoomProps = {
 const JoinRoomPage: React.FC<JoinRoomProps> = ({
   match: { params: { id } },
 }) => {
-  const [gamePin, setGamePin] = useState(id ? id.substring(0, 4) : '');
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionDialog, setPermissionDialog] = useState(false);
   const [joinRequested, setJoinRequested] = useState(false);
@@ -102,8 +68,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
     }
   };
 
-  const onJoinRoomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onJoinRoomFormSubmit = (gamePin: string) => {
     if (gamePin.length < PIN_LENGTH) return;
     setJoinRequested(true);
   };
@@ -120,50 +85,19 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   return (
     <JoinRoomContainer>
       <PindaHead />
-      <h1>Enter Game PIN</h1>
-      <JoinRoomForm onSubmit={onJoinRoomFormSubmit}>
-        <StyledInput
-          name="gamepin"
-          type="text"
-          pattern="[0-9]*"
-          inputMode="numeric"
-          maxLength={PIN_LENGTH}
-          placeholder="XXXX"
-          value={gamePin}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => (
-            setGamePin(event.target.value.replace(/\D/g, ''))
-          )}
-          autoFocus
-        />
-        <JoinRoomButton
-          type="submit"
-          disabled={gamePin.length < PIN_LENGTH
-            || permission === MotionPermission.DENIED}
-        >
-          Let&apos;s Go!
-        </JoinRoomButton>
-        {permission === MotionPermission.DENIED
-          && (
-            <ErrorText>
-              Unable to get permissions to play Pinda.
-            </ErrorText>
-          )}
-        <Link to={{ pathname: '/' }}>Cancel</Link>
-      </JoinRoomForm>
-      {showPermissionDialog
-        && (
-          <Modal>
-            <h3>
-              Give Permissions?
-            </h3>
-            <p>
-              Pinda requires some device permissions in order to play some games.
-            </p>
-            <Button primary onClick={getUserPermission}>
-              Sure!
-            </Button>
-          </Modal>
-        )}
+      <JoinRoomForm
+        submitJoinRoomForm={onJoinRoomFormSubmit}
+        initialId={id}
+        permission={permission}
+      />
+      <Modal
+        isVisible={showPermissionDialog}
+        title="Give Permissions?"
+        onConfirm={getUserPermission}
+        confirmationButtonText="Sure!"
+      >
+        Pinda requires some device permissions in order to play some games.
+      </Modal>
     </JoinRoomContainer>
   );
 };
