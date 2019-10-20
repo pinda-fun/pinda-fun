@@ -43,11 +43,20 @@ export default function useErrorableChannel<T>(channelId: string | null): Errora
 
   useEffect(() => {
     if (channelId == null) {
-      setError(null);
-      setJoinPayload(null);
-      setPresence(null);
-      setChannel(null);
-      setSocket(null);
+      setSocket(oldSocket => {
+        setError(null);
+        setJoinPayload(null);
+        setPresence(null);
+        setChannel(oldChannel => {
+          if (oldChannel != null) {
+            oldChannel.leave();
+            if (oldSocket != null) oldSocket.remove(oldChannel);
+          }
+          return null;
+        });
+        if (oldSocket != null) oldSocket.disconnect();
+        return null;
+      });
       return;
     }
     setSocket(oldSocket => {
