@@ -27,6 +27,19 @@ config :api, ApiWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base
 
+sentry_dsn =
+  System.get_env("SENTRY_DSN") ||
+    raise """
+    environment variable SENTRY_DSN is missing.
+    """
+
+config :sentry,
+  dsn: sentry_dsn,
+  included_environments: ~w(prod staging),
+  environment_name: System.get_env("RELEASE_LEVEL") || "staging",
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!()
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix

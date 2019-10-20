@@ -3,9 +3,9 @@
 gitpush() {
   if [ -n "$1" ]
   then
-    git push dokku api:master "$1"
+    git push dokku api:master --no-verify "$1"
   else
-    git push dokku api:master
+    git push dokku api:master --no-verify
   fi
 }
 
