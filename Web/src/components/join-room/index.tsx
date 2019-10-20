@@ -60,7 +60,7 @@ type JoinRoomProps = {
 };
 
 const JoinRoomPage: React.FC<JoinRoomProps> = ({
-  match: { params: { id } }
+  match: { params: { id } },
 }) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, 4) : '');
 
