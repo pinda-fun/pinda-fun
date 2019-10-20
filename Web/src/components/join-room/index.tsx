@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, match } from 'react-router-dom';
 import styled from 'styled-components';
-import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import BigButton from '../common/BigButton';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
@@ -63,24 +62,12 @@ type JoinRoomProps = {
 const JoinRoomPage: React.FC<JoinRoomProps> = ({
   match: { params: { id } },
 }) => {
-  const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
-
-  const [numPlayers, setNumPlayers] = useState(0);
-
-  const [channelName, setChannelName] = useState<string | null>(null);
-  const { channel, error, presence } = useErrorableChannel(channelName);
+  const [gamePin, setGamePin] = useState(id ? id.substring(0, 4) : '');
 
   const onJoinRoomFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Perform join room with gamePin
-    if (gamePin.length !== PIN_LENGTH) return;
-    setChannelName(`room:${gamePin}`);
   };
-
-  useEffect(() => {
-    if (presence == null) return;
-    presence.onSync(() => setNumPlayers(presence.list().length));
-  }, [presence]);
 
   return (
     <JoinRoomContainer>
@@ -104,8 +91,6 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
           Let&apos;s Go!
         </JoinRoomButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
-        <p>{channel != null && `Connected, numPlayers = ${numPlayers}`}</p>
-        <p>{error != null && `Error: ${error[0].toString()} -- ${error[1].toString()}`}</p>
       </JoinRoomForm>
     </JoinRoomContainer>
   );

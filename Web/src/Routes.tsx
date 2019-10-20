@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Loading from './components/common/Loading';
+import TestJoinRoomPage from './components/room/JoinRoomPage';
 
 const LandingPage = lazy(() => import('components/landing'));
 const CreateRoomPage = lazy(() => import('components/create-room'));
@@ -15,6 +16,7 @@ const Routes: React.FC = () => (
       <Route exact path="/join" component={JoinRoomPage} />
       <Route path="/join/:id" component={JoinRoomPage} />
       <Route exact path="/balloon-game" component={BalloonShake} />
+      <Route exact path="/test/joinroom" component={TestJoinRoomPage} />
     </Switch>
   </Suspense>
 );
