@@ -2,6 +2,7 @@ import React from 'react';
 import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import styled from 'styled-components';
+import { ReactComponent as ShockedPindaSVG } from 'svg/pinda-shocked-badge.svg';
 import { MotionPermission } from './GameStates';
 
 interface IProps {
@@ -44,6 +45,19 @@ const GamePrep: React.FC<IProps> = ({
           <BigButton onClick={startGame} type="button">
             Start Game!
           </BigButton>
+        )}
+    {permission === MotionPermission.DENIED
+        && (
+          <>
+            <ShockedPindaSVG />
+            <h1>
+              Uh Oh!
+            </h1>
+            <p>
+              Permissions to your device&apos;s motion sensor was not granted, so
+              you can&apos;t play this game.
+            </p>
+          </>
         )}
   </Container>
 );
