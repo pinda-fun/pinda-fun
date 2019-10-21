@@ -98,13 +98,12 @@ defmodule Api.PINGenerator do
         end
       end)
 
-    can_be_freed = Map.get(result, true, [])
-    still_taken = Map.get(result, false, [])
+    can_be_freed = result |> Map.get(true, []) |> MapSet.new()
+    taken = result |> Map.get(false, []) |> MapSet.new()
 
-    available = can_be_freed ++ available
-    taken = MapSet.new(still_taken)
+    available = MapSet.union(can_be_freed, available)
 
-    Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
+    Logger.info("#{__MODULE__}: Cleaning up rooms, #{MapSet.size(can_be_freed)} freed")
 
     Process.send_after(self(), :cleanup, @cleanup_interval)
     {:noreply, %__MODULE__{available: available, taken: taken}}
