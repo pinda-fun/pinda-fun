@@ -6,6 +6,8 @@ defmodule Api.PINGenerator do
   @enforce_keys [:available]
   defstruct available: nil, taken: MapSet.new()
 
+  @type t :: %__MODULE__{available: MapSet.t(), taken: MapSet.t()}
+
   @num_digits 4
   @range 0..((:math.pow(10, @num_digits) |> round()) - 1)
   @max_num_pins Enum.count(@range)
@@ -25,7 +27,7 @@ defmodule Api.PINGenerator do
       |> Enum.map(fn pin ->
         pin |> to_string() |> String.pad_leading(4, "0")
       end)
-      |> Enum.shuffle()
+      |> MapSet.new()
 
     Process.send_after(self(), :cleanup, @cleanup_interval)
 
@@ -34,20 +36,27 @@ defmodule Api.PINGenerator do
 
   @impl true
   def handle_call(:generate, _from, state = %__MODULE__{available: available, taken: taken}) do
-    case available do
-      [] ->
-        {:reply, nil, state}
-
-      [pin | available] ->
-        taken = MapSet.put(taken, pin)
-        Process.send_after(self(), {:cleanup, pin}, 10_000)
-        {:reply, pin, %__MODULE__{available: available, taken: taken}}
+    if Enum.empty?(available) do
+      {:reply, nil, state}
+    else
+      [pin] = Enum.take(available, 1)
+      available = MapSet.delete(available, pin)
+      taken = MapSet.put(taken, pin)
+      {:reply, pin, %__MODULE__{available: available, taken: taken}}
     end
   end
 
   @impl true
   def handle_call({:mark_available, pin}, _from, state) do
     case do_mark_available(pin, state) do
+      {:ok, new_state} -> {:reply, :ok, new_state}
+      :error -> {:reply, :error, state}
+    end
+  end
+
+  @impl true
+  def handle_call({:mark_unavailable, pin}, _from, state) do
+    case do_mark_unavailable(pin, state) do
       {:ok, new_state} -> {:reply, :ok, new_state}
       :error -> {:reply, :error, state}
     end
@@ -61,7 +70,17 @@ defmodule Api.PINGenerator do
   defp do_mark_available(pin, %__MODULE__{available: available, taken: taken}) do
     if MapSet.member?(taken, pin) do
       taken = MapSet.delete(taken, pin)
-      available = [pin | available]
+      available = MapSet.put(available, pin)
+      {:ok, %__MODULE__{available: available, taken: taken}}
+    else
+      :error
+    end
+  end
+
+  defp do_mark_unavailable(pin, %__MODULE__{available: available, taken: taken}) do
+    if MapSet.member?(available, pin) do
+      available = MapSet.delete(available, pin)
+      taken = MapSet.put(taken, pin)
       {:ok, %__MODULE__{available: available, taken: taken}}
     else
       :error
@@ -69,42 +88,25 @@ defmodule Api.PINGenerator do
   end
 
   @impl true
-  def handle_info({:cleanup, pin}, state = %__MODULE__{}) do
-    # Check whether the given room is actually taken
-    # If it is not, then free the pin up.
-    try do
-      with true <- Presence.list("room:#{pin}") |> Enum.empty?(),
-           {:ok, new_state} <- do_mark_available(pin, state) do
-        {:noreply, new_state}
-      else
-        false -> {:noreply, state}
-        :error -> {:noreply, state}
-      end
-    catch
-      # Do not exit just because we can't check presence
-      :exit, _ -> {:noreply, state}
-    end
-  end
+  def handle_info(:cleanup, %__MODULE__{available: available, taken: taken}) do
+    result =
+      Enum.group_by(taken, fn pin ->
+        # When Presence timed out, assume pin is still taken
+        case Presence.safe_list("room:#{pin}") do
+          {:ok, presences} -> Enum.empty?(presences)
+          {:error, :timeout} -> false
+        end
+      end)
 
-  @impl true
-  def handle_info(:cleanup, state = %__MODULE__{available: available, taken: taken}) do
-    try do
-      result = Enum.group_by(taken, fn pin -> Presence.list("room:#{pin}") |> Enum.empty?() end)
+    can_be_freed = result |> Map.get(true, []) |> MapSet.new()
+    taken = result |> Map.get(false, []) |> MapSet.new()
 
-      can_be_freed = Map.get(result, true, [])
-      still_taken = Map.get(result, false, [])
+    available = MapSet.union(can_be_freed, available)
 
-      available = can_be_freed ++ available
-      taken = MapSet.new(still_taken)
+    Logger.info("#{__MODULE__}: Cleaning up rooms, #{MapSet.size(can_be_freed)} freed")
 
-      Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
-
-      Process.send_after(self(), :cleanup, @cleanup_interval)
-      {:noreply, %__MODULE__{available: available, taken: taken}}
-    catch
-      # Do not exit just because we can't check presence
-      :exit, _ -> {:noreply, state}
-    end
+    Process.send_after(self(), :cleanup, @cleanup_interval)
+    {:noreply, %__MODULE__{available: available, taken: taken}}
   end
 
   # Ignore timed-out GenServer call to Presence
@@ -132,9 +134,14 @@ defmodule Api.PINGenerator do
   Returns `:ok` if this succeeds,
   or `:error` if this PIN was not generated of the system or has been marked as available.
   """
-  @spec mark_pin_as_available(String.t()) :: :ok | {:error, atom()}
+  @spec mark_pin_as_available(String.t()) :: :ok | :error
   def mark_pin_as_available(pin, pin_generator \\ __MODULE__) do
     GenServer.call(pin_generator, {:mark_available, pin})
+  end
+
+  @spec mark_pin_as_unavailable(String.t()) :: :ok | :error
+  def mark_pin_as_unavailable(pin, pin_generator \\ __MODULE__) do
+    GenServer.call(pin_generator, {:mark_unavailable, pin})
   end
 
   @spec has_pin?(GenServer.server()) :: boolean()

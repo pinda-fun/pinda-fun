@@ -18,4 +18,4 @@ The frontend is accessible at https://localhost, while the backend is at http://
 Production frontend is hosted at https://pinda.fun/
 
 ## API
-Production backend is hosted at https://sizzling-tiny-wrenchbird.gigalixirapp.com/
+Production backend is hosted at https://api.dokku.julius.sg/

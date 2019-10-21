@@ -122,7 +122,6 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       const metas = database.getMetas();
       setNames(Object.entries(metas).map(([clientId, meta]) => [clientId, meta.name]));
 
-      if (gameName != null) return;
       const maybeHostMeta = database.getHostMeta();
       if (maybeHostMeta == null) {
         // Handle the case when the host left
