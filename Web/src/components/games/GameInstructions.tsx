@@ -71,7 +71,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({
       setIsCompleted(true);
     }, seconds * 1000);
     return () => clearTimeout(timer);
-  }, [isCompleted]);
+  }, [isCompleted, onComplete, seconds]);
 
   return (
     <InstructionsDiv>

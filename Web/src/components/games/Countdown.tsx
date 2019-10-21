@@ -41,7 +41,7 @@ const Countdown: React.FC<CountdownProps> = ({ seconds, onComplete }) => {
       onComplete,
     );
     return () => timerSub.unsubscribe();
-  }, [count]);
+  }, [count, onComplete]);
 
   return (
     <CountdownDiv>
