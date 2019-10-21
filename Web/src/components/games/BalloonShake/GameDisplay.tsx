@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as Balloon } from 'svg/balloon.svg';
 
 interface IProps {
@@ -35,22 +36,6 @@ const BalloonContainer = styled.div`
   z-index: 0;
 `;
 
-const TimerSection = styled.section`
-  display: flex;
-  flex-direction: column;
-`;
-
-const TimerText = styled.h1`
-  font-size: 6rem;
-  color: white;
-  text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  letter-spacing: 0.3rem;
-
-  // Increase line-height to curb font rendering bug
-  line-height: 1.2;
-`;
-
 const ShakeCountSection= styled.section`
   display: flex;
   justify-content: flex-start;
@@ -67,10 +52,7 @@ const BigText = styled.span`
 
 const GameDisplay: React.FC<IProps> = ({ secondsLeft, count }) => (
   <GameContainer>
-    <TimerSection>
-      <span>Time left:</span>
-      <TimerText>{secondsLeft}</TimerText>
-    </TimerSection>
+    <TimerDisplay seconds={secondsLeft} />
     <BalloonContainer>
       <Balloon width={count * 3 + 50} />
     </BalloonContainer>
