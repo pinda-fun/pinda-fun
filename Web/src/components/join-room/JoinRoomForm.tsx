@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
-import { MotionPermission } from 'components/games/BalloonShake/GameStates';
+import { MotionPermission } from 'components/games/GameStates';
 
 const PIN_LENGTH = 4;
 

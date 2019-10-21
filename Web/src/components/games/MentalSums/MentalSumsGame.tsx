@@ -9,6 +9,8 @@ const GAME_TIME = 30;
 
 interface MentalSumsGameProps {
   onCompletion: () => void;
+  incrementScore: () => void;
+  score: number;
   seed: string;
 };
 
@@ -67,14 +69,11 @@ const ScoreDisplay = styled.h2`
 `;
 
 const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
-  onCompletion, seed
+  onCompletion, incrementScore, score, seed
 }) => {
-  const [score, setScore] = useState(0);
   const { problemText, expectedAns, nextProblem } = useQuestionStream(seedrandom(seed));
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [input, setInput] = useState('');
-
-  const incrementScore = () => setScore(prev => prev + 1);
 
   const checkAns = (input: string) => {
     if (expectedAns === null) return;
@@ -85,7 +84,6 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
   };
 
   useEffect(() => {
-    nextProblem();
     const timer = createTimerObservable(GAME_TIME).pipe(share());
     const timerSub = timer.subscribe(
       left => setTimeLeft(left),
@@ -105,7 +103,7 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
       </QuestionDisplay>
       <StyledInput
         onChange={(e) => {
-          const newInput = e.target.value.replace(/[^0-9\-]/g, '');
+          const newInput = e.target.value.replace(/[^0-9-]/g, '');
           setInput(newInput);
           checkAns(newInput);
         }}

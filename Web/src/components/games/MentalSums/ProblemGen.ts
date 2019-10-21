@@ -30,16 +30,19 @@ const generateProblem =
 
 export const useQuestionStream = (rng: seedrandom.prng) => {
   const [_rng] = useState([rng]); // need to box this or else it'll become a number
-  const [problem, setProblem] = useState<Problem | null>(null);
+
+  const getProblem = () =>
+    generateProblem(
+      Math.abs(_rng[0].int32()),
+      Math.abs(_rng[0].int32()),
+      Math.abs(_rng[0].int32()),
+    );
+
+  const [problem, setProblem] = useState<Problem>(getProblem());
   const [problemText, setProblemText] = useState('');
   const [expectedAns, setExpectedAns] = useState<number | null>(null);
 
-  const nextProblem = () =>
-    setProblem(generateProblem(
-      Math.abs(_rng[0].int32()),
-      Math.abs(_rng[0].int32()),
-      Math.abs(_rng[0].int32()),
-    ));
+  const nextProblem = () => setProblem(getProblem());
 
   useEffect(() => {
     setProblemText(problem === null ? '' : problem.probAsString);
