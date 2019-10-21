@@ -11,8 +11,8 @@ interface IProps {
 const GameContainer = styled.div`
   background: var(--pink);
   overflow: hidden;
-  height: 100vh;
-  width: 100vw;
+  height: 100vh; /* Fallback height */
+  height: ${window.innerHeight}px;
 
   display: flex;
   justify-content: space-evenly;
