@@ -4,7 +4,7 @@ module.exports = {
   "extends": [
     "airbnb-typescript"
   ],
-  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
   "env": {
     "browser": true,
     "jasmine": true,
@@ -24,8 +24,11 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'max-classes-per-file': 'warn',
 
-    '@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
     'import/prefer-default-export': 'off',
+
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
   },
   "settings": {
     "react": {
