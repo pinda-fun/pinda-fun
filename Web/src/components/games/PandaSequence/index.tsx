@@ -19,7 +19,7 @@ const PandaSequence: React.FC = () => {
   const [sequence, setSequence] = useState<Sequence>({ timestep: 0, numbers: [] });
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
-  const [{ generate }] = useState(useSeqGenerator(SEED, 0, NUM_POTS));
+  const { generate } = useSeqGenerator(SEED, 0, NUM_POTS);
 
   /** Setup game and trigger first sequence */
   useEffect(() => {
@@ -46,7 +46,7 @@ const PandaSequence: React.FC = () => {
   }, [sequence]);
 
   /** Process user input */
-  const handleInputEvent = (input:number) => {
+  const handleInputEvent = (input: number) => {
     const { numbers } = sequence;
     // validate input against sequence
     if (numbers[inputIndex] === input) {
@@ -76,13 +76,13 @@ const PandaSequence: React.FC = () => {
     <>
       {gameState === GameState.IN_PROGRESS
         && (
-        <GameDisplay
-          mode={mode}
-          secondsLeft={secondsLeft}
-          score={score}
-          active={sequence.numbers[index]}
-          handleInputEvent={handleInputEvent}
-        />
+          <GameDisplay
+            mode={mode}
+            secondsLeft={secondsLeft}
+            score={score}
+            active={sequence.numbers[index]}
+            handleInputEvent={handleInputEvent}
+          />
         )}
       {gameState === GameState.WAITING_RESULTS
         && <GameResults finalCount={score} />}
