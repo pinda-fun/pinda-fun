@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/BalloonShake/GameStates';
 import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
-import { getMetas, findHostMeta } from 'components/room/Meta';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import JoinRoomForm from './JoinRoomForm';
 
@@ -57,7 +56,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   const [numPlayers, setNumPlayers] = useState(0);
 
   const [channelName, setChannelName] = useState<string | null>(null);
-  const { channel, error, presence } = useErrorableChannel(channelName, { name });
+  const { channel, error, database } = useErrorableChannel(channelName, { name });
 
   const getUserPermission = async function requestPermission() {
     try {
@@ -117,23 +116,23 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   }, [permission, joinRequested, gamePin]);
 
   useEffect(() => {
-    if (presence == null) return;
-    presence.onSync(() => {
-      const metas = getMetas(presence);
-      setNumPlayers(metas.length);
-      setNames(metas.map(([clientId, meta]) => [clientId, meta.name]));
-      if (gameName != null) return;
-      const maybeHostMeta = findHostMeta(metas);
+    if (database == null) return;
+    database.onSync(() => {
+      setNumPlayers(database.getNumPlayers());
+      const metas = database.getMetas();
+      setNames(Object.entries(metas).map(([clientId, meta]) => [clientId, meta.name]));
 
+      if (gameName != null) return;
+      const maybeHostMeta = database.getHostMeta();
       if (maybeHostMeta == null) {
         // Handle the case when the host left
         setGameName('Unknown, host left us :(');
         return;
       }
-      const [_, { game }] = maybeHostMeta;
+      const { game } = maybeHostMeta;
       setGameName(game);
     });
-  }, [presence, gameName]);
+  }, [database, gameName]);
 
   useEffect(() => {
     if (error != null) setJoinRequested(false);

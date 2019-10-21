@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Socket, Channel, Presence } from 'phoenix';
+import { Socket, Channel } from 'phoenix';
 
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from '../../../utils/getClientId';
 import ChannelResponse from './ChannelResponse';
 import ErrorCause from './ErrorCause';
+import Database from '../Database';
 
 
 // Use staging is we're inside a Netlify deploy preview
@@ -24,7 +25,7 @@ export interface ErrorableChannel<T> {
   channel: Channel | null,
   error: [ErrorCause, any] | null,
   returnPayload: T | null,
-  presence: Presence | null,
+  database: Database | null,
 }
 
 
@@ -39,7 +40,7 @@ export default function useErrorableChannel<T extends object | undefined, U exte
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
   const [returnPayload, setReturnPayload] = useState<U | null>(null);
-  const [presence, setPresence] = useState<Presence | null>(null);
+  const [database, setDatabase] = useState<Database | null>(null);
 
   const maybeReconnectSocket = (): Socket => {
     const socket = socketRef.current;
@@ -57,21 +58,21 @@ export default function useErrorableChannel<T extends object | undefined, U exte
     if (channelId == null) {
       setError(null);
       setReturnPayload(null);
-      setPresence(null);
+      setDatabase(null);
       setChannel(null);
       return undefined;
     }
     const socket = maybeReconnectSocket();
 
     const newChannel = socket.channel(channelId, payload);
-    const newPresence = new Presence(newChannel);
+    const newDatabase = new Database(newChannel);
 
     newChannel
       .join()
       .receive(ChannelResponse.OK, (currentReturnPayload: U) => {
         setError(null);
         setReturnPayload(currentReturnPayload);
-        setPresence(newPresence);
+        setDatabase(newDatabase);
         setChannel(newChannel);
       })
       .receive(ChannelResponse.ERROR, reasons => {
@@ -90,6 +91,6 @@ export default function useErrorableChannel<T extends object | undefined, U exte
   }, [channelId]);
 
   return {
-    channel, error, returnPayload, presence,
+    channel, error, returnPayload, database,
   };
 }
