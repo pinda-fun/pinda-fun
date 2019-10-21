@@ -3,7 +3,7 @@ import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import styled from 'styled-components';
 import { ReactComponent as ShockedPindaSVG } from 'svg/pinda-shocked-badge.svg';
-import { MotionPermission } from './GameStates';
+import { MotionPermission } from '../GameStates';
 
 interface IProps {
   permission: MotionPermission;
@@ -27,26 +27,26 @@ const Container = styled.div`
 const GamePrep: React.FC<IProps> = ({
   permission, showPermissionRequest, requestPermissionCallback, startGame,
 }) => (
-  <Container>
-    {permission === MotionPermission.NOT_SET && !showPermissionRequest
+    <Container>
+      {permission === MotionPermission.NOT_SET && !showPermissionRequest
         && (
           <h3>
             Checking if you can play the game...
           </h3>
         )}
-    {permission === MotionPermission.NOT_SET && showPermissionRequest
+      {permission === MotionPermission.NOT_SET && showPermissionRequest
         && (
           <Button onClick={() => requestPermissionCallback()} type="button">
             Set Permission
           </Button>
         )}
-    {permission === MotionPermission.GRANTED
+      {permission === MotionPermission.GRANTED
         && (
           <BigButton onClick={startGame} type="button">
             Start Game!
           </BigButton>
         )}
-    {permission === MotionPermission.DENIED
+      {permission === MotionPermission.DENIED
         && (
           <>
             <ShockedPindaSVG />
@@ -59,7 +59,7 @@ const GamePrep: React.FC<IProps> = ({
             </p>
           </>
         )}
-  </Container>
-);
+    </Container>
+  );
 
 export default GamePrep;

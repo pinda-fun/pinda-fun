@@ -7,7 +7,7 @@ import {
 } from 'rxjs/operators';
 import useCounter from '../hooks';
 import { unwrap, createTimerObservable } from '../rxhelpers';
-import { GameState, MotionPermission } from './GameStates';
+import { GameState, MotionPermission } from '../GameStates';
 import GameCountdown from './GameCountdown';
 import GameDisplay from './GameDisplay';
 import GameResults from './GameResults';
