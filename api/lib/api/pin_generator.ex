@@ -40,7 +40,6 @@ defmodule Api.PINGenerator do
 
       [pin | available] ->
         taken = MapSet.put(taken, pin)
-        Process.send_after(self(), {:cleanup, pin}, 10_000)
         {:reply, pin, %__MODULE__{available: available, taken: taken}}
     end
   end
@@ -69,42 +68,26 @@ defmodule Api.PINGenerator do
   end
 
   @impl true
-  def handle_info({:cleanup, pin}, state = %__MODULE__{}) do
-    # Check whether the given room is actually taken
-    # If it is not, then free the pin up.
-    try do
-      with true <- Presence.list("room:#{pin}") |> Enum.empty?(),
-           {:ok, new_state} <- do_mark_available(pin, state) do
-        {:noreply, new_state}
-      else
-        false -> {:noreply, state}
-        :error -> {:noreply, state}
-      end
-    catch
-      # Do not exit just because we can't check presence
-      :exit, _ -> {:noreply, state}
-    end
-  end
+  def handle_info(:cleanup, %__MODULE__{available: available, taken: taken}) do
+    result =
+      Enum.group_by(taken, fn pin ->
+        # When Presence timed out, assume pin is still taken
+        case Presence.safe_list("room:#{pin}") do
+          {:ok, presences} -> Enum.empty?(presences)
+          {:error, :timeout} -> false
+        end
+      end)
 
-  @impl true
-  def handle_info(:cleanup, state = %__MODULE__{available: available, taken: taken}) do
-    try do
-      result = Enum.group_by(taken, fn pin -> Presence.list("room:#{pin}") |> Enum.empty?() end)
+    can_be_freed = Map.get(result, true, [])
+    still_taken = Map.get(result, false, [])
 
-      can_be_freed = Map.get(result, true, [])
-      still_taken = Map.get(result, false, [])
+    available = can_be_freed ++ available
+    taken = MapSet.new(still_taken)
 
-      available = can_be_freed ++ available
-      taken = MapSet.new(still_taken)
+    Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
 
-      Logger.info("#{__MODULE__}: Cleaning up rooms, #{length(can_be_freed)} freed")
-
-      Process.send_after(self(), :cleanup, @cleanup_interval)
-      {:noreply, %__MODULE__{available: available, taken: taken}}
-    catch
-      # Do not exit just because we can't check presence
-      :exit, _ -> {:noreply, state}
-    end
+    Process.send_after(self(), :cleanup, @cleanup_interval)
+    {:noreply, %__MODULE__{available: available, taken: taken}}
   end
 
   # Ignore timed-out GenServer call to Presence
