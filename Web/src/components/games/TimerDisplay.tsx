@@ -4,8 +4,8 @@ import styled from 'styled-components';
 const TimerDiv = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: baseline;
+  justify-content: center;
+  align-items: center;
 
   & > * {
     margin: 0 0.25rem;
