@@ -11,17 +11,17 @@ const BalloonShakeInstructions: React.FC<GameInstructionsProps> = ({
   seconds,
   onComplete,
 }) => (
-    <GameInstructions
-      title="Pinda Sums"
-      seconds={seconds}
-      onComplete={onComplete}
-    >
-      <ShakePhoneSVG />
-      <p>
+  <GameInstructions
+    title="Pinda Sums"
+    seconds={seconds}
+    onComplete={onComplete}
+  >
+    <ShakePhoneSVG />
+    <p>
         After the timer starts, you will be given 30 seconds to answer as many
         mental sums as possible.
-      </p>
-    </GameInstructions>
-  );
+    </p>
+  </GameInstructions>
+);
 
 export default BalloonShakeInstructions;

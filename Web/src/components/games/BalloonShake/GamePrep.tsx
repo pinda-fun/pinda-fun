@@ -27,39 +27,39 @@ const Container = styled.div`
 const GamePrep: React.FC<IProps> = ({
   permission, showPermissionRequest, requestPermissionCallback, startGame,
 }) => (
-    <Container>
-      {permission === MotionPermission.NOT_SET && !showPermissionRequest
+  <Container>
+    {permission === MotionPermission.NOT_SET && !showPermissionRequest
         && (
           <h3>
             Checking if you can play the game...
-        </h3>
+          </h3>
         )}
-      {permission === MotionPermission.NOT_SET && showPermissionRequest
+    {permission === MotionPermission.NOT_SET && showPermissionRequest
         && (
           <Button onClick={() => requestPermissionCallback()} type="button">
             Set Permission
-        </Button>
+          </Button>
         )}
-      {permission === MotionPermission.GRANTED
+    {permission === MotionPermission.GRANTED
         && (
           <BigButton onClick={startGame} type="button">
             Start Game!
-        </BigButton>
+          </BigButton>
         )}
-      {permission === MotionPermission.DENIED
+    {permission === MotionPermission.DENIED
         && (
           <>
             <ShockedPindaSVG />
             <h1>
               Uh Oh!
-          </h1>
+            </h1>
             <p>
               Permissions to your device&apos;s motion sensor was not granted, so
               you can&apos;t play this game.
-          </p>
+            </p>
           </>
         )}
-    </Container>
-  );
+  </Container>
+);
 
 export default GamePrep;

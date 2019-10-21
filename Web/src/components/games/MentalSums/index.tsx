@@ -25,8 +25,7 @@ const MentalSums: React.FC = () => {
           />
         )}
       {gameState === GameState.COUNTING_DOWN
-        && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />
-      }
+        && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />}
       {gameState === GameState.IN_PROGRESS
         && (
           <MentalSumsGame
@@ -37,10 +36,9 @@ const MentalSums: React.FC = () => {
           />
         )}
       {gameState === GameState.WAITING_RESULTS
-        && <GameResults finalCount={playerScore} />
-      }
+        && <GameResults finalCount={playerScore} />}
     </>
-  )
-}
+  );
+};
 
 export default MentalSums;
