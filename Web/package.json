@@ -12,6 +12,7 @@
     "@types/react-dom": "16.9.2",
     "@types/react-router": "^5.1.1",
     "@types/react-router-dom": "^5.1.0",
+    "@types/seedrandom": "^2.4.28",
     "@types/styled-components": "^4.1.19",
     "@types/uuid": "^3.4.5",
     "phoenix": "^1.4.10",
