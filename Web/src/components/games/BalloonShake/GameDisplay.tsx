@@ -36,7 +36,7 @@ const BalloonContainer = styled.div`
   z-index: 0;
 `;
 
-const ShakeCountSection= styled.section`
+const ShakeCountSection = styled.section`
   display: flex;
   justify-content: flex-start;
   align-items: baseline;

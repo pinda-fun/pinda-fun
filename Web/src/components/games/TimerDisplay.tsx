@@ -32,16 +32,14 @@ type TimerProps = {
   seconds: number;
 };
 
-const TimerDisplay: React.FC<TimerProps> = ({ seconds }) => {
-  return (
-    <TimerDiv>
-      <span>Time left:</span>
-      <div>
-        <TimerText>{seconds}</TimerText>
-        <UnitsText> sec</UnitsText>
-      </div>
-    </TimerDiv>
-  );
-};
+const TimerDisplay: React.FC<TimerProps> = ({ seconds }) => (
+  <TimerDiv>
+    <span>Time left:</span>
+    <div>
+      <TimerText>{seconds}</TimerText>
+      <UnitsText> sec</UnitsText>
+    </div>
+  </TimerDiv>
+);
 
 export default TimerDisplay;
