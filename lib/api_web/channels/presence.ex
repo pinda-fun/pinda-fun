@@ -71,4 +71,24 @@ defmodule ApiWeb.Presence do
   use Phoenix.Presence,
     otp_app: :api,
     pubsub_server: Api.PubSub
+
+  require Logger
+
+  @doc """
+  Catches exit due to GenServer.call/2 timeout.
+
+  Note that the client still need to handle and ignore the GenServer callback
+  (two-element tuples with a reference as the first element)
+  """
+  @spec safe_list(Phoenix.Socket.t() | String.t()) ::
+          {:ok, Phoenix.Presence.presences()} | {:error, :timeout}
+  def safe_list(socket_or_topic) do
+    try do
+      {:ok, __MODULE__.list(socket_or_topic)}
+    catch
+      :exit, _ ->
+        Logger.warn("#{__MODULE__}: safe_list/1 timed out.")
+        {:error, :timeout}
+    end
+  end
 end
