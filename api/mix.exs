@@ -17,8 +17,10 @@ defmodule Api.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
-      ]
+        "coveralls.html": :test,
+        dialyzer: :test
+      ],
+      dialyzer: [plt_add_apps: [:ex_unit]]
     ]
   end
 
@@ -51,7 +53,8 @@ defmodule Api.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:sentry, "~> 7.0"},
       {:credo, "~> 1.1.0", only: :test, runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:dialyxir, "~> 1.0.0-rc.7", only: :test, runtime: false}
     ]
   end
 

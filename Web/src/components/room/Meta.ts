@@ -1,12 +1,13 @@
 interface MetaBase {
   isHost: boolean,
   name: string,
-  game?: string,
 }
 
 export interface HostMeta extends MetaBase {
   isHost: true,
+  // HostMeta specific
   game: string,
+  isStart: boolean,
 }
 
 export interface NonHostMeta extends MetaBase {
