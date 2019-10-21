@@ -20,7 +20,6 @@ const GameContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  z-index: -999;
 
   & > * {
     z-index: 1;
@@ -59,7 +58,6 @@ const StyledInput = styled.input`
   font-size: 3rem;
   text-align: center;
   background: none;
-  outline: none;
   border: none;
   border-bottom: 2px solid;
   width: 13rem;
@@ -144,6 +142,7 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
         value={input}
         name="answer-field"
         type="text"
+        autoFocus
       />
       <ScoreDisplay>
         Score: {score}

@@ -17,7 +17,6 @@ const Result = styled.h2`
   font-size: 6rem;
   color: var(--purple);
   margin: 1rem 0 0 0;
-  justify-content: center;
   z-index: 1;
 `;
 
