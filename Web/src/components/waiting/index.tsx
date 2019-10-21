@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
+import { mdMin } from '../../utils/media';
 
 const WaitingDiv = styled.div`
   background-color: var(--pale-purple);
