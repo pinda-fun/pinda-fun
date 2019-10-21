@@ -1,6 +1,10 @@
 defmodule ApiWeb.RoomChannel do
   @moduledoc """
   The channel that manages rooms
+
+  To join a specific room with a pin:
+    - Host: %{"name" => name, "game" => game}
+    - Non-host: %{"name" => name}
   """
 
   use ApiWeb, :channel
@@ -14,18 +18,24 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  def join(topic = "room:" <> _pin, payload, socket) do
+  def join(topic = "room:" <> _pin, payload = %{"name" => name}, socket) when is_binary(name) do
     try do
-      socket
-      |> Presence.list()
-      |> Map.get(socket.assigns.client_id)
-      |> case do
-        nil ->
-          send(self(), :after_join)
-          {:ok, socket}
+      presence_list = Presence.list(socket)
 
-        _ ->
-          {:error, %{reason: "Existing connection"}}
+      if Enum.empty?(presence_list) do
+        # Host
+        case payload do
+          %{"game" => game} when is_binary(game) ->
+            send(self(), {:after_join, payload})
+            {:ok, socket}
+
+          _ ->
+            {:error, %{reason: "Bad request"}}
+        end
+      else
+        # Non-host
+        send(self(), {:after_join, payload})
+        {:ok, socket}
       end
     catch
       # Keep on trying even if Presence does not respond in time
@@ -33,10 +43,26 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  def handle_info(:after_join, socket) do
+  def join(_, _, _) do
+    {:error, %{reason: "Bad request"}}
+  end
+
+  def handle_info({:after_join, payload = %{"name" => name}}, socket) when is_binary(name) do
     try do
+      presence_list = Presence.list(socket)
+
       push(socket, "presence_state", Presence.list(socket))
-      Presence.track(socket, socket.assigns.client_id, %{})
+
+      meta =
+        if Enum.empty?(presence_list) do
+          %{"game" => game} = payload
+          %{"game" => game, "isHost" => true}
+        else
+          %{"isHost" => false}
+        end
+        |> Map.put("name", name)
+
+      Presence.track(socket, socket.assigns.client_id, meta)
       {:noreply, socket}
     catch
       :exit, _ ->
