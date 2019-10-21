@@ -20,7 +20,7 @@ export function unwrap<T>(observable: Observable<T | null>) {
 
 export function createTimerObservable(ticks: number, timerInterval = 1000): Observable<number> {
   return timer(0, timerInterval).pipe(
-    take(ticks),
+    take(ticks + 1),
     map(x => ticks - x),
   );
 }
