@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import seedrandom from 'seedrandom';
 import styled from 'styled-components';
-import { blink } from 'utils/animations';
+import { blinkRed, blinkGreen } from 'utils/animations';
 import { useQuestionStream } from './ProblemGen';
 
 interface MentalSumsGameProps {
@@ -26,32 +26,24 @@ const GameContainer = styled.div`
   }
 `;
 
-interface BackgroundContainerProps {
-  animate: boolean;
-}
-
 const CorrectContainer = styled.div`
-  animation: ${blink} 0.5s ease-in-out 0s 1;
+  animation: ${blinkGreen} 0.5s ease-in-out 0s 1;
   position: fixed;
-  background: var(--green);
   overflow: hidden;
   height: 100vh;
   width: 100vw;
   display: flex;
   z-index: 1;
-  opacity: 0%;
 `;
 
 const WrongContainer = styled.div`
-  animation: ${blink} 0.5s ease-in-out 0s 1;
+  animation: ${blinkRed} 0.5s ease-in-out 0s infinite;
   position: fixed;
-  background: var(--red);
   overflow: hidden;
   height: 100vh;
   width: 100vw;
   display: flex;
   z-index: 1;
-  opacity: 0%;
 `;
 
 const StyledInput = styled.input`

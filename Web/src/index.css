@@ -17,6 +17,10 @@
   /* brand fonts */
   --primary-font: 'Fredoka One';
   --secondary-font: 'Luckiest Guy';
+
+  /* colors as rgb values */
+  --red-rgb: 255, 79, 82;
+  --green-rgb: 124, 216, 133;
 }
 
 body,
