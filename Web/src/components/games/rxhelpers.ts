@@ -18,6 +18,7 @@ export function unwrap<T>(observable: Observable<T | null>) {
   });
 }
 
+/** Returns interval observable that emits the number of ticks left */
 function immediateTimerObservable(ticks: number, timerInterval = 1000): Observable<number> {
   const startTime = new Date().getTime();
   return interval(timerInterval).pipe(
