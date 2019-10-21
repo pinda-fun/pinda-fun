@@ -91,4 +91,16 @@ defmodule ApiWeb.Presence do
         {:error, :timeout}
     end
   end
+
+  @spec safe_update(Phoenix.Socket.t(), String.t(), map() | (map() -> map())) ::
+          {:ok, ref :: binary()} | {:error, :timeout | term()}
+  def safe_update(socket, key, meta) do
+    try do
+      __MODULE__.update(socket, key, meta)
+    catch
+      :exit, _ ->
+        Logger.warn("#{__MODULE__}: safe_update/3 timed out.")
+        {:error, :timeout}
+    end
+  end
 end
