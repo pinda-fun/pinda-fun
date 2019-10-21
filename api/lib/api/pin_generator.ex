@@ -6,6 +6,8 @@ defmodule Api.PINGenerator do
   @enforce_keys [:available]
   defstruct available: nil, taken: MapSet.new()
 
+  @type t :: %__MODULE__{available: MapSet.t(), taken: MapSet.t()}
+
   @num_digits 4
   @range 0..((:math.pow(10, @num_digits) |> round()) - 1)
   @max_num_pins Enum.count(@range)
@@ -25,7 +27,7 @@ defmodule Api.PINGenerator do
       |> Enum.map(fn pin ->
         pin |> to_string() |> String.pad_leading(4, "0")
       end)
-      |> Enum.shuffle()
+      |> MapSet.new()
 
     Process.send_after(self(), :cleanup, @cleanup_interval)
 
@@ -34,19 +36,27 @@ defmodule Api.PINGenerator do
 
   @impl true
   def handle_call(:generate, _from, state = %__MODULE__{available: available, taken: taken}) do
-    case available do
-      [] ->
-        {:reply, nil, state}
-
-      [pin | available] ->
-        taken = MapSet.put(taken, pin)
-        {:reply, pin, %__MODULE__{available: available, taken: taken}}
+    if Enum.empty?(available) do
+      {:reply, nil, state}
+    else
+      [pin] = Enum.take(available, 1)
+      available = MapSet.delete(available, pin)
+      taken = MapSet.put(taken, pin)
+      {:reply, pin, %__MODULE__{available: available, taken: taken}}
     end
   end
 
   @impl true
   def handle_call({:mark_available, pin}, _from, state) do
     case do_mark_available(pin, state) do
+      {:ok, new_state} -> {:reply, :ok, new_state}
+      :error -> {:reply, :error, state}
+    end
+  end
+
+  @impl true
+  def handle_call({:mark_unavailable, pin}, _from, state) do
+    case do_mark_unavailable(pin, state) do
       {:ok, new_state} -> {:reply, :ok, new_state}
       :error -> {:reply, :error, state}
     end
@@ -60,7 +70,17 @@ defmodule Api.PINGenerator do
   defp do_mark_available(pin, %__MODULE__{available: available, taken: taken}) do
     if MapSet.member?(taken, pin) do
       taken = MapSet.delete(taken, pin)
-      available = [pin | available]
+      available = MapSet.put(available, pin)
+      {:ok, %__MODULE__{available: available, taken: taken}}
+    else
+      :error
+    end
+  end
+
+  defp do_mark_unavailable(pin, %__MODULE__{available: available, taken: taken}) do
+    if MapSet.member?(available, pin) do
+      available = MapSet.delete(available, pin)
+      taken = MapSet.put(taken, pin)
       {:ok, %__MODULE__{available: available, taken: taken}}
     else
       :error
@@ -115,9 +135,14 @@ defmodule Api.PINGenerator do
   Returns `:ok` if this succeeds,
   or `:error` if this PIN was not generated of the system or has been marked as available.
   """
-  @spec mark_pin_as_available(String.t()) :: :ok | {:error, atom()}
+  @spec mark_pin_as_available(String.t()) :: :ok | :error
   def mark_pin_as_available(pin, pin_generator \\ __MODULE__) do
     GenServer.call(pin_generator, {:mark_available, pin})
+  end
+
+  @spec mark_pin_as_unavailable(String.t()) :: :ok | :error
+  def mark_pin_as_unavailable(pin, pin_generator \\ __MODULE__) do
+    GenServer.call(pin_generator, {:mark_unavailable, pin})
   end
 
   @spec has_pin?(GenServer.server()) :: boolean()

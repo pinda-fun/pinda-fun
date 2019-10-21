@@ -33,8 +33,9 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  defp join(_topic, payload = %{"name" => name, "game" => game}, socket, :host)
+  defp join("room:" <> pin, payload = %{"name" => name, "game" => game}, socket, :host)
        when is_binary(name) and is_binary(game) do
+    Api.PINGenerator.mark_pin_as_unavailable(pin)
     send(self(), {:after_join, :host, payload})
     {:ok, socket}
   end
