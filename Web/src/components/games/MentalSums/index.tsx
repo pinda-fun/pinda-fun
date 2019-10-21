@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { share } from 'rxjs/operators';
 import MentalSumsGame from './MentalSumsGame';
 import { GameState } from '../GameStates';
 import MentalSumsInstructions from './MentalSumsInstructions';
 import Countdown from '../Countdown';
 import GameResults from './GameResults';
+import { createTimerObservable } from '../rxhelpers';
+
+const GAME_TIME = 20;
 
 const MentalSums: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
+  const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [playerScore, setPlayerScore] = useState(0);
 
-  const finishGame = () => {
-    setGameState(GameState.WAITING_RESULTS);
-  };
-
   const incrementScore = () => setPlayerScore(prev => prev + 1);
+
+  useEffect(() => {
+    if (gameState !== GameState.IN_PROGRESS) return undefined;
+    const timer = createTimerObservable(GAME_TIME).pipe(share());
+    const timerSub = timer.subscribe(
+      left => setTimeLeft(left),
+      null,
+      () => setGameState(GameState.WAITING_RESULTS),
+    );
+    return () => timerSub.unsubscribe();
+  }, [gameState]);
 
   return (
     <>
@@ -29,9 +41,9 @@ const MentalSums: React.FC = () => {
       {gameState === GameState.IN_PROGRESS
         && (
           <MentalSumsGame
-            onCompletion={finishGame}
             score={playerScore}
             incrementScore={incrementScore}
+            timeLeft={timeLeft}
             seed="ben-leong"
           />
         )}

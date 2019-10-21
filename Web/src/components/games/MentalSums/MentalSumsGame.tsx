@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import seedrandom from 'seedrandom';
-import { share } from 'rxjs/operators';
 import styled from 'styled-components';
 import { useQuestionStream } from './ProblemGen';
-import { createTimerObservable } from '../rxhelpers';
-
-const GAME_TIME = 30;
 
 interface MentalSumsGameProps {
-  onCompletion: () => void;
   incrementScore: () => void;
   score: number;
+  timeLeft: number;
   seed: string;
 }
 
@@ -69,10 +65,9 @@ const ScoreDisplay = styled.h2`
 `;
 
 const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
-  onCompletion, incrementScore, score, seed,
+  incrementScore, score, seed, timeLeft,
 }) => {
   const { problemText, expectedAns, nextProblem } = useQuestionStream(seedrandom(seed));
-  const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [input, setInput] = useState('');
 
   const checkAns = (newInput: string) => {
@@ -83,15 +78,6 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
     setInput('');
   };
 
-  useEffect(() => {
-    const timer = createTimerObservable(GAME_TIME).pipe(share());
-    const timerSub = timer.subscribe(
-      left => setTimeLeft(left),
-      null,
-      () => onCompletion(),
-    );
-    return () => timerSub.unsubscribe();
-  }, []);
 
   return (
     <GameContainer>
