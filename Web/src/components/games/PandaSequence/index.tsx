@@ -3,14 +3,13 @@ import { share } from 'rxjs/operators';
 import { Sequence, PandaSequenceMode } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../BalloonShake/GameStates';
-import SequenceDisplay from './SequenceDisplay';
-import UseSeqGenerator from './useSeqGenerator';
-
+import GameResults from './GameResults';
+import GameDisplay from './GameDisplay';
+import useSeqGenerator from './useSeqGenerator';
 
 const GAME_TIME = 25;
 const SEED = '100';
 const NUM_POTS = 5;
-
 
 const PandaSequence: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.WAITING_START);
@@ -20,7 +19,7 @@ const PandaSequence: React.FC = () => {
   const [sequence, setSequence] = useState<Sequence>({ timestep: 0, numbers: [] });
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
-  const [{ generate }] = useState(UseSeqGenerator(SEED, 0, NUM_POTS));
+  const [{ generate }] = useState(useSeqGenerator(SEED, 0, NUM_POTS));
 
   /** Setup game and trigger first sequence */
   useEffect(() => {
@@ -30,31 +29,28 @@ const PandaSequence: React.FC = () => {
       null,
       () => setGameState(GameState.WAITING_RESULTS),
     );
-    setSequence(generate());
     setGameState(GameState.IN_PROGRESS);
-  }, [generate]);
+  }, []);
 
   /** Display new sequence */
   useEffect(() => {
     if (sequence.numbers.length === 0) return;
 
     const { timestep, numbers } = sequence;
-    const timer = createTimerObservable(numbers.length, timestep).pipe(share());
+    const timer = createTimerObservable(numbers.length + 1, timestep).pipe(share());
     timer.subscribe(
-      () => {
-        setIndex(oldIndex => oldIndex + 1);
-      },
+      () => setIndex(oldIndex => oldIndex + 1),
       null,
-      () => {
-        setMode(PandaSequenceMode.INPUT);
-      },
+      () => setMode(PandaSequenceMode.INPUT),
     );
   }, [sequence]);
 
   /** Process user input */
   const handleInputEvent = (input:number) => {
     const { numbers } = sequence;
+    // validate input against sequence
     if (numbers[inputIndex] === input) {
+      // handle end of sequence
       if (inputIndex === numbers.length - 1) {
         setScore(oldScore => oldScore + numbers.length);
         setMode(PandaSequenceMode.DISPLAY);
@@ -68,10 +64,11 @@ const PandaSequence: React.FC = () => {
 
   /** Handle mode change */
   useEffect(() => {
-    // TODO: if (mode === PandaSequenceMode.INPUT) { }
-    if (mode === PandaSequenceMode.DISPLAY) {
+    if (mode === PandaSequenceMode.INPUT) {
+      setInputIndex(0);
+    } else if (mode === PandaSequenceMode.DISPLAY) {
       setSequence(generate());
-      setIndex(0);
+      setIndex(-1);
     }
   }, [mode, generate]);
 
@@ -79,7 +76,7 @@ const PandaSequence: React.FC = () => {
     <>
       {gameState === GameState.IN_PROGRESS
         && (
-        <SequenceDisplay
+        <GameDisplay
           mode={mode}
           secondsLeft={secondsLeft}
           score={score}
@@ -88,7 +85,7 @@ const PandaSequence: React.FC = () => {
         />
         )}
       {gameState === GameState.WAITING_RESULTS
-        && <h2>Done</h2>}
+        && <GameResults finalCount={score} />}
     </>
   );
 };
