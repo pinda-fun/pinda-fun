@@ -4,7 +4,7 @@ module.exports = {
   "extends": [
     "airbnb-typescript"
   ],
-  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
   "env": {
     "browser": true,
     "jasmine": true,
@@ -15,6 +15,11 @@ module.exports = {
     'no-debugger': warnInDevelopment,
     'no-console': warnInDevelopment,
 
+    // This rule has issues with the TypeScript parser, but tsc catches
+    // these sorts of errors anyway.
+    // See: https://github.com/typescript-eslint/typescript-eslint/issues/342
+    'no-undef': 'off',
+
     'no-alert': 'off',
     'prefer-destructuring': 'off',
 
@@ -24,8 +29,11 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'max-classes-per-file': 'warn',
 
-    '@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
     'import/prefer-default-export': 'off',
+
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
   },
   "settings": {
     "react": {

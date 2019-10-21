@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Socket, Channel, Presence } from 'phoenix';
+import { useState, useEffect, useRef } from 'react';
+import { Socket, Channel } from 'phoenix';
 
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from '../../../utils/getClientId';
 import ChannelResponse from './ChannelResponse';
 import ErrorCause from './ErrorCause';
+import Database from '../Database';
 
 
 // Use staging is we're inside a Netlify deploy preview
@@ -23,80 +24,73 @@ const TIMEOUT_DURATION = 5000;
 export interface ErrorableChannel<T> {
   channel: Channel | null,
   error: [ErrorCause, any] | null,
-  joinPayload: T | null,
-  presence: Presence | null,
+  returnPayload: T | null,
+  database: Database | null,
 }
 
-function maybeReconnectSocket(maybeSocket: Socket | null): Socket {
-  if (maybeSocket != null && maybeSocket.isConnected()) return maybeSocket;
-  const newSocket = new Socket(
-    SOCKET_URL,
-    { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
-  );
-  newSocket.connect();
-  return newSocket;
-}
 
 /**
  * @param channelId if null, will not establish connection.
  */
-export default function useErrorableChannel<T>(channelId: string | null): ErrorableChannel<T> {
-  const [_, setSocket] = useState<Socket | null>(null);
+export default function useErrorableChannel<T extends object | undefined, U extends object>(
+  channelId: string | null,
+  payload: T,
+): ErrorableChannel<U> {
+  const socketRef = useRef<Socket | null>(null);
   const [channel, setChannel] = useState<Channel | null>(null);
   const [error, setError] = useState<[ErrorCause, any] | null>(null);
-  const [joinPayload, setJoinPayload] = useState<T | null>(null);
-  const [presence, setPresence] = useState<Presence | null>(null);
+  const [returnPayload, setReturnPayload] = useState<U | null>(null);
+  const [database, setDatabase] = useState<Database | null>(null);
+
+  const maybeReconnectSocket = (): Socket => {
+    const socket = socketRef.current;
+    if (socket != null && socket.isConnected()) return socket;
+    const newSocket = new Socket(
+      SOCKET_URL,
+      { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
+    );
+    newSocket.connect();
+    socketRef.current = newSocket;
+    return newSocket;
+  };
 
   useEffect(() => {
     if (channelId == null) {
-      setSocket(oldSocket => {
-        setError(null);
-        setJoinPayload(null);
-        setPresence(null);
-        setChannel(oldChannel => {
-          if (oldChannel != null) {
-            oldChannel.leave();
-            if (oldSocket != null) oldSocket.remove(oldChannel);
-          }
-          return null;
-        });
-        if (oldSocket != null) oldSocket.disconnect();
-        return null;
-      });
-      return;
+      setError(null);
+      setReturnPayload(null);
+      setDatabase(null);
+      setChannel(null);
+      return undefined;
     }
-    setSocket(oldSocket => {
-      const currentSocket = maybeReconnectSocket(oldSocket);
+    const socket = maybeReconnectSocket();
 
-      const newChannel = currentSocket.channel(channelId);
-      const newPresence = new Presence(newChannel);
+    const newChannel = socket.channel(channelId, payload);
+    const newDatabase = new Database(newChannel);
 
-      newChannel
-        .join()
-        .receive(ChannelResponse.OK, (payload: T) => {
-          setError(null);
-          setJoinPayload(payload);
-          setPresence(newPresence);
-          setChannel(oldChannel => {
-            if (oldChannel != null) {
-              oldChannel.leave();
-              currentSocket.remove(oldChannel);
-            }
-            return newChannel;
-          });
-        })
-        .receive(ChannelResponse.ERROR, reasons => {
-          setError([ErrorCause.Other, reasons]);
-          newChannel.leave();
-          currentSocket.remove(newChannel);
-        })
-        .receive(ChannelResponse.TIMEOUT, () => setError([ErrorCause.Timeout, null]));
+    newChannel
+      .join()
+      .receive(ChannelResponse.OK, (currentReturnPayload: U) => {
+        setError(null);
+        setReturnPayload(currentReturnPayload);
+        setDatabase(newDatabase);
+        setChannel(newChannel);
+      })
+      .receive(ChannelResponse.ERROR, reasons => {
+        setError([ErrorCause.Other, reasons]);
+        newChannel.leave();
+        socket.remove(newChannel);
+      })
+      .receive(ChannelResponse.TIMEOUT, () => setError([ErrorCause.Timeout, null]));
 
-      return currentSocket;
-    });
+    return () => {
+      newChannel.leave();
+      socket.remove(newChannel);
+    };
+    // Payload is not a dependency because we only want to change channel on channelId change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channelId]);
 
   return {
-    channel, error, joinPayload, presence,
+    channel, error, returnPayload, database,
   };
 }

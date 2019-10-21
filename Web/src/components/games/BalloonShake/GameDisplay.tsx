@@ -35,7 +35,9 @@ const TimeLeft = styled.h2`
   color: var(--purple);
   margin: 0 0 0 0;
   justify-content: center;
-  padding-top: 6px;
+
+  // Increase line-height to curb font rendering bug
+  line-height: 1.2;
 `;
 
 const ShakeCount = styled.h3`
@@ -43,7 +45,9 @@ const ShakeCount = styled.h3`
   color: var(--dark-purple);
   margin: 1rem 0 0 0;
   justify-content: center;
-  padding-top: 6px;
+
+  // Increase line-height to curb font rendering bug
+  line-height: 1.2;
 `;
 
 const GameDisplay: React.FC<IProps> = ({ secondsLeft, count }) => (

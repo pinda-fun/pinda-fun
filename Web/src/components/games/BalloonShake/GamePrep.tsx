@@ -17,7 +17,7 @@ const Container = styled.div`
   position: relative;
   overflow: hidden;
   height: 100vh;
-  width: 100vw;
+
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -32,19 +32,19 @@ const GamePrep: React.FC<IProps> = ({
         && (
           <h3>
             Checking if you can play the game...
-          </h3>
+        </h3>
         )}
       {permission === MotionPermission.NOT_SET && showPermissionRequest
         && (
           <Button onClick={() => requestPermissionCallback()} type="button">
             Set Permission
-          </Button>
+        </Button>
         )}
       {permission === MotionPermission.GRANTED
         && (
           <BigButton onClick={startGame} type="button">
             Start Game!
-          </BigButton>
+        </BigButton>
         )}
       {permission === MotionPermission.DENIED
         && (
@@ -52,11 +52,11 @@ const GamePrep: React.FC<IProps> = ({
             <ShockedPindaSVG />
             <h1>
               Uh Oh!
-            </h1>
+          </h1>
             <p>
               Permissions to your device&apos;s motion sensor was not granted, so
-              you cannot play this game.
-            </p>
+              you can&apos;t play this game.
+          </p>
           </>
         )}
     </Container>

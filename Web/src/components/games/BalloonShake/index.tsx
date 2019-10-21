@@ -8,13 +8,15 @@ import {
 import useCounter from '../hooks';
 import { unwrap, createTimerObservable } from '../rxhelpers';
 import { GameState, MotionPermission } from '../GameStates';
-import GameCountdown from './GameCountdown';
 import GameDisplay from './GameDisplay';
 import GameResults from './GameResults';
+import BalloonShakeInstructions from './BalloonShakeInstructions';
 import GamePrep from './GamePrep';
+import Countdown from '../Countdown';
 
 const GAME_TIME = 20; // Total shake time given
-const COUNTDOWN_TIME = 4; // Total time to countdown
+const INSTRUCTIONS_TIME = 5; // Total time to read instructions
+const COUNTDOWN_TIME = 3; // Total time to countdown
 
 /** Generates an observable of the shake event produced by the phone. */
 function getShakeObservable(permission: MotionPermission): Observable<number> {
@@ -45,7 +47,6 @@ const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.GRANTED);
   const [showPermissionButton, setPermissionButton] = useState(false);
-  const [countdownLeft, setCountdownLeft] = useState(COUNTDOWN_TIME);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [gameState, setGameState] = useState(GameState.WAITING_START);
   const { count } = useCounter(obs, -1);
@@ -64,19 +65,6 @@ const BalloonShake: React.FC = () => {
 
   /** Game initialisation effect. */
   useEffect(getPermissionAvailability, []);
-
-  /** COUNTING_DOWN state handler. */
-  useEffect(() => {
-    if (permission !== MotionPermission.GRANTED
-      || gameState !== GameState.COUNTING_DOWN) return undefined;
-    const timer = createTimerObservable(COUNTDOWN_TIME);
-    const timerSub = timer.subscribe(
-      timeLeft => setCountdownLeft(timeLeft),
-      null,
-      () => setGameState(GameState.IN_PROGRESS),
-    );
-    return () => timerSub.unsubscribe();
-  }, [permission, gameState]);
 
   /** IN_PROGRESS state handler. */
   useEffect(() => {
@@ -117,11 +105,23 @@ const BalloonShake: React.FC = () => {
             permission={permission}
             showPermissionRequest={showPermissionButton}
             requestPermissionCallback={getUserPermission}
-            startGame={() => setGameState(GameState.COUNTING_DOWN)}
+            startGame={() => setGameState(GameState.INSTRUCTIONS)}
+          />
+        )}
+      {gameState === GameState.INSTRUCTIONS
+        && (
+          <BalloonShakeInstructions
+            seconds={INSTRUCTIONS_TIME}
+            onComplete={() => setGameState(GameState.COUNTING_DOWN)}
           />
         )}
       {gameState === GameState.COUNTING_DOWN
-        && <GameCountdown secondsLeft={countdownLeft} />}
+        && (
+          <Countdown
+            seconds={COUNTDOWN_TIME}
+            onComplete={() => setGameState(GameState.IN_PROGRESS)}
+          />
+        )}
       {gameState === GameState.IN_PROGRESS
         && <GameDisplay secondsLeft={secondsLeft} count={count} />}
       {gameState === GameState.WAITING_RESULTS
