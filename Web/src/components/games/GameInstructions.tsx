@@ -58,21 +58,19 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
-    /* eslint-disable consistent-return */
     if (isCompleted && onComplete) {
       onComplete();
-      return;
+      return undefined;
     }
 
-    if (!seconds) {
-      return;
+    if (seconds == null) {
+      return undefined;
     }
 
-    const intervalId = setInterval(() => {
+    const timer = setTimeout(() => {
       setIsCompleted(true);
     }, seconds * 1000);
-    return () => clearInterval(intervalId);
-    /* eslint-enable consistent-return */
+    return () => clearTimeout(timer);
   }, [isCompleted]);
 
   return (
