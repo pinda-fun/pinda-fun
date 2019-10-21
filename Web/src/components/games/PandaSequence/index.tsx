@@ -20,8 +20,7 @@ const PandaSequence: React.FC = () => {
   const [sequence, setSequence] = useState<Sequence>({ timestep: 0, numbers: [] });
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
-
-  const { generate } = UseSeqGenerator(SEED, 0, NUM_POTS);
+  const [{ generate }] = useState(UseSeqGenerator(SEED, 0, NUM_POTS));
 
   /** Setup game and trigger first sequence */
   useEffect(() => {
@@ -33,7 +32,7 @@ const PandaSequence: React.FC = () => {
     );
     setSequence(generate());
     setGameState(GameState.IN_PROGRESS);
-  }, []);
+  }, [generate]);
 
   /** Display new sequence */
   useEffect(() => {
@@ -74,7 +73,7 @@ const PandaSequence: React.FC = () => {
       setSequence(generate());
       setIndex(0);
     }
-  }, [mode]);
+  }, [mode, generate]);
 
   return (
     <>

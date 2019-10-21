@@ -25,7 +25,7 @@ export default function UseSeqGenerator(
   lowerBound = 1,
   upperBound = 5,
 ) {
-  const generator = randomWithinBounds(seed, lowerBound, upperBound);
+  const [generator] = useState(randomWithinBounds(seed, lowerBound, upperBound));
   const [count, setCount] = useState(0);
   const [sequences, setSequences] = useState(Array<Sequence>());
 
@@ -45,7 +45,7 @@ export default function UseSeqGenerator(
     };
 
     setSequences(prevSeq => [...prevSeq, newSeq]);
-    setCount(count + 1);
+    setCount(oldCount => oldCount + 1);
     return newSeq;
   };
 
