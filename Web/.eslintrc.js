@@ -15,6 +15,11 @@ module.exports = {
     'no-debugger': warnInDevelopment,
     'no-console': warnInDevelopment,
 
+    // This rule has issues with the TypeScript parser, but tsc catches
+    // these sorts of errors anyway.
+    // See: https://github.com/typescript-eslint/typescript-eslint/issues/342
+    'no-undef': 'off',
+
     'no-alert': 'off',
     'prefer-destructuring': 'off',
 

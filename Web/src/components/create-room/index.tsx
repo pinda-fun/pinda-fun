@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import BigButton from 'components/common/BigButton';
 import Loading from 'components/common/Loading';
-import { getMetas } from 'components/room/Meta';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -125,7 +124,7 @@ const CreateRoomPage: React.FC = () => {
   const [numPlayers, setNumPlayers] = useState(0);
 
   const {
-    channel, error, returnPayload, presence,
+    channel, error, returnPayload, database,
   } = useErrorableChannel<Payload | {}, LobbyReturnPayload | {}>(
     pin == null ? 'room:lobby' : `room:${pin}`,
     pin == null ? {} : { name: 'Julius', game: 'Shake' },
@@ -142,13 +141,13 @@ const CreateRoomPage: React.FC = () => {
   }, [channel, returnPayload, pin]);
 
   useEffect(() => {
-    if (presence == null) return;
-    presence.onSync(() => {
-      const metas = getMetas(presence);
-      setNumPlayers(metas.length);
-      setNames(metas.map(([id, meta]) => [id, meta.name]));
+    if (database == null) return;
+    database.onSync(() => {
+      setNumPlayers(database.getNumPlayers());
+      const metas = database.getMetas();
+      setNames(Object.entries(metas).map(([clientId, meta]) => [clientId, meta.name]));
     });
-  }, [presence]);
+  }, [database]);
 
   // TODO: stylise error
   if (error != null) {
