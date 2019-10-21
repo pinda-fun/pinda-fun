@@ -58,7 +58,6 @@ const StyledInput = styled.input`
   font-size: 3rem;
   text-align: center;
   background: none;
-  border: none;
   border-bottom: 2px solid;
   width: 13rem;
   letter-spacing: 1rem;
@@ -67,28 +66,28 @@ const StyledInput = styled.input`
 `;
 
 const TimeLeft = styled.h2`
-    font-size: 3rem;
-    margin: 0 0 0 0;
-    justify-content: center;
-    padding-top: 6px;
+  font-size: 3rem;
+  margin: 0 0 0 0;
+  justify-content: center;
+  padding-top: 6px;
 `;
 
 const QuestionDisplay = styled.h2`
-    font-family: var(--primary-font), sans-serif;
-    font-size: 4rem;
-    color: var(--dark-purple);
-    margin: 1rem 0 0 0;
-    justify-content: center;
-    padding-top: 6px;
+  font-family: var(--primary-font), sans-serif;
+  font-size: 4rem;
+  color: var(--dark-purple);
+  margin: 1rem 0 0 0;
+  justify-content: center;
+  padding-top: 6px;
 `;
 
 const ScoreDisplay = styled.h2`
-    font-family: var(--primary-font), sans-serif;
-    font-size: 3rem;
-    color: var(--dark-purple);
-    margin: 1rem 0 0 0;
-    justify-content: center;
-    padding-top: 6px;
+  font-family: var(--primary-font), sans-serif;
+  font-size: 3rem;
+  color: var(--dark-purple);
+  margin: 1rem 0 0 0;
+  justify-content: center;
+  padding-top: 6px;
 `;
 
 const MentalSumsGame: React.FC<MentalSumsGameProps> = ({

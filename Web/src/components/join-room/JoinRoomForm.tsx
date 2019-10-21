@@ -11,7 +11,6 @@ const StyledInput = styled.input`
   text-align: center;
   background: none;
   outline: none;
-  border: none;
   border-bottom: 2px solid;
   width: 13rem;
   letter-spacing: 1rem;
