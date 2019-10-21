@@ -92,12 +92,12 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
 
   const setCorrect = () => {
     setAnimateCorrect(true);
-    window.setTimeout(() => setAnimateCorrect(false), 500);
+    setTimeout(() => setAnimateCorrect(false), 500);
   };
 
   const setWrong = () => {
     setAnimateWrong(true);
-    window.setTimeout(() => setAnimateWrong(false), 500);
+    setTimeout(() => setAnimateWrong(false), 500);
   };
 
   const checkAns = (newInput: string) => {
