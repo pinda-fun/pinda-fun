@@ -1,0 +1,41 @@
+#!/bin/sh
+
+gitpush() {
+  if [ -n "$1" ]
+  then
+    git push dokku api:master --no-verify "$1"
+  else
+    git push dokku api:master --no-verify
+  fi
+}
+
+cd "$(git rev-parse --show-toplevel)" || (echo Failed to cd to repository root; exit 1)
+
+if [ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]
+then
+  echo Not on "master" branch
+  echo Try "git checkout master"
+  echo Press enter to continue, or C-c to abort
+  read -r
+fi
+if [ "$(git branch --list api)" ]
+then
+  echo Branch "api" already exists
+  echo Try "git branch -D api"
+  exit 1
+fi
+if [ -n "$1" ] && [ "$1" != "-f" ]
+then
+  echo The only allowed arg is "-f"
+  exit 1
+fi
+git subtree split --prefix api/ -b api
+
+if gitpush "$@";
+then
+  echo Deployed successfully
+  echo Do not forget to run "dokku run mix ecto.migrate"
+else
+  echo Unable to deploy. Try calling \`"$0" "-f"\`
+fi
+git branch -D api >/dev/null 2>/dev/null

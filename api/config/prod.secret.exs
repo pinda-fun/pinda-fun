@@ -4,6 +4,18 @@
 # remember to add this file to your .gitignore.
 use Mix.Config
 
+database_url =
+  System.get_env("DATABASE_URL") ||
+    raise """
+    environment variable DATABASE_URL is missing.
+    For example: ecto://USER:PASS@HOST/DATABASE
+    """
+
+config :api, Api.Repo,
+  ssl: true,
+  url: database_url,
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+
 secret_key_base =
   System.get_env("SECRET_KEY_BASE") ||
     raise """
@@ -14,6 +26,19 @@ secret_key_base =
 config :api, ApiWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base
+
+sentry_dsn =
+  System.get_env("SENTRY_DSN") ||
+    raise """
+    environment variable SENTRY_DSN is missing.
+    """
+
+config :sentry,
+  dsn: sentry_dsn,
+  included_environments: ~w(prod staging),
+  environment_name: System.get_env("RELEASE_LEVEL") || "staging",
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!()
 
 # ## Using releases (Elixir v1.9+)
 #

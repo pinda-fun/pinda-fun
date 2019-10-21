@@ -110,24 +110,44 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-interface PINJoinPayload {
+interface Payload {
+  name: string,
+  game: string
+}
+
+interface LobbyReturnPayload {
   pin: string
 }
 
 const CreateRoomPage: React.FC = () => {
   const [pin, setPin] = useState<string | null>(null);
-  const { channel, error, joinPayload } = useErrorableChannel<PINJoinPayload>(pin == null ? 'room:lobby' : `room:${pin}`);
+  const [numPlayers, setNumPlayers] = useState(0);
+
+  const {
+    channel, error, returnPayload, database,
+  } = useErrorableChannel<Payload | {}, LobbyReturnPayload | {}>(
+    pin == null ? 'room:lobby' : `room:${pin}`,
+    pin == null ? {} : { name: 'Julius', game: 'Shake' },
+  );
+  const [names, setNames] = useState<[string, string][]>([]);
+
+  const sharableLink = `${window.location.origin}/join/${pin}`;
 
   useEffect(() => {
     if (channel == null) return;
-    if (pin == null && joinPayload != null) {
-      setPin(joinPayload.pin);
+    if (pin == null && returnPayload != null && 'pin' in returnPayload) {
+      setPin(returnPayload.pin);
     }
-  }, [channel]);
+  }, [channel, returnPayload, pin]);
 
-  // TODO: get real data instead
-  const sharableLink = '/';
-  const numPlayers = 10;
+  useEffect(() => {
+    if (database == null) return;
+    database.onSync(() => {
+      setNumPlayers(database.getNumPlayers());
+      const metas = database.getMetas();
+      setNames(Object.entries(metas).map(([clientId, meta]) => [clientId, meta.name]));
+    });
+  }, [database]);
 
   // TODO: stylise error
   if (error != null) {
@@ -161,6 +181,7 @@ const CreateRoomPage: React.FC = () => {
         <StartButton>START!</StartButton>
       </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
+      <p>{channel != null && `UserMetas: ${JSON.stringify(names)}`}</p>
       <PindaHappy />
     </CreateRoomContainer>
   );

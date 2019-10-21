@@ -8,8 +8,11 @@ defmodule Api.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      # Start the Ecto repository
+      Api.Repo,
       # Start the endpoint when the application starts
       ApiWeb.Endpoint,
+      ApiWeb.Presence,
       {Api.PINGenerator, name: Api.PINGenerator}
       # Starts a worker by calling: Api.Worker.start_link(arg)
       # {Api.Worker, arg},
@@ -17,6 +20,9 @@ defmodule Api.Application do
 
     # Use :one_for_all strategy to clean up all states should anything crash
     opts = [strategy: :one_for_all, name: Api.Supervisor]
+
+    {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
+
     Supervisor.start_link(children, opts)
   end
 
