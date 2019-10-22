@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import BigButton from 'components/common/BigButton';
 import Loading from 'components/common/Loading';
+import ChannelContext, { UncontrolledErrorableChannelProps } from 'components/room/ChannelContext';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -124,11 +124,17 @@ const CreateRoomPage: React.FC = () => {
   const [numPlayers, setNumPlayers] = useState(0);
 
   const {
-    channel, error, returnPayload, database,
-  } = useErrorableChannel<Payload | {}, LobbyReturnPayload | {}>(
-    pin == null ? 'room:lobby' : `room:${pin}`,
-    pin == null ? {} : { name: 'Julius', game: 'Shake' },
-  );
+    channel, error, returnPayload, database, setChannel,
+  } = useContext(ChannelContext) as
+    UncontrolledErrorableChannelProps<Payload | {}, LobbyReturnPayload | {}>;
+
+  useEffect(() => {
+    setChannel(
+      pin == null ? 'room:lobby' : `room:${pin}`,
+      pin == null ? {} : { name: 'Julius', game: 'Shake' },
+    );
+  }, [pin, setChannel]);
+
   const [names, setNames] = useState<[string, string][]>([]);
 
   const sharableLink = `${window.location.origin}/join/${pin}`;

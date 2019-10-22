@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { match } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/BalloonShake/GameStates';
-import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
+import ChannelContext from 'components/room/ChannelContext';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import JoinRoomForm from './JoinRoomForm';
 
@@ -51,7 +51,9 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   const [numPlayers, setNumPlayers] = useState(0);
 
   const [channelName, setChannelName] = useState<string | null>(null);
-  const { channel, error, database } = useErrorableChannel(channelName, { name });
+  const {
+    channel, error, database, setChannel,
+  } = useContext(ChannelContext);
 
   const getUserPermission = async function requestPermission() {
     try {
@@ -93,6 +95,11 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
 
     setGamePin(newGamePin);
   };
+
+  useEffect(() => {
+    if (channelName === null) return;
+    setChannel(channelName, { name });
+  }, [name, channelName, setChannel]);
 
   useEffect(() => {
     if (joinRequested && permission === MotionPermission.NOT_SET) {

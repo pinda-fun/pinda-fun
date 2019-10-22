@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import ChannelContext, { useUncontrolledErrorableChannel } from 'components/room/ChannelContext';
 import Loading from './components/common/Loading';
-import ChannelContext, { useControlledErrorableChannel } from 'components/room/ChannelContext';
 
 const LandingPage = lazy(() => import('components/landing'));
 const CreateRoomPage = lazy(() => import('components/create-room'));
@@ -9,7 +9,7 @@ const JoinRoomPage = lazy(() => import('components/join-room'));
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 
 const RoutesWithChannelContext: React.FC = () => (
-  <ChannelContext.Provider value={useControlledErrorableChannel()}>
+  <ChannelContext.Provider value={useUncontrolledErrorableChannel()}>
     <Switch>
       <Route path="/new" component={CreateRoomPage} />
       <Route exact path="/join" component={JoinRoomPage} />
