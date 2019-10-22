@@ -1,40 +1,38 @@
-import React, { useState, createContext, Context } from 'react';
-import useErrorableChannel from './hooks/useErrorableChannel';
-import { Channel } from 'phoenix';
-import ErrorCause from './hooks/ErrorCause';
-
-type ChannelConnectionArgs<T> = [string | null, T];
+import { useState, createContext, useMemo } from 'react';
+import useErrorableChannel, { ErrorableChannel } from './hooks/useErrorableChannel';
 
 interface Payload {
   name: string,
 }
 
-interface ControlledErrorableChannelProps<T> {
-  channel: Channel | null;
-  error: [ErrorCause, any] | null;
-  returnPayload: any;
-  database: any;
-  setArgs: React.Dispatch<React.SetStateAction<ChannelConnectionArgs<T>>>
-};
+export interface UncontrolledErrorableChannelProps<T, U> extends ErrorableChannel<U> {
+  setChannel: (newChannelId: string, channelPayload: T) => void;
+}
 
-const emptyChannelArgs: ChannelConnectionArgs<{}> = [null, {}];
+const PAYLOAD_INIT = { name: '' };
 
-export const useControlledErrorableChannel = function <T extends object>() {
-  const [args, setArgs] = useState<ChannelConnectionArgs<T>>(
-    emptyChannelArgs as ChannelConnectionArgs<T>
-  );
+export const useUncontrolledErrorableChannel = () => {
+  const [channelPayload, setChannelPayload] = useState<Payload | {}>(PAYLOAD_INIT);
+  const [channelId, setChannelId] = useState<string | null>(null);
 
   const {
-    channel, error, returnPayload, database
-  } = useErrorableChannel(...args);
+    channel, error, returnPayload, database,
+  } = useErrorableChannel(channelId, channelPayload);
+
+  const setChannel = useMemo(() => (newChannelId: string, payload: Payload | {}) => {
+    setChannelPayload(payload);
+    setChannelId(newChannelId);
+    // Payload is not a dependency because we only want to change channel on channelId change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channelId]);
 
   return {
-    channel, error, returnPayload, database, setArgs
-  }
+    channel, error, returnPayload, database, setChannel,
+  };
 };
 
-const ChannelContext: Context<ControlledErrorableChannelProps<Payload>> = createContext(
-  (undefined as unknown) as ControlledErrorableChannelProps<Payload>
+const ChannelContext = createContext(
+  (undefined as unknown) as UncontrolledErrorableChannelProps<Payload | {}, any>,
 );
 
 export default ChannelContext;

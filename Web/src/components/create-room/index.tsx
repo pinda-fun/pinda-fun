@@ -124,7 +124,18 @@ const CreateRoomPage: React.FC = () => {
   const comm = useContext(CommContext);
   const { room, error, database } = useCommHooks(comm);
 
-  const [numPlayers, setNumPlayers] = useState(0);
+  const {
+    channel, error, returnPayload, database, setChannel,
+  } = useContext(ChannelContext) as
+    UncontrolledErrorableChannelProps<Payload | {}, LobbyReturnPayload | {}>;
+
+  useEffect(() => {
+    setChannel(
+      pin == null ? 'room:lobby' : `room:${pin}`,
+      pin == null ? {} : { name: 'Julius', game: 'Shake' },
+    );
+  }, [pin, setChannel]);
+
   const [names, setNames] = useState<[string, string][]>([]);
 
   useEffect(() => {

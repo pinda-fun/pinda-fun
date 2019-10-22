@@ -32,15 +32,6 @@ const Routes: React.FC = () => (
       <Route exact path="/" component={LandingPage} />
       <RoutesWithCommContext />
     </Switch>
-  </ChannelContext.Provider>
-);
-
-const Routes: React.FC = () => (
-  <Suspense fallback={<Loading />}>
-    <Switch>
-      <Route exact path="/" component={LandingPage} />
-      <RoutesWithCommContext />
-    </Switch>
   </Suspense>
 );
 
