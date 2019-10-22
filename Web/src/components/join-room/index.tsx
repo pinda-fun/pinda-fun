@@ -31,13 +31,8 @@ const PindaHead = styled(PindaHeadSVG)`
   height: 5.5rem;
 `;
 
-
-interface Payload {
-  name: string,
-}
-
 interface JoinRoomProps {
-  match: match<{ id?: string }>,
+  match: match<{ id?: string }>;
 }
 
 const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) => {
