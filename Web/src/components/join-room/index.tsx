@@ -30,11 +30,6 @@ const PindaHead = styled(PindaHeadSVG)`
   height: 5.5rem;
 `;
 
-
-interface Payload {
-  name: string,
-}
-
 type JoinRoomProps = {
   match: match<{ id?: string }>;
 };
