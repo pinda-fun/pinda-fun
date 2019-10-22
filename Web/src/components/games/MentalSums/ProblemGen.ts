@@ -28,7 +28,7 @@ const generateProblem = (opRand: number, termRand1: number, termRand2: number): 
 };
 
 export const useQuestionStream = (rng: seedrandom.prng) => {
-  const rand = useRef(rng).current; // need to box this or else it'll become a number
+  const rand = useRef(rng).current;
 
   const getProblem = () => generateProblem(
     Math.abs(rand.int32()),
