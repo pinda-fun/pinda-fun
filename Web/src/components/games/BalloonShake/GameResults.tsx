@@ -5,7 +5,7 @@ const Container = styled.div`
   background: var(--pale-purple);
   position: relative;
   overflow: hidden;
-  height: 100vh;
+  height: ${window.innerHeight}px;
   width: 100vw;
   display: flex;
   justify-content: center;

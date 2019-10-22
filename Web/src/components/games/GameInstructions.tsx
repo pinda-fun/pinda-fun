@@ -5,7 +5,7 @@ import { smMin } from 'utils/media';
 const InstructionsDiv = styled.div`
   background-color: var(--deep-purple);
   color: white;
-  min-height: 100vh;
+  min-height: ${window.innerHeight}px;
   text-align: center;
   overflow: hidden;
 
