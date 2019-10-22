@@ -33,6 +33,7 @@ export default function useSeqGenerator(
     for (let i = 0; i < Math.floor(lastLength + LENGTH_FACTOR); i += 1) {
       nums.push(generator.next().value);
     }
+
     const newSeq: Sequence = {
       timestep: lastTimestep * TIMESTEP_FACTOR,
       numbers: nums,

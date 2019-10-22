@@ -28,23 +28,17 @@ const GameContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  z-index: -999;
-
-  & > * {
-    z-index: 1;
-  }
 `;
 
 const Balloon = styled(BalloonSVG)`
   display: flex;
   width: 70;
-  z-index: 0;
 `;
 
 const TimeLeft = styled.h2`
   font-size: 6rem;
   color: var(--purple);
-  margin: 0 0 0 0;
+  margin: 0;
   justify-content: center;
   padding-top: 6px;
 `;
@@ -57,14 +51,15 @@ const Score = styled.h3`
   padding-top: 6px;
 `;
 
+const balloons = [0, 1, 2, 3, 4];
+
 const GameDisplay: React.FC<IProps> = ({
   mode, secondsLeft, score, active, handleInputEvent,
 }) => {
   const onTap = (index:number) => {
+    // TODO: Animate tapped component to confirm user input
     handleInputEvent(index);
   };
-
-  const balloons = [0, 1, 2, 3, 4];
 
   return (
     <ThemeProvider theme={mode === PandaSequenceMode.INPUT ? InputTheme : DisplayTheme}>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { share } from 'rxjs/operators';
 import { Sequence, PandaSequenceMode } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../BalloonShake/GameStates';
@@ -7,7 +6,7 @@ import GameResults from './GameResults';
 import GameDisplay from './GameDisplay';
 import useSeqGenerator from './useSeqGenerator';
 
-const GAME_TIME = 25;
+const GAME_TIME = 30;
 const SEED = '100';
 const NUM_POTS = 5;
 
@@ -23,26 +22,28 @@ const PandaSequence: React.FC = () => {
 
   /** Setup game and trigger first sequence */
   useEffect(() => {
-    const timer = createTimerObservable(GAME_TIME).pipe(share());
-    timer.subscribe(
+    const timer = createTimerObservable(GAME_TIME);
+    const timerSub = timer.subscribe(
       left => setSecondsLeft(left),
       null,
       () => setGameState(GameState.WAITING_RESULTS),
     );
     setGameState(GameState.IN_PROGRESS);
+    return () => timerSub.unsubscribe();
   }, []);
 
   /** Display new sequence */
   useEffect(() => {
-    if (sequence.numbers.length === 0) return;
+    if (sequence.numbers.length === 0) return () => {};
 
     const { timestep, numbers } = sequence;
-    const timer = createTimerObservable(numbers.length + 1, timestep).pipe(share());
-    timer.subscribe(
+    const timer = createTimerObservable(numbers.length + 1, timestep);
+    const timerSub = timer.subscribe(
       () => setIndex(oldIndex => oldIndex + 1),
       null,
       () => setMode(PandaSequenceMode.INPUT),
     );
+    return () => timerSub.unsubscribe();
   }, [sequence]);
 
   /** Process user input */

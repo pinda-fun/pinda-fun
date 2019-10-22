@@ -4,6 +4,6 @@ export interface Sequence {
 }
 
 export enum PandaSequenceMode {
-  INPUT = 0,
-  DISPLAY = 1,
+  INPUT,
+  DISPLAY,
 }
