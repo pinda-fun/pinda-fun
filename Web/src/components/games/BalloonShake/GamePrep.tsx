@@ -3,7 +3,7 @@ import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
 import styled from 'styled-components';
 import { ReactComponent as ShockedPindaSVG } from 'svg/pinda-shocked-badge.svg';
-import { MotionPermission } from './GameStates';
+import { MotionPermission } from '../GameStates';
 
 interface IProps {
   permission: MotionPermission;

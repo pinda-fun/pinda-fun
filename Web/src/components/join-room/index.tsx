@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { match } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'components/common/Modal';
-import { MotionPermission } from 'components/games/BalloonShake/GameStates';
+import { MotionPermission } from 'components/games/GameStates';
 import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import JoinRoomForm from './JoinRoomForm';
