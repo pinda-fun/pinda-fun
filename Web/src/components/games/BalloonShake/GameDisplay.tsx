@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
+import TimerDisplay from 'components/games/TimerDisplay';
+import { ReactComponent as Balloon } from 'svg/balloon.svg';
 
 interface IProps {
   secondsLeft: number;
@@ -8,59 +9,55 @@ interface IProps {
 }
 
 const GameContainer = styled.div`
-  background: var(--pale-yellow);
+  background: var(--pink);
   overflow: hidden;
-  height: 100vh;
-  width: 100vw;
+  height: ${window.innerHeight}px;
+
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   flex-direction: column;
   align-items: center;
-  z-index: -999;
+
+  color: white;
+  font-size: 1.4rem;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 
   & > * {
     z-index: 1;
   }
 `;
 
-const Balloon = styled(BalloonSVG)`
+const BalloonContainer = styled.div`
   display: flex;
-  position: absolute;
   justify-content: center;
+  align-items: flex-end;
+  height: 55vh;
   z-index: 0;
 `;
 
-const TimeLeft = styled.h2`
-  font-size: 6rem;
-  color: var(--purple);
-  margin: 0 0 0 0;
-  justify-content: center;
+const ShakeCountSection = styled.section`
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
 
-  // Increase line-height to curb font rendering bug
-  line-height: 1.2;
+  & > * {
+    margin: 0 0.25rem;
+  }
 `;
 
-const ShakeCount = styled.h3`
-  font-size: 4rem;
-  color: var(--dark-purple);
-  margin: 1rem 0 0 0;
-  justify-content: center;
-
-  // Increase line-height to curb font rendering bug
-  line-height: 1.2;
+const BigText = styled.span`
+  font-size: 2.5rem;
 `;
 
 const GameDisplay: React.FC<IProps> = ({ secondsLeft, count }) => (
   <GameContainer>
-    <Balloon width={count * 3 + 50} />
-    <h2>Time Left:</h2>
-    <TimeLeft>
-      {secondsLeft}
-    </TimeLeft>
-    <ShakeCount>
-      {count}
-    </ShakeCount>
-    <h2>Shakes so far</h2>
+    <TimerDisplay seconds={secondsLeft} />
+    <BalloonContainer>
+      <Balloon width={count * 3 + 50} />
+    </BalloonContainer>
+    <ShakeCountSection>
+      <BigText>{count}</BigText> Shakes
+    </ShakeCountSection>
   </GameContainer>
 );
 
