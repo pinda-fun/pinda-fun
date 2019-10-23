@@ -113,7 +113,10 @@ export default class PhoenixComm implements Comm {
 
   createRoom(name: string, game: string): void {
     this.cleanup();
-    this.joinChannel<PINReturnPayload>('room:lobby', {}, ({ pin }) => this.joinRoom(pin, name, game));
+    this.joinChannel<PINReturnPayload>('room:lobby', {}, ({ pin }) => {
+      this.leaveRoom();
+      this.joinRoom(pin, name, game);
+    });
   }
 
   joinRoom(pin: string, name: string, game?: string | undefined): void {
