@@ -51,7 +51,9 @@ export default class PhoenixComm implements Comm {
       SOCKET_URL,
       { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
     );
-    this.socket.connect();
+
+    // Do not connect if we are testing
+    if (process.env.NODE_ENV !== 'test') this.socket.connect();
   }
 
   register(handlers: Handlers): void {

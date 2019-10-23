@@ -58,7 +58,6 @@ defmodule ApiWeb.RoomChannel do
       {:ok, presences} ->
         push(socket, "presence_state", presences)
         Presence.track(socket, socket.assigns.client_id, meta(type, payload))
-        IO.inspect({"meta", meta(type, payload)})
         {:noreply, socket}
 
       {:error, :timeout} ->
