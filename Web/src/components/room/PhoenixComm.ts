@@ -125,6 +125,14 @@ export default class PhoenixComm implements Comm {
     });
   }
 
+  leaveRoom(): void {
+    if (this.channel != null) {
+      this.channel.leave();
+      this.socket.remove(this.channel);
+    }
+    this.cleanup();
+  }
+
   pushHostCommand(
     { message, payload }: HostCommand,
     onOk?: (() => void) | undefined,

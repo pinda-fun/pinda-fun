@@ -35,6 +35,7 @@ export default interface Comm extends CommAttributes {
   register(handlers: Handlers): void
   createRoom(name: string, game: string): void
   joinRoom(pin: string, name: string, game?: string): void
+  leaveRoom(): void
   pushHostCommand(
     hostCommand: HostCommand,
     onOk?: (() => void),

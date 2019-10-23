@@ -131,6 +131,9 @@ const CreateRoomPage: React.FC<{ comm: Comm }> = ({ comm }) => {
 
   useEffect(() => {
     comm.createRoom('Julius', 'shake');
+    return () => {
+      comm.leaveRoom();
+    };
     // Only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

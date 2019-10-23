@@ -13,6 +13,7 @@ export default function useCommHooks(comm: Comm): CommAttributes {
   };
   useEffect(() => {
     comm.register(handlers);
+    return () => comm.register({});
     // Only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

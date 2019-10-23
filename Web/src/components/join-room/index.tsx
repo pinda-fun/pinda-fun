@@ -111,10 +111,12 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ id, comm }) => {
       if (name == null || name === '') {
         alert('Name cannot be empty');
         setJoinRequested(false);
-        return;
+        return undefined;
       }
       comm.joinRoom(gamePin, name);
+      return () => comm.leaveRoom();
     }
+    return undefined;
   }, [permission, joinRequested, gamePin, comm]);
 
   useEffect(() => {
