@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sequence, PandaSequenceMode } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
-import { GameState } from '../BalloonShake/GameStates';
+import { GameState } from '../GameStates';
 import GameResults from './GameResults';
 import GameDisplay from './GameDisplay';
 import useSeqGenerator from './useSeqGenerator';

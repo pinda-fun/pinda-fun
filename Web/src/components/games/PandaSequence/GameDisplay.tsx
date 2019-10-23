@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
+import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
 import { PandaSequenceMode } from './Sequence';
 
@@ -35,14 +36,6 @@ const Balloon = styled(BalloonSVG)`
   width: 70;
 `;
 
-const TimeLeft = styled.h2`
-  font-size: 6rem;
-  color: var(--purple);
-  margin: 0;
-  justify-content: center;
-  padding-top: 6px;
-`;
-
 const Score = styled.h3`
   font-size: 4rem;
   color: var(--dark-purple);
@@ -64,10 +57,7 @@ const GameDisplay: React.FC<IProps> = ({
   return (
     <ThemeProvider theme={mode === PandaSequenceMode.INPUT ? InputTheme : DisplayTheme}>
       <GameContainer>
-        <h2>Time Left:</h2>
-        <TimeLeft>
-          {secondsLeft}
-        </TimeLeft>
+        <TimerDisplay seconds={secondsLeft} />
         {mode === PandaSequenceMode.DISPLAY
           && balloons.map(i => <Balloon key={i} width={active === i ? 100 : 70} />)}
         {mode === PandaSequenceMode.INPUT

@@ -7,6 +7,7 @@ const CreateRoomPage = lazy(() => import('components/create-room'));
 const JoinRoomPage = lazy(() => import('components/join-room'));
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
+const MentalSums = lazy(() => import('components/games/MentalSums'));
 
 const Routes: React.FC = () => (
   <Suspense fallback={<Loading />}>
@@ -17,6 +18,7 @@ const Routes: React.FC = () => (
       <Route path="/join/:id" component={JoinRoomPage} />
       <Route exact path="/balloon-game" component={BalloonShake} />
       <Route exact path="/panda-sequence" component={PandaSequence} />
+      <Route exact path="/sums-game" component={MentalSums} />
     </Switch>
   </Suspense>
 );
