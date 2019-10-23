@@ -18,6 +18,7 @@
     "phoenix": "^1.4.10",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.2",
+    "react-animations": "^1.0.0",
     "react-dom": "^16.10.2",
     "react-feather": "^2.0.3",
     "react-loading": "^2.0.3",

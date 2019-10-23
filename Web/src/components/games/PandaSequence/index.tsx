@@ -6,7 +6,7 @@ import GameResults from './GameResults';
 import GameDisplay from './GameDisplay';
 import { randomWithinBounds, generate } from './SequenceGenerator';
 
-const GAME_TIME = 30;
+const GAME_TIME = 100;
 const SEED = '100';
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
 
@@ -48,7 +48,7 @@ const PandaSequence: React.FC = () => {
   }, [sequence]);
 
   /** Process user input */
-  const handleInputEvent = (input: number) => {
+  const processInput = (input: number) => {
     const { numbers } = sequence;
     // validate input against sequence
     if (numbers[inputIndex] === input) {
@@ -74,6 +74,7 @@ const PandaSequence: React.FC = () => {
     }
   }, [mode, generator]);
 
+  console.log(sequence.timestep);
   return (
     <>
       {gameState === GameState.IN_PROGRESS
@@ -82,8 +83,9 @@ const PandaSequence: React.FC = () => {
             mode={mode}
             secondsLeft={secondsLeft}
             score={score}
+            processInput={processInput}
             active={sequence.numbers[index]}
-            handleInputEvent={handleInputEvent}
+            timestep={sequence.timestep}
           />
         )}
       {gameState === GameState.WAITING_RESULTS

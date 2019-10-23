@@ -1,15 +1,20 @@
-import React from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
 import { PandaSequenceMode } from './Sequence';
+import { bounce, wobble } from 'react-animations';
+import {
+  Subject
+} from 'rxjs';
 
 interface IProps {
   mode: PandaSequenceMode,
   secondsLeft: number,
   score: number,
-  handleInputEvent:(input:number) => void,
+  processInput:(input:number) => void,
   active?: number,
+  timestep?: number,
 }
 
 const DisplayTheme = {
@@ -42,11 +47,15 @@ const BalloonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content:space-evenly;
-`;
+`
+
+const bounceAnimation = keyframes`${bounce}`;
+const wobbleAnimation = keyframes`${wobble}`;
 
 const Balloon = styled(BalloonSVG)`
   width: 70px;
   margin: 12px;
+  ${ (props: {duration: number}) => props.duration === 0 ? undefined : css`animation: ${props.duration/1000}s ${wobbleAnimation} ease-in-out infinite;` }
 `;
 
 const Score = styled.h3`
@@ -58,18 +67,38 @@ const Score = styled.h3`
 `;
 
 const GameDisplay: React.FC<IProps> = ({
-  mode, secondsLeft, score, active, handleInputEvent,
+  mode, secondsLeft, score, processInput, active, timestep = 1000,
 }) => {
+  const [observable] = useState<Subject<number>>(new Subject());
+
+  useEffect(() => {
+    const sub = observable.subscribe(
+      balloonIndex => animate(balloonIndex)
+    );
+    return () => sub.unsubscribe();
+  }, [observable])
+
   const onTap = (index:number) => {
-    // TODO: Animate tapped component to confirm user input
-    handleInputEvent(index);
+    processInput(index);
+    // observable.next(index); // TODO: Async this
+    
   };
+
+  const animate = (balloonIndex:number) => {
+
+  }
 
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
-    balloons = Array.from(Array(5).keys()).map((i) => <Balloon key={i} style={{ width: active === i ? '100px' : '70px' }} />);
+    balloons=Array.from(Array(5).keys()).map(i => 
+      <Balloon 
+        key={i} 
+        duration={active === i ? timestep : 0} 
+      />);
+      // style={{ width: active === i ? '100px' : '70px' }}
   } else {
-    balloons = Array.from(Array(5).keys()).map((i) => <Balloon key={i} onClick={() => onTap(i)} />);
+    balloons=Array.from(Array(5).keys()).map(i => <Balloon key={i} duration={active === i ? 0.5 : 0} 
+      onClick={() => onTap(i)} />);
   }
 
   return (
