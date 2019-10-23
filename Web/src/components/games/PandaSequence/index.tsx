@@ -8,7 +8,6 @@ import useSeqGenerator from './useSeqGenerator';
 
 const GAME_TIME = 30;
 const SEED = '100';
-const NUM_POTS = 5;
 
 const PandaSequence: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.WAITING_START);
@@ -18,7 +17,7 @@ const PandaSequence: React.FC = () => {
   const [sequence, setSequence] = useState<Sequence>({ timestep: 0, numbers: [] });
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
-  const { generate } = useSeqGenerator(SEED, 0, NUM_POTS);
+  const { generate } = useSeqGenerator(SEED, 0, 5);
 
   /** Setup game and trigger first sequence */
   useEffect(() => {

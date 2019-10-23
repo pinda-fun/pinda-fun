@@ -29,11 +29,24 @@ const GameContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
+
+  color: black;
+  font-size: 1.4rem;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+`;
+
+const BalloonContainer = styled.div`
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content:space-evenly;
 `;
 
 const Balloon = styled(BalloonSVG)`
-  display: flex;
-  width: 70;
+  width: 70px;
+  margin: 12px;
 `;
 
 const Score = styled.h3`
@@ -44,8 +57,6 @@ const Score = styled.h3`
   padding-top: 6px;
 `;
 
-const balloons = [0, 1, 2, 3, 4];
-
 const GameDisplay: React.FC<IProps> = ({
   mode, secondsLeft, score, active, handleInputEvent,
 }) => {
@@ -54,14 +65,23 @@ const GameDisplay: React.FC<IProps> = ({
     handleInputEvent(index);
   };
 
+  let balloons;
+  if (mode === PandaSequenceMode.DISPLAY) {
+    balloons = Array.from(Array(5).keys()).map(i => <Balloon key={i} style={{ width: active === i ? '100px' : '70px' }} />);
+  } else {
+    balloons = Array.from(Array(5).keys()).map(i => <Balloon key={i} onClick={() => onTap(i)} />);
+  }
+
   return (
     <ThemeProvider theme={mode === PandaSequenceMode.INPUT ? InputTheme : DisplayTheme}>
       <GameContainer>
         <TimerDisplay seconds={secondsLeft} />
-        {mode === PandaSequenceMode.DISPLAY
-          && balloons.map(i => <Balloon key={i} width={active === i ? 100 : 70} />)}
-        {mode === PandaSequenceMode.INPUT
-          && balloons.map(i => <Balloon key={i} onClick={() => onTap(i)} />)}
+        <BalloonContainer>
+          {balloons.slice(0, 3)}
+        </BalloonContainer>
+        <BalloonContainer>
+          {balloons.slice(3, 5)}
+        </BalloonContainer>
         <Score>
           {score}
         </Score>
