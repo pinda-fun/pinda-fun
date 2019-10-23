@@ -6,7 +6,7 @@ import GameResults from './GameResults';
 import GameDisplay from './GameDisplay';
 import { randomWithinBounds, generate } from './SequenceGenerator';
 
-const GAME_TIME = 100;
+const GAME_TIME = 30;
 const SEED = '100';
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
 
@@ -30,8 +30,9 @@ const PandaSequence: React.FC = () => {
       () => setGameState(GameState.WAITING_RESULTS),
     );
     setGameState(GameState.IN_PROGRESS);
+    setSequence((oldSeq) => generate(oldSeq, generator));
     return () => timerSub.unsubscribe();
-  }, []);
+  }, [generator]);
 
   /** Display new sequence */
   useEffect(() => {
@@ -47,21 +48,22 @@ const PandaSequence: React.FC = () => {
     return () => timerSub.unsubscribe();
   }, [sequence]);
 
-  /** Process user input */
-  const processInput = (input: number) => {
-    const { numbers } = sequence;
-    // validate input against sequence
-    if (numbers[inputIndex] === input) {
-      // handle end of sequence
-      if (inputIndex === numbers.length - 1) {
-        setScore((oldScore) => oldScore + numbers.length);
-        setMode(PandaSequenceMode.DISPLAY);
-      } else {
-        setInputIndex((oldIndex) => oldIndex + 1);
-      }
-    } else {
+  const processCorrectInput = (numbers:number[]) => {
+    if (inputIndex === numbers.length - 1) {
+      // update score, mode and sequence if current sequence is done
+      setScore((oldScore) => oldScore + numbers.length);
       setMode(PandaSequenceMode.DISPLAY);
+      setSequence((oldSeq) => generate(oldSeq, generator));
+    } else {
+      // update inputIndex
+      setInputIndex((oldIndex) => oldIndex + 1);
     }
+  };
+
+  const processWrongInput = () => {
+    // update mode and reset current sequence
+    setMode(PandaSequenceMode.DISPLAY);
+    setSequence((oldSeq) => ({ ...oldSeq }));
   };
 
   /** Handle mode change */
@@ -69,12 +71,21 @@ const PandaSequence: React.FC = () => {
     if (mode === PandaSequenceMode.INPUT) {
       setInputIndex(0);
     } else if (mode === PandaSequenceMode.DISPLAY) {
-      setSequence((oldSeq) => generate(oldSeq, generator));
       setIndex(-1);
     }
-  }, [mode, generator]);
+  }, [mode]);
 
-  console.log(sequence.timestep);
+  /** Callback to process user input in game display */
+  const processInput = (input: number) => {
+    const { numbers } = sequence;
+
+    if (numbers[inputIndex] === input) {
+      processCorrectInput(numbers);
+    } else {
+      processWrongInput();
+    }
+  };
+
   return (
     <>
       {gameState === GameState.IN_PROGRESS

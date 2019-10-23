@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
-import { PandaSequenceMode } from './Sequence';
 import { bounce, wobble } from 'react-animations';
 import {
-  Subject
+  Subject,
 } from 'rxjs';
+import { PandaSequenceMode } from './Sequence';
 
 interface IProps {
   mode: PandaSequenceMode,
@@ -47,7 +47,7 @@ const BalloonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content:space-evenly;
-`
+`;
 
 const bounceAnimation = keyframes`${bounce}`;
 const wobbleAnimation = keyframes`${wobble}`;
@@ -55,7 +55,7 @@ const wobbleAnimation = keyframes`${wobble}`;
 const Balloon = styled(BalloonSVG)`
   width: 70px;
   margin: 12px;
-  ${ (props: {duration: number}) => props.duration === 0 ? undefined : css`animation: ${props.duration/1000}s ${wobbleAnimation} ease-in-out infinite;` }
+  ${(props: {duration: number}) => (props.duration === 0 ? undefined : css`animation: ${props.duration / 1000}s ${wobbleAnimation} ease-in-out infinite;`)}
 `;
 
 const Score = styled.h3`
@@ -73,32 +73,37 @@ const GameDisplay: React.FC<IProps> = ({
 
   useEffect(() => {
     const sub = observable.subscribe(
-      balloonIndex => animate(balloonIndex)
+      (balloonIndex) => animate(balloonIndex),
     );
     return () => sub.unsubscribe();
-  }, [observable])
+  }, [observable]);
 
   const onTap = (index:number) => {
     processInput(index);
     // observable.next(index); // TODO: Async this
-    
   };
 
   const animate = (balloonIndex:number) => {
 
-  }
+  };
 
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
-    balloons=Array.from(Array(5).keys()).map(i => 
-      <Balloon 
-        key={i} 
-        duration={active === i ? timestep : 0} 
-      />);
-      // style={{ width: active === i ? '100px' : '70px' }}
+    balloons = Array.from(Array(5).keys()).map((i) => (
+      <Balloon
+        key={i}
+        duration={active === i ? timestep : 0}
+      />
+    ));
+    // style={{ width: active === i ? '100px' : '70px' }}
   } else {
-    balloons=Array.from(Array(5).keys()).map(i => <Balloon key={i} duration={active === i ? 0.5 : 0} 
-      onClick={() => onTap(i)} />);
+    balloons = Array.from(Array(5).keys()).map((i) => (
+      <Balloon
+        key={i}
+        duration={active === i ? 0.5 : 0}
+        onClick={() => onTap(i)}
+      />
+    ));
   }
 
   return (
