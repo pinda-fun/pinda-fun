@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Sequence, PandaSequenceMode } from './Sequence';
+import { PandaSequenceMode } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
 import GameResults from './GameResults';
 import GameDisplay from './GameDisplay';
-import useSeqGenerator from './useSeqGenerator';
+import { randomWithinBounds, generate } from './SequenceGenerator';
 
 const GAME_TIME = 30;
 const SEED = '100';
+const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
 
 const PandaSequence: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.WAITING_START);
-  const [mode, setMode] = useState(PandaSequenceMode.DISPLAY);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [score, setScore] = useState(0);
-  const [sequence, setSequence] = useState<Sequence>({ timestep: 0, numbers: [] });
+  const [mode, setMode] = useState(PandaSequenceMode.DISPLAY);
+
+  const [generator] = useState(randomWithinBounds(0, 5, SEED));
+  const [sequence, setSequence] = useState(INIT_SEQUENCE);
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
-  const { generate } = useSeqGenerator(SEED, 0, 5);
 
   /** Setup game and trigger first sequence */
   useEffect(() => {
@@ -67,10 +69,10 @@ const PandaSequence: React.FC = () => {
     if (mode === PandaSequenceMode.INPUT) {
       setInputIndex(0);
     } else if (mode === PandaSequenceMode.DISPLAY) {
-      setSequence(generate());
+      setSequence((oldSeq) => generate(oldSeq, generator));
       setIndex(-1);
     }
-  }, [mode, generate]);
+  }, [mode, generator]);
 
   return (
     <>
