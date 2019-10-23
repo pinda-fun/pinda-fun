@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { usePhoenixComm } from 'components/room/PhoenixComm';
+import PhoenixComm from 'components/room/PhoenixComm';
 import CommContext from 'components/room/CommContext';
 import Loading from './components/common/Loading';
 
@@ -10,8 +10,10 @@ const JoinRoomPage = lazy(() => import('components/join-room'));
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
 
+const comm = new PhoenixComm();
+
 const RoutesWithCommContext: React.FC = () => (
-  <CommContext.Provider value={usePhoenixComm()}>
+  <CommContext.Provider value={comm}>
     <Switch>
       <Route path="/new" component={CreateRoomPage} />
       <Route exact path="/join" component={JoinRoomPage} />

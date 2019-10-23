@@ -25,7 +25,11 @@ defmodule ApiWeb.RoomChannel do
   def join(topic = "room:" <> _pin, payload = %{"name" => name}, socket) when is_binary(name) do
     case Presence.safe_list(socket) do
       {:ok, presences} ->
-        join(topic, payload, socket, if(Enum.empty?(presences), do: :host, else: :non_host))
+        if Map.has_key?(presences, socket.assigns.client_id) do
+          {:error, %{reason: "Existing connection"}}
+        else
+          join(topic, payload, socket, if(Enum.empty?(presences), do: :host, else: :non_host))
+        end
 
       {:error, :timeout} ->
         # Retry again
@@ -54,6 +58,7 @@ defmodule ApiWeb.RoomChannel do
       {:ok, presences} ->
         push(socket, "presence_state", presences)
         Presence.track(socket, socket.assigns.client_id, meta(type, payload))
+        IO.inspect({"meta", meta(type, payload)})
         {:noreply, socket}
 
       {:error, :timeout} ->

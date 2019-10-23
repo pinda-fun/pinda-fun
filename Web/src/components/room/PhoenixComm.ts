@@ -1,8 +1,7 @@
 import { Socket, Channel } from 'phoenix';
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
-import { useRef, useState } from 'react';
-import Comm, { CommError, PushError } from './Comm';
+import Comm, { CommError, PushError, Handlers } from './Comm';
 import Database from './Database';
 import ChannelResponse from './hooks/ChannelResponse';
 import HostCommand from './HostCommand';
@@ -12,15 +11,6 @@ const SOCKET_URL = isDeployPreview()
   : process.env.REACT_APP_WEBSOCKET_URL!;
 
 const TIMEOUT_DURATION = 5000;
-
-function createSocket(): Socket {
-  const socket = new Socket(
-    SOCKET_URL,
-    { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
-  );
-  socket.connect();
-  return socket;
-}
 
 interface PINReturnPayload {
   pin: string
@@ -32,34 +22,71 @@ interface ErrorPayload {
 
 const customErrorMapping: { [reason: string]: CommError } = { 'Ran out of PIN': CommError.NoMorePin };
 
-export function usePhoenixComm(): Comm {
-  const socket = useRef(createSocket()).current;
-  const [channel, setChannel] = useState<Channel | null>(null);
-  const [room, setRoom] = useState<string | null>(null);
-  const [error, setError] = useState<CommError | null>(null);
-  const [errorDescription, setErrorDescription] = useState<string | null>(null);
-  const [database, setDatabase] = useState<Database | null>(null);
+const noOp = () => { };
 
-  const cleanup = () => {
-    setChannel(oldChannel => {
-      if (oldChannel != null) {
-        oldChannel.leave();
-        socket.remove(oldChannel);
-      }
-      return null;
-    });
-    setError(null);
-    setErrorDescription(null);
-    setDatabase(null);
-    setRoom(null);
-  };
+export default class PhoenixComm implements Comm {
+  room: string | null;
 
-  const joinChannel = <T>(
+  error: CommError | null;
+
+  errorDescription: string | null;
+
+  database: Database | null;
+
+  private channel: Channel | null;
+
+  private socket: Socket;
+
+  private handlers: Handlers;
+
+  constructor() {
+    this.room = null;
+    this.error = null;
+    this.errorDescription = null;
+    this.database = null;
+    this.channel = null;
+    this.handlers = {};
+
+    this.socket = new Socket(
+      SOCKET_URL,
+      { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
+    );
+    this.socket.connect();
+  }
+
+  register(handlers: Handlers): void {
+    this.handlers = handlers;
+  }
+
+  private flush(): void {
+    const {
+      setError, setErrorDescription, setDatabase, setRoom,
+    } = this.handlers;
+    if (setError) setError(this.error);
+    if (setErrorDescription) setErrorDescription(this.errorDescription);
+    if (setDatabase) setDatabase(this.database);
+    if (setRoom) setRoom(this.room);
+  }
+
+  private cleanup(): void {
+    if (this.channel != null) {
+      this.channel.leave();
+      this.socket.remove(this.channel);
+    }
+    this.channel = null;
+    this.error = null;
+    this.errorDescription = null;
+    this.database = null;
+    this.room = null;
+    this.flush();
+  }
+
+  private joinChannel<T>(
     topic: string,
     channelPayload: object,
     onOk: (payload: T, newChannel: Channel, newDatabase: Database) => void,
-  ): void => {
-    const newChannel = socket.channel(topic, channelPayload);
+  ): void {
+    const newChannel = this.socket.channel(topic, channelPayload);
     const newDatabase = new Database(newChannel);
 
     newChannel
@@ -67,55 +94,53 @@ export function usePhoenixComm(): Comm {
       .receive(ChannelResponse.OK, (payload: T) => onOk(payload, newChannel, newDatabase))
       .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
         newChannel.leave();
-        socket.remove(newChannel);
+        this.socket.remove(newChannel);
         if (reason in customErrorMapping) {
-          setError(customErrorMapping[reason]);
+          this.error = customErrorMapping[reason];
         } else {
-          setError(CommError.Other);
-          setErrorDescription(reason);
+          this.error = CommError.Other;
+          this.errorDescription = reason;
         }
+        this.flush();
       })
-      .receive(ChannelResponse.TIMEOUT, () => setError(CommError.Timeout));
-  };
+      .receive(ChannelResponse.TIMEOUT, () => {
+        this.error = CommError.Timeout;
+        this.flush();
+      });
+  }
 
-  const joinRoom = (pin: string, name: string) => {
-    cleanup();
-    joinChannel(`room:${pin}`, { name }, (_, newChannel, newDatabase) => {
-      setDatabase(newDatabase);
-      setChannel(newChannel);
+  createRoom(name: string, game: string): void {
+    this.cleanup();
+    this.joinChannel<PINReturnPayload>('room:lobby', {}, ({ pin }) => this.joinRoom(pin, name, game));
+  }
+
+  joinRoom(pin: string, name: string, game?: string | undefined): void {
+    this.cleanup();
+    const joinPayload = game === undefined ? { name } : { name, game };
+    this.joinChannel(`room:${pin}`, joinPayload, (_, newChannel, newDatabase) => {
+      this.database = newDatabase;
+      this.channel = newChannel;
+      this.room = pin;
+      this.flush();
     });
-  };
+  }
 
-  const createRoom = (name: string) => {
-    cleanup();
-    joinChannel<PINReturnPayload>('room:lobby', {}, ({ pin }) => joinRoom(pin, name));
-  };
-
-
-  const pushHostCommand = (
+  pushHostCommand(
     { message, payload }: HostCommand,
-    onOk: (() => void) | undefined,
-    onError: ((error: PushError, errorDescription: string | null) => void) | undefined,
-  ) => {
-    if (channel == null) {
-      if (onError !== undefined) onError(PushError.NoChannel, null);
+    onOk?: (() => void) | undefined,
+    onError?: ((error: PushError, errorDescription: string | null) => void) | undefined,
+  ): void {
+    if (this.channel == null) {
+      if (onError) onError(PushError.NoChannel, null);
       return;
     }
-    const push = channel.push(message, payload);
-
-    if (onOk !== undefined) push.receive(ChannelResponse.OK, onOk);
-
-    if (onError !== undefined) {
-      push
-        .receive(
-          ChannelResponse.ERROR,
-          ({ reason }: ErrorPayload) => onError(PushError.Other, reason),
-        )
-        .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
-    }
-  };
-
-  return {
-    room, error, errorDescription, database, createRoom, joinRoom, pushHostCommand,
-  };
+    this.channel
+      .push(message, payload)
+      .receive(ChannelResponse.OK, onOk || noOp)
+      .receive(
+        ChannelResponse.ERROR,
+        ({ reason }: ErrorPayload) => (onError || noOp)(PushError.Other, reason),
+      )
+      .receive(ChannelResponse.TIMEOUT, () => (onError || noOp)(PushError.Timeout, null));
+  }
 }
