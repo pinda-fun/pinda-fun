@@ -122,7 +122,7 @@ interface LobbyReturnPayload {
 
 const CreateRoomPage: React.FC = () => {
   const comm = useContext(CommContext);
-  const { room, error, database } = useCommHooks();
+  const { room, error, database } = useCommHooks(comm);
 
   const [numPlayers, setNumPlayers] = useState(0);
   const [names, setNames] = useState<[string, string][]>([]);

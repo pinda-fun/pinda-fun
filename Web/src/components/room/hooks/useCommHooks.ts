@@ -1,12 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
-import {
+import { useState, useEffect } from 'react';
+import Comm, {
   Handlers, CommAttributes, CommError, noOpHandlers,
 } from '../Comm';
 import Database from '../Database';
-import CommContext from '../CommContext';
 
-export default function useCommHooks(): CommAttributes {
-  const comm = useContext(CommContext);
+export default function useCommHooks(comm: Comm): CommAttributes {
   const [room, setRoom] = useState<string | null>(null);
   const [error, setError] = useState<CommError | null>(null);
   const [errorDescription, setErrorDescription] = useState<string | null>(null);

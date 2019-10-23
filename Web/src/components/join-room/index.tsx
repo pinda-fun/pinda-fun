@@ -55,7 +55,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
   const comm = useContext(CommContext);
   const {
     room, error, errorDescription, database,
-  } = useCommHooks();
+  } = useCommHooks(comm);
 
   const getUserPermission = async function requestPermission() {
     try {
