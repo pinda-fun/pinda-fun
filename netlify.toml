@@ -1,4 +1,4 @@
 [build]
   base = "Web/"
   publish = "build/"
-  command = "yarn build"
+  command = "yarn build && cp _redirects build"
