@@ -53,7 +53,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
     <>
       <h1>Enter Game PIN</h1>
       <Form
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault();
           submitJoinRoomForm(gamePin);
         }}
