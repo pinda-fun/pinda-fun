@@ -14,13 +14,13 @@ const MentalSums: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [playerScore, setPlayerScore] = useState(0);
 
-  const incrementScore = () => setPlayerScore(prev => prev + 1);
+  const incrementScore = () => setPlayerScore((prev) => prev + 1);
 
   useEffect(() => {
     if (gameState !== GameState.IN_PROGRESS) return undefined;
     const timer = createTimerObservable(GAME_TIME).pipe(share());
     const timerSub = timer.subscribe(
-      left => setTimeLeft(left),
+      (left) => setTimeLeft(left),
       null,
       () => setGameState(GameState.WAITING_RESULTS),
     );

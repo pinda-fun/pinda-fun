@@ -19,7 +19,7 @@ export default class Database {
     this.presence.onSync(() => {
       const { state } = this.presence;
       if (this.hostId == null) {
-        const maybeHostId = Object.keys(state).find(clientId => state[clientId].metas[0].isHost);
+        const maybeHostId = Object.keys(state).find((clientId) => state[clientId].metas[0].isHost);
         this.hostId = maybeHostId == null ? null : maybeHostId;
       }
       this.onSyncHandler();
