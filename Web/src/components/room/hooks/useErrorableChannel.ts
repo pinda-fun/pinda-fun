@@ -75,7 +75,7 @@ export default function useErrorableChannel<T extends object | undefined, U exte
         setDatabase(newDatabase);
         setChannel(newChannel);
       })
-      .receive(ChannelResponse.ERROR, (reasons) => {
+      .receive(ChannelResponse.ERROR, reasons => {
         setError([ErrorCause.Other, reasons]);
         newChannel.leave();
         socket.remove(newChannel);

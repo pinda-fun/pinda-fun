@@ -25,11 +25,11 @@ CounterWithStatus<T | null> {
         },
       ),
     ).subscribe(
-      (x) => {
+      x => {
         setCount(x.count);
         setStatus(x.status);
       },
-      (x) => {
+      x => {
         setStatus(x);
       },
     );

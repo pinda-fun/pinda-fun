@@ -21,14 +21,14 @@ const COUNTDOWN_TIME = 3; // Total time to countdown
 /** Generates an observable of the shake event produced by the phone. */
 function getShakeObservable(permission: MotionPermission): Observable<number> {
   if (permission !== MotionPermission.GRANTED) {
-    return new Observable((sub) => sub.error('Your device does not support motion.'));
+    return new Observable(sub => sub.error('Your device does not support motion.'));
   }
   return fromEvent(window, 'devicemotion').pipe(
-    map((evt) => (evt as DeviceMotionEvent).acceleration),
+    map(evt => (evt as DeviceMotionEvent).acceleration),
     unwrap,
     pluck('y'),
     unwrap,
-    filter((x) => x > 10),
+    filter(x => x > 10),
     debounceTime(100),
     startWith(0),
   );
@@ -72,7 +72,7 @@ const BalloonShake: React.FC = () => {
       || gameState !== GameState.IN_PROGRESS) return undefined;
     const timer = createTimerObservable(GAME_TIME).pipe(share());
     const timerSub = timer.subscribe(
-      (left) => setSecondsLeft(left),
+      left => setSecondsLeft(left),
       null,
       () => setGameState(GameState.WAITING_RESULTS),
     );

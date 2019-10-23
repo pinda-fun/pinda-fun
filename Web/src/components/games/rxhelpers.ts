@@ -6,9 +6,9 @@ import {
 
 /** Unwraps Optional (`T | null`) types to `T`, or filters out if `null`. */
 export function unwrap<T>(observable: Observable<T | null>) {
-  return new Observable<T>((newObserver) => {
+  return new Observable<T>(newObserver => {
     const subscription = observable.subscribe(
-      (nextItem) => {
+      nextItem => {
         if (nextItem !== null) newObserver.next(nextItem);
       },
       newObserver.error,
@@ -21,6 +21,6 @@ export function unwrap<T>(observable: Observable<T | null>) {
 export function createTimerObservable(ticks: number, timerInterval = 1000): Observable<number> {
   return timer(0, timerInterval).pipe(
     take(ticks + 1),
-    map((x) => ticks - x),
+    map(x => ticks - x),
   );
 }

@@ -36,7 +36,7 @@ const Countdown: React.FC<CountdownProps> = ({ seconds, onComplete }) => {
   useEffect(() => {
     const timer = createTimerObservable(count + 1);
     const timerSub = timer.subscribe(
-      (timeLeft) => setCount(timeLeft - 1),
+      timeLeft => setCount(timeLeft - 1),
       null,
       onComplete,
     );
