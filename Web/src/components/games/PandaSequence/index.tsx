@@ -21,7 +21,7 @@ const PandaSequence: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
 
-  /** Setup game and trigger first sequence */
+  // setup game and trigger first sequence
   useEffect(() => {
     const timer = createTimerObservable(GAME_TIME);
     const timerSub = timer.subscribe(
@@ -34,7 +34,7 @@ const PandaSequence: React.FC = () => {
     return () => timerSub.unsubscribe();
   }, [generator]);
 
-  /** Display new sequence */
+  // display new sequence
   useEffect(() => {
     if (sequence.numbers.length === 0) return () => {};
 
@@ -95,7 +95,7 @@ const PandaSequence: React.FC = () => {
             secondsLeft={secondsLeft}
             score={score}
             processInput={processInput}
-            active={sequence.numbers[index]}
+            displaying={sequence.numbers[index]}
             timestep={sequence.timestep}
           />
         )}

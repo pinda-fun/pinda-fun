@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
-import { bounce, wobble } from 'react-animations';
-import {
-  Subject,
-} from 'rxjs';
+import { wobble } from 'react-animations';
 import { PandaSequenceMode } from './Sequence';
 
 interface IProps {
@@ -13,16 +10,18 @@ interface IProps {
   secondsLeft: number,
   score: number,
   processInput:(input:number) => void,
-  active?: number,
-  timestep?: number,
+  timestep: number,
+  displaying?: number,
 }
 
 const DisplayTheme = {
   background: 'var(--pale-yellow)',
+  animateDuration: 'infinite',
 };
 
 const InputTheme = {
   background: 'var(--pale-purple)',
+  animateDuration: '1',
 };
 
 const GameContainer = styled.div`
@@ -49,13 +48,13 @@ const BalloonContainer = styled.div`
   justify-content:space-evenly;
 `;
 
-const bounceAnimation = keyframes`${bounce}`;
-const wobbleAnimation = keyframes`${wobble}`;
+const WobbleAnimation = keyframes`${wobble}`;
 
 const Balloon = styled(BalloonSVG)`
   width: 70px;
   margin: 12px;
-  ${(props: {duration: number}) => (props.duration === 0 ? undefined : css`animation: ${props.duration / 1000}s ${wobbleAnimation} ease-in-out infinite;`)}
+  animation: ${(tags: {duration: number}) => (tags.duration === 0
+    ? undefined : css`${tags.duration / 1000}s ${WobbleAnimation} ease-in-out ${(props) => props.theme.animateDuration};`)}
 `;
 
 const Score = styled.h3`
@@ -66,42 +65,40 @@ const Score = styled.h3`
   padding-top: 6px;
 `;
 
+/**
+ * This component handles both display and input mode.
+ * Display Mode: Element in sequence is animated according to "displaying" prop
+ * Input Mode: Element tapped is animated based on "selected" state
+ */
 const GameDisplay: React.FC<IProps> = ({
-  mode, secondsLeft, score, processInput, active, timestep = 1000,
+  mode, secondsLeft, score, processInput, timestep, displaying,
 }) => {
-  const [observable] = useState<Subject<number>>(new Subject());
+  const [selected, setSelected] = useState(Array(5).fill(false));
 
-  useEffect(() => {
-    const sub = observable.subscribe(
-      (balloonIndex) => animate(balloonIndex),
-    );
-    return () => sub.unsubscribe();
-  }, [observable]);
-
-  const onTap = (index:number) => {
-    processInput(index);
-    // observable.next(index); // TODO: Async this
+  const handleClick = (index:number) => {
+    setSelected((oldClicked) => Object.assign([], oldClicked, { [index]: true }));
   };
 
-  const animate = (balloonIndex:number) => {
-
+  const handleAnimationEnd = (index:number) => {
+    processInput(index);
+    setSelected(Object.assign([], selected, { [index]: false }));
   };
 
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
-    balloons = Array.from(Array(5).keys()).map((i) => (
+    balloons = Array.from(Array(5).keys()).map((index) => (
       <Balloon
-        key={i}
-        duration={active === i ? timestep : 0}
+        key={index}
+        duration={displaying === index ? timestep : 0}
       />
     ));
-    // style={{ width: active === i ? '100px' : '70px' }}
   } else {
-    balloons = Array.from(Array(5).keys()).map((i) => (
+    balloons = Array.from(Array(5).keys()).map((index) => (
       <Balloon
-        key={i}
-        duration={active === i ? 0.5 : 0}
-        onClick={() => onTap(i)}
+        key={index}
+        duration={selected[index] ? timestep : 0}
+        onClick={() => handleClick(index)}
+        onAnimationEnd={() => handleAnimationEnd(index)}
       />
     ));
   }
