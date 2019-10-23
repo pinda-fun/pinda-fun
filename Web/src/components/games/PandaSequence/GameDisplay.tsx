@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
@@ -74,6 +74,12 @@ const GameDisplay: React.FC<IProps> = ({
   mode, secondsLeft, score, processInput, timestep, displaying,
 }) => {
   const [selected, setSelected] = useState(Array(5).fill(false));
+
+  useEffect(() => {
+    if (mode === PandaSequenceMode.INPUT) {
+      setSelected(Array(5).fill(false));
+    }
+  }, [mode]);
 
   const handleClick = (index:number) => {
     setSelected((oldClicked) => Object.assign([], oldClicked, { [index]: true }));
