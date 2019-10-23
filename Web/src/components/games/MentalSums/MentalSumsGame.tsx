@@ -125,7 +125,7 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
         {problemText}
       </QuestionDisplay>
       <StyledInput
-        onChange={e => {
+        onChange={(e) => {
           const newInput = e.target.value.replace(/[^0-9-]/g, '');
           setInput(newInput);
           checkAns(newInput);

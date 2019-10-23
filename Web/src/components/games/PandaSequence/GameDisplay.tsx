@@ -21,7 +21,7 @@ const InputTheme = {
 };
 
 const GameContainer = styled.div`
-  background: ${props => props.theme.background};
+  background: ${(props) => props.theme.background};
   overflow: hidden;
   height: 100vh;
   width: 100vw;
@@ -67,9 +67,9 @@ const GameDisplay: React.FC<IProps> = ({
 
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
-    balloons = Array.from(Array(5).keys()).map(i => <Balloon key={i} style={{ width: active === i ? '100px' : '70px' }} />);
+    balloons = Array.from(Array(5).keys()).map((i) => <Balloon key={i} style={{ width: active === i ? '100px' : '70px' }} />);
   } else {
-    balloons = Array.from(Array(5).keys()).map(i => <Balloon key={i} onClick={() => onTap(i)} />);
+    balloons = Array.from(Array(5).keys()).map((i) => <Balloon key={i} onClick={() => onTap(i)} />);
   }
 
   return (

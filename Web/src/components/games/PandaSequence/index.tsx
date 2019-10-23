@@ -23,7 +23,7 @@ const PandaSequence: React.FC = () => {
   useEffect(() => {
     const timer = createTimerObservable(GAME_TIME);
     const timerSub = timer.subscribe(
-      left => setSecondsLeft(left),
+      (left) => setSecondsLeft(left),
       null,
       () => setGameState(GameState.WAITING_RESULTS),
     );
@@ -38,7 +38,7 @@ const PandaSequence: React.FC = () => {
     const { timestep, numbers } = sequence;
     const timer = createTimerObservable(numbers.length + 1, timestep);
     const timerSub = timer.subscribe(
-      () => setIndex(oldIndex => oldIndex + 1),
+      () => setIndex((oldIndex) => oldIndex + 1),
       null,
       () => setMode(PandaSequenceMode.INPUT),
     );
@@ -52,10 +52,10 @@ const PandaSequence: React.FC = () => {
     if (numbers[inputIndex] === input) {
       // handle end of sequence
       if (inputIndex === numbers.length - 1) {
-        setScore(oldScore => oldScore + numbers.length);
+        setScore((oldScore) => oldScore + numbers.length);
         setMode(PandaSequenceMode.DISPLAY);
       } else {
-        setInputIndex(oldIndex => oldIndex + 1);
+        setInputIndex((oldIndex) => oldIndex + 1);
       }
     } else {
       setMode(PandaSequenceMode.DISPLAY);
