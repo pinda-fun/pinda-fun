@@ -1,7 +1,9 @@
 import { Socket, Channel } from 'phoenix';
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
-import Comm, { CommError, PushError, Handlers } from './Comm';
+import Comm, {
+  CommError, PushError, Handlers, noOpHandlers,
+} from './Comm';
 import Database from './Database';
 import ChannelResponse from './hooks/ChannelResponse';
 import HostCommand from './HostCommand';
@@ -25,13 +27,13 @@ const customErrorMapping: { [reason: string]: CommError } = { 'Ran out of PIN': 
 const noOp = () => { };
 
 export default class PhoenixComm implements Comm {
-  room: string | null;
+  private room: string | null;
 
-  error: CommError | null;
+  private error: CommError | null;
 
-  errorDescription: string | null;
+  private errorDescription: string | null;
 
-  database: Database | null;
+  private database: Database | null;
 
   private channel: Channel | null;
 
@@ -45,7 +47,7 @@ export default class PhoenixComm implements Comm {
     this.errorDescription = null;
     this.database = null;
     this.channel = null;
-    this.handlers = {};
+    this.handlers = noOpHandlers;
 
     this.socket = new Socket(
       SOCKET_URL,

@@ -1,5 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
-import { Handlers, CommAttributes, CommError } from '../Comm';
+import {
+  Handlers, CommAttributes, CommError, noOpHandlers,
+} from '../Comm';
 import Database from '../Database';
 import CommContext from '../CommContext';
 
@@ -15,7 +17,7 @@ export default function useCommHooks(): CommAttributes {
   };
   useEffect(() => {
     comm.register(handlers);
-    return () => comm.register({});
+    return () => comm.register(noOpHandlers);
     // Only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
