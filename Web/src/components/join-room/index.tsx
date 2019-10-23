@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { match } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/GameStates';
 import useCommHooks from 'components/room/hooks/useCommHooks';
-import Comm from 'components/room/Comm';
 import CommContext from 'components/room/CommContext';
 import JoinRoomForm from './JoinRoomForm';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
@@ -37,16 +36,11 @@ interface Payload {
   name: string,
 }
 
-interface JoinRoomWithContextProps {
-  match: match<{ id?: string }>;
-}
-
 interface JoinRoomProps {
-  id?: string,
-  comm: Comm,
+  match: match<{ id?: string }>,
 }
 
-const JoinRoomPage: React.FC<JoinRoomProps> = ({ id, comm }) => {
+const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
 
   const [names, setNames] = useState<[string, string][]>([]);
@@ -58,9 +52,10 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ id, comm }) => {
   const [joinRequested, setJoinRequested] = useState(false);
   const [numPlayers, setNumPlayers] = useState(0);
 
+  const comm = useContext(CommContext);
   const {
     room, error, errorDescription, database,
-  } = useCommHooks(comm);
+  } = useCommHooks();
 
   const getUserPermission = async function requestPermission() {
     try {
@@ -165,12 +160,4 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ id, comm }) => {
   );
 };
 
-const JoinRoomPageWithContext: React.FC<JoinRoomWithContextProps> = (
-  { match: { params: { id } } },
-) => (
-  <CommContext.Consumer>
-    {comm => <JoinRoomPage id={id} comm={comm} />}
-  </CommContext.Consumer>
-);
-
-export default JoinRoomPageWithContext;
+export default JoinRoomPage;

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import Loading from 'components/common/Loading';
 import CommContext from 'components/room/CommContext';
-import Comm from 'components/room/Comm';
 import useCommHooks from 'components/room/hooks/useCommHooks';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
@@ -121,13 +120,12 @@ interface LobbyReturnPayload {
   pin: string
 }
 
-const CreateRoomPage: React.FC<{ comm: Comm }> = ({ comm }) => {
-  const { room, error, database } = useCommHooks(comm);
+const CreateRoomPage: React.FC = () => {
+  const comm = useContext(CommContext);
+  const { room, error, database } = useCommHooks();
 
   const [numPlayers, setNumPlayers] = useState(0);
   const [names, setNames] = useState<[string, string][]>([]);
-
-  const sharableLink = `${window.location.origin}/join/${room || ''}`;
 
   useEffect(() => {
     comm.createRoom('Julius', 'shake');
@@ -155,6 +153,8 @@ const CreateRoomPage: React.FC<{ comm: Comm }> = ({ comm }) => {
   if (room == null) {
     return <Loading />;
   }
+
+  const sharableLink = `${window.location.origin}/join/${room}`;
 
   return (
     <CreateRoomContainer>
@@ -185,10 +185,4 @@ const CreateRoomPage: React.FC<{ comm: Comm }> = ({ comm }) => {
   );
 };
 
-const CreateRoomPageWithContext: React.FC = () => (
-  <CommContext.Consumer>
-    {comm => <CreateRoomPage comm={comm} />}
-  </CommContext.Consumer>
-);
-
-export default CreateRoomPageWithContext;
+export default CreateRoomPage;
