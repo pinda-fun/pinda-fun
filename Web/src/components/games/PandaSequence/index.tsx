@@ -48,6 +48,15 @@ const PandaSequence: React.FC = () => {
     return () => timerSub.unsubscribe();
   }, [sequence]);
 
+  // handle mode change
+  useEffect(() => {
+    if (mode === PandaSequenceMode.INPUT) {
+      setInputIndex(0);
+    } else if (mode === PandaSequenceMode.DISPLAY) {
+      setIndex(-1);
+    }
+  }, [mode]);
+
   const processCorrectInput = (numbers:number[]) => {
     if (inputIndex === numbers.length - 1) {
       // update score, mode and sequence if current sequence is done
@@ -65,15 +74,6 @@ const PandaSequence: React.FC = () => {
     setMode(PandaSequenceMode.DISPLAY);
     setSequence((oldSeq) => ({ ...oldSeq }));
   };
-
-  /** Handle mode change */
-  useEffect(() => {
-    if (mode === PandaSequenceMode.INPUT) {
-      setInputIndex(0);
-    } else if (mode === PandaSequenceMode.DISPLAY) {
-      setIndex(-1);
-    }
-  }, [mode]);
 
   /** Callback to process user input in game display */
   const processInput = (input: number) => {
