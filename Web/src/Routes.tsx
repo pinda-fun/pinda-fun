@@ -1,8 +1,8 @@
 import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import PhoenixComm from 'components/room/PhoenixComm';
-import CommContext from 'components/room/CommContext';
-import Loading from './components/common/Loading';
+import PhoenixComm from 'components/room/comm/phoenix/PhoenixComm';
+import CommContext from 'components/room/comm/CommContext';
+import Loading from 'components/common/Loading';
 
 const LandingPage = lazy(() => import('components/landing'));
 const CreateRoomPage = lazy(() => import('components/create-room'));

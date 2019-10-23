@@ -1,18 +1,23 @@
 import { Socket, Channel } from 'phoenix';
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
-import Comm, {
-  CommError, PushError, Handlers, noOpHandlers,
-} from './Comm';
-import Database from './Database';
-import ChannelResponse from './hooks/ChannelResponse';
-import HostCommand from './HostCommand';
+import Database from 'components/room/database/Database';
+import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
+import Comm, { Handlers, noOpHandlers } from '../Comm';
+import HostCommand from '../HostCommand';
+import { CommError, PushError } from '../Errors';
 
 const SOCKET_URL = isDeployPreview()
   ? process.env.REACT_APP_WEBSOCKET_STAGING_URL!
   : process.env.REACT_APP_WEBSOCKET_URL!;
 
 const TIMEOUT_DURATION = 5000;
+
+enum ChannelResponse {
+  OK = 'ok',
+  ERROR = 'error',
+  TIMEOUT = 'timeout'
+}
 
 interface PINReturnPayload {
   pin: string
@@ -91,7 +96,7 @@ export default class PhoenixComm implements Comm {
     onOk: (payload: T, newChannel: Channel, newDatabase: Database) => void,
   ): void {
     const newChannel = this.socket.channel(topic, channelPayload);
-    const newDatabase = new Database(newChannel);
+    const newDatabase = new PhoenixDatabase(newChannel);
 
     newChannel
       .join()

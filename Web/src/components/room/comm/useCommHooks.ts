@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import Comm, {
-  Handlers, CommAttributes, CommError, noOpHandlers,
-} from '../Comm';
-import Database from '../Database';
+import Comm, { Handlers, CommAttributes, noOpHandlers } from './Comm';
+import Database from '../database/Database';
+import { CommError } from './Errors';
 
 export default function useCommHooks(comm: Comm): CommAttributes {
   const [room, setRoom] = useState<string | null>(null);

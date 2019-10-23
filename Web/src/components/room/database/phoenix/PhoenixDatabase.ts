@@ -1,10 +1,13 @@
-import { Channel, Presence } from 'phoenix';
+import { Presence, Channel } from 'phoenix';
 import getClientId from 'utils/getClientId';
-import PresenceState from './PresenceState';
-import Meta, { HostMeta } from './Meta';
+import Meta, { HostMeta } from '../Meta';
+import Database from '../Database';
 
+interface PresenceState {
+  [clientId: string]: { metas: Meta[] }
+}
 
-export default class Database {
+export default class PhoenixDatabase implements Database {
   private presence: Presence<PresenceState>;
 
   hostId: string | null;

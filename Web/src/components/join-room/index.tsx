@@ -3,8 +3,8 @@ import { match } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/GameStates';
-import useCommHooks from 'components/room/hooks/useCommHooks';
-import CommContext from 'components/room/CommContext';
+import useCommHooks from 'components/room/comm/useCommHooks';
+import CommContext from 'components/room/comm/CommContext';
 import JoinRoomForm from './JoinRoomForm';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 

@@ -1,16 +1,12 @@
-import Database from './Database';
+import Database from 'components/room/database/Database';
 import HostCommand from './HostCommand';
+import { CommError, PushError } from './Errors';
 
-export enum CommError {
-  NoMorePin = 'NoMorePin',
-  Timeout = 'Timeout',
-  Other = 'Other',
-}
-
-export enum PushError {
-  NoChannel = 'NoChannel',
-  Timeout = 'Timeout',
-  Other = 'Other',
+export interface CommAttributes {
+  room: string | null;
+  error: CommError | null;
+  errorDescription: string | null;
+  database: Database | null;
 }
 
 export interface Handlers {
@@ -24,13 +20,6 @@ const noOp = () => { };
 export const noOpHandlers = {
   setRoom: noOp, setError: noOp, setErrorDescription: noOp, setDatabase: noOp,
 };
-
-export interface CommAttributes {
-  room: string | null;
-  error: CommError | null;
-  errorDescription: string | null;
-  database: Database | null;
-}
 
 /**
  * if successful then (room != null && database != null && error == null)
