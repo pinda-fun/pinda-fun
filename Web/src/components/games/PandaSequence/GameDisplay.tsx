@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
@@ -15,13 +15,11 @@ interface IProps {
 }
 
 const DisplayTheme = {
-  background: 'var(--pale-yellow)',
-  animateDuration: 'infinite',
+  background: 'var(--pink)',
 };
 
 const InputTheme = {
   background: 'var(--pale-purple)',
-  animateDuration: '1',
 };
 
 const GameContainer = styled.div`
@@ -39,6 +37,23 @@ const GameContainer = styled.div`
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 `;
 
+const WobbleAnimation = keyframes`${wobble}`;
+
+const DisplayBalloon = styled(BalloonSVG)`
+  width: 70px;
+  margin: 12px;
+  animation: ${(tags: {duration: number}) => (tags.duration === 0
+    ? undefined : css`${tags.duration / 1000}s ${WobbleAnimation} ease-in-out infinite;`)}
+`;
+
+const InputBalloon = styled(BalloonSVG)`
+  width: 70px;
+  margin: 12px;
+  &:active {
+    width: 100px
+  }
+`;
+
 const BalloonContainer = styled.div`
   overflow: hidden;
   height: 100vh;
@@ -46,15 +61,6 @@ const BalloonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content:space-evenly;
-`;
-
-const WobbleAnimation = keyframes`${wobble}`;
-
-const Balloon = styled(BalloonSVG)`
-  width: 70px;
-  margin: 12px;
-  animation: ${(tags: {duration: number}) => (tags.duration === 0
-    ? undefined : css`${tags.duration / 1000}s ${WobbleAnimation} ease-in-out ${(props) => props.theme.animateDuration};`)}
 `;
 
 const Score = styled.h3`
@@ -73,38 +79,19 @@ const Score = styled.h3`
 const GameDisplay: React.FC<IProps> = ({
   mode, secondsLeft, score, processInput, timestep, displaying,
 }) => {
-  const [selected, setSelected] = useState(Array(5).fill(false));
-
-  useEffect(() => {
-    if (mode === PandaSequenceMode.INPUT) {
-      setSelected(Array(5).fill(false));
-    }
-  }, [mode]);
-
-  const handleClick = (index:number) => {
-    setSelected((oldClicked) => Object.assign([], oldClicked, { [index]: true }));
-  };
-
-  const handleAnimationEnd = (index:number) => {
-    processInput(index);
-    setSelected(Object.assign([], selected, { [index]: false }));
-  };
-
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
     balloons = Array.from(Array(5).keys()).map((index) => (
-      <Balloon
+      <DisplayBalloon
         key={index}
         duration={displaying === index ? timestep : 0}
       />
     ));
   } else {
     balloons = Array.from(Array(5).keys()).map((index) => (
-      <Balloon
+      <InputBalloon
         key={index}
-        duration={selected[index] ? timestep : 0}
-        onClick={() => handleClick(index)}
-        onAnimationEnd={() => handleAnimationEnd(index)}
+        onClick={() => processInput(index)}
       />
     ));
   }
