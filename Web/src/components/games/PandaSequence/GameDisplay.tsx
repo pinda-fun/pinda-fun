@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
@@ -47,11 +47,8 @@ const DisplayBalloon = styled(BalloonSVG)`
 `;
 
 const InputBalloon = styled(BalloonSVG)`
-  width: 70px;
+  width: ${(tags: {isselected: number}) => (tags.isselected === 1 ? '100px' : '70px')}
   margin: 12px;
-  &:active {
-    width: 100px
-  }
 `;
 
 const BalloonContainer = styled.div`
@@ -79,6 +76,17 @@ const Score = styled.h3`
 const GameDisplay: React.FC<IProps> = ({
   mode, secondsLeft, score, processInput, timestep, displaying,
 }) => {
+  const [selected, setSelected] = useState(Array(5).fill(false));
+
+  const handleTouch = (index:number) => {
+    setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: true }));
+  };
+
+  const handleTouchEnd = (index:number) => {
+    processInput(index);
+    setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: false }));
+  };
+
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
     balloons = Array.from(Array(5).keys()).map((index) => (
@@ -90,8 +98,10 @@ const GameDisplay: React.FC<IProps> = ({
   } else {
     balloons = Array.from(Array(5).keys()).map((index) => (
       <InputBalloon
+        onTouchStart={() => handleTouch(index)}
+        onTouchEnd={() => handleTouchEnd(index)}
+        isselected={selected[index] ? 1 : 0}
         key={index}
-        onClick={() => processInput(index)}
       />
     ));
   }
