@@ -1,5 +1,3 @@
-import { Channel, Push } from 'phoenix';
-
 export enum HostMessage {
   START = 'start',
   STOP = 'stop',
@@ -15,11 +13,6 @@ export interface HostCommandBase<T extends HostCommandPayload> {
 type HostCommand = StartHostCommand | StopHostCommand;
 
 export default HostCommand;
-
-export function pushHostCommand(hostCommand: HostCommand, channel: Channel): Push {
-  const { message, payload } = hostCommand;
-  return channel.push(message, payload);
-}
 
 /* StartHostCommand */
 export interface StartHostCommandPayload extends HostCommandPayload { }

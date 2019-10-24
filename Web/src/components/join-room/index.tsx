@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { match } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'components/common/Modal';
 import { MotionPermission } from 'components/games/GameStates';
-import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
-import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
+import useCommHooks from 'components/room/comm/useCommHooks';
+import CommContext from 'components/room/comm/CommContext';
 import JoinRoomForm from './JoinRoomForm';
+import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
 const PIN_LENGTH = 4;
 
@@ -35,16 +36,12 @@ interface Payload {
   name: string,
 }
 
-type JoinRoomProps = {
-  match: match<{ id?: string }>;
-};
+interface JoinRoomProps {
+  match: match<{ id?: string }>,
+}
 
-const JoinRoomPage: React.FC<JoinRoomProps> = ({
-  match: { params: { id } },
-}) => {
+const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
-
-  const [name, setName] = useState('Caryn');
 
   const [names, setNames] = useState<[string, string][]>([]);
 
@@ -55,8 +52,10 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
   const [numPlayers, setNumPlayers] = useState(0);
 
-  const [channelName, setChannelName] = useState<string | null>(null);
-  const { channel, error, database } = useErrorableChannel(channelName, { name });
+  const comm = useContext(CommContext);
+  const {
+    room, error, errorDescription, database,
+  } = useCommHooks(comm);
 
   const getUserPermission = async function requestPermission() {
     try {
@@ -90,7 +89,6 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
     if (newGamePin.length !== PIN_LENGTH) return;
 
     // Reset state
-    setChannelName(null);
     setGameName(null);
     setNames([]);
 
@@ -104,16 +102,17 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       getPermissionAvailability();
     }
     if (joinRequested && permission === MotionPermission.GRANTED) {
-      const newName = prompt('What is your name?');
-      if (newName == null || newName === '') {
+      const name = prompt('What is your name?');
+      if (name == null || name === '') {
         alert('Name cannot be empty');
         setJoinRequested(false);
-        return;
+        return undefined;
       }
-      setName(newName);
-      setChannelName(`room:${gamePin}`);
+      comm.joinRoom(gamePin, name);
+      return () => comm.leaveRoom();
     }
-  }, [permission, joinRequested, gamePin]);
+    return undefined;
+  }, [permission, joinRequested, gamePin, comm]);
 
   useEffect(() => {
     if (database == null) return;
@@ -145,8 +144,8 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
         initialId={id}
         permission={permission}
       />
-      <p>{channel != null && `Connected, numPlayers = ${numPlayers}`}</p>
-      <p>{error != null && `Error: ${error[0].toString()} -- ${JSON.stringify(error[1])}`}</p>
+      <p>{room != null && `Connected, numPlayers = ${numPlayers}`}</p>
+      <p>{error != null && `Error: ${error.toString()} -- ${errorDescription}`}</p>
       <p>{gameName != null && `Game: ${gameName}`}</p>
       <p>UserMetas: {JSON.stringify(names)}</p>
       <Modal
