@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import Loading from 'components/common/Loading';
@@ -12,103 +12,57 @@ import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
 
 const CreateRoomContainer = styled.div`
-  background: var(--pale-yellow);
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
+    background: var(--pale-yellow);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-  & > * {
+    & > * {
     margin: 0.5rem 0;
-  }
+    }
 
-  h2 {
+    h2 {
     font-family: var(--primary-font);
     margin: 0.5rem 0;
     font-weight: normal;
     font-size: 1.3rem;
-  }
+    }
 `;
 
-const TwoColumnDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  & > * {
-    margin: 0 1rem;
-  }
-
-  @media (max-width: ${mdMin}) {
+const Form = styled.form`
+    display: flex;
     flex-direction: column;
     align-items: center;
-  }
-`;
+    width: 100%;
 
-const GamePinSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: baseline;
-
-  @media (max-width: ${mdMin}) {
-    flex-direction: row;
-  }
-
-  h1 {
-    margin: 2rem 0 0 0;
-    color: var(--red);
-    text-shadow: 6px 6px 0px var(--pink);
-    font-size: 9rem;
-    letter-spacing: 0.8rem;
-
-    @media (max-width: ${mdMin}) {
-      text-shadow: 3px 3px 0px var(--pink);
-      font-size: 4rem;
-      margin-left: 0.5rem;
+    & > * {
+    margin: 10px 0;
     }
-  }
 `;
 
-const ShareSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+const StyledInput = styled.input`
+    font-size: 3rem;
+    text-align: center;
+    background: none;
+    outline: none;
+    border-bottom: 2px solid;
+    width: 13rem;
+    padding: 0 0 0.5rem 1rem;
+    margin-bottom: 1.5rem;
 `;
 
-const ShareContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  & > * {
-    margin: 0.5rem 0;
-  }
-
-  @media (max-width: ${mdMin}) {
-    flex-direction: column-reverse;
-  }
+const CreateRoomButton = styled(BigButton)`
+  padding-left: 2em;
+  padding-right: 2em;
 `;
 
-const StartButton = styled(BigButton)`
-  padding-left: 3rem;
-  padding-right: 3rem;
-`;
-
-const PindaHappy = styled(PindaHappySVG)`
-  position: absolute;
-  height: 270px;
-  bottom: -30px;
-  right: -80px;
-
-  @media (max-width: ${mdMin}) {
-    display: none;
-  }
+const ErrorText = styled.p`
+    color: red;
 `;
 
 interface Payload {
@@ -120,23 +74,34 @@ interface LobbyReturnPayload {
   pin: string
 }
 
+function connectionIsSuccessful(returnPayloadValue: LobbyReturnPayload | {} | null):
+  returnPayloadValue is LobbyReturnPayload {
+  return (returnPayloadValue as LobbyReturnPayload).pin !== undefined;
+}
+
 const CreateRoomPage: React.FC = () => {
   const comm = useContext(CommContext);
   const { room, error, database } = useCommHooks(comm);
 
   const {
-    channel, error, returnPayload, database, setChannel,
+    channel, error: channelError, setChannel, returnPayload,
   } = useContext(ChannelContext) as
     UncontrolledErrorableChannelProps<Payload | {}, LobbyReturnPayload | {}>;
 
-  useEffect(() => {
-    setChannel(
-      pin == null ? 'room:lobby' : `room:${pin}`,
-      pin == null ? {} : { name: 'Julius', game: 'Shake' },
-    );
-  }, [pin, setChannel]);
-
-  const [names, setNames] = useState<[string, string][]>([]);
+  const validated = (name: string, game: string) => {
+    const trimmedName = name.trim();
+    if (name.trim().length === 0)
+      return {
+        name: name,
+        gameName: game,
+        errors: ["Host name cannot be empty"],
+      };
+    return {
+      name: trimmedName,
+      gameName: game,
+      errors: [],
+    };
+  }
 
   useEffect(() => {
     comm.createRoom('Julius', 'shake');
@@ -192,6 +157,35 @@ const CreateRoomPage: React.FC = () => {
       <Link to={{ pathname: '/' }}>Cancel</Link>
       <p>{room != null && `UserMetas: ${JSON.stringify(names)}`}</p>
       <PindaHappy />
+      <Form
+        onSubmit={e => {
+          e.preventDefault();
+          attemptCreation();
+        }}
+      >
+        <StyledInput
+          name="host-name"
+          type="text"
+          pattern="[a-zA-Z\s]*"
+          value={hostName}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setHostName(event.target.value);
+          }}
+        />
+        <CreateRoomButton
+          type="submit"
+          disabled={!hostName.length}
+        >
+          Make Room
+                </CreateRoomButton>
+        {inputErrors
+          && (
+            <ErrorText>
+              {inputErrors}
+            </ErrorText>
+          )}
+      </Form>
+      <Link to={{ pathname: '/' }}>Cancel</Link>
     </CreateRoomContainer>
   );
 };
