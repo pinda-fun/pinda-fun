@@ -18,6 +18,18 @@ defmodule ApiWeb.RoomChannelTest do
     end)
   end
 
+  # Order of things:
+  # - host connected
+  # - host checks its presence
+  # - non-host connected
+  # - host and non-host check their presences
+  # - non-host tries to issue hostcommand and fails
+  # - non-host2 connected
+  # - host, non-host and non-host2 all check their presences
+  # - host issues hostcommands and succeeds
+  # - host, non-host and non-host2 all checks their presences
+  # - non-host2 leaves
+  # - host, non-host check their presences
   test "Integration test" do
     pin = "5678"
     tester_pid = self()
