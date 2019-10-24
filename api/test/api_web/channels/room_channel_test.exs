@@ -8,11 +8,13 @@ defmodule ApiWeb.RoomChannelTest do
   @non_host_name "asd"
 
   test "Lobby returns pin" do
-    assert {:ok, %{"pin" => pin}, socket} =
-             socket(ApiWeb.UserSocket, "", %{client_id: "host"})
-             |> subscribe_and_join(RoomChannel, "room:lobby")
+    Enum.each(1..10, fn _ ->
+      assert {:ok, %{"pin" => pin}, socket} =
+               socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+               |> subscribe_and_join(RoomChannel, "room:lobby")
 
-    assert :error = Api.PINGenerator.mark_pin_as_unavailable(pin)
+      assert :error = Api.PINGenerator.mark_pin_as_unavailable(pin)
+    end)
   end
 
   test "Integration test" do
@@ -32,6 +34,11 @@ defmodule ApiWeb.RoomChannelTest do
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name})
 
         assert {:ok, %{}, socket} =
+                 socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+                 |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name, "game" => @game})
+
+        # Also check that only 1 connection per client is allowed
+        assert {:error, %{reason: "Existing connection"}} =
                  socket(ApiWeb.UserSocket, "", %{client_id: "host"})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name, "game" => @game})
 
@@ -98,7 +105,12 @@ defmodule ApiWeb.RoomChannelTest do
 
         assert {:ok, %{}, socket} =
                  socket(ApiWeb.UserSocket, "", %{client_id: "non-host"})
-                 |> subscribe_and_join(RoomChannel, "room:#{pin}", %{"name" => @non_host_name})
+                 |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host_name})
+
+        # Also check that only 1 connection per client is allowed
+        assert {:error, %{reason: "Existing connection"}} =
+                 socket(ApiWeb.UserSocket, "", %{client_id: "non-host"})
+                 |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host_name})
 
         send(tester_pid, {:non_host, :host, :connected})
 
@@ -152,7 +164,7 @@ defmodule ApiWeb.RoomChannelTest do
   end
 
   defp receive_loop(mapping, done_set \\ MapSet.new()) when is_map(mapping) do
-    if MapSet.size(done_set) == 2 do
+    if MapSet.size(done_set) == length(Map.keys(mapping)) do
       nil
     else
       receive do
