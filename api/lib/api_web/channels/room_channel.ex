@@ -61,7 +61,7 @@ defmodule ApiWeb.RoomChannel do
     case Presence.safe_list(socket) do
       {:ok, presences} ->
         push(socket, "presence_state", presences)
-        Presence.track(socket, socket.assigns.client_id, meta(type, payload))
+        Presence.track(socket, socket.assigns.client_id, Presence.meta(type, payload))
         {:noreply, socket}
 
       {:error, :timeout} ->
@@ -72,23 +72,6 @@ defmodule ApiWeb.RoomChannel do
   # Ignore timed-out GenServer calls
   def handle_info({ref, _}, socket) when is_reference(ref) do
     {:noreply, socket}
-  end
-
-  defp base_meta(type, %{"name" => name}) when is_binary(name) do
-    %{
-      "isHost" => type == :host,
-      "name" => name
-    }
-  end
-
-  defp meta(type = :host, payload = %{"game" => game}) when is_binary(game) do
-    base_meta(type, payload)
-    |> Map.put("game", game)
-    |> Map.put("isStart", false)
-  end
-
-  defp meta(type = :non_host, payload) do
-    base_meta(type, payload)
   end
 
   def handle_in(msg = "start", payload, socket) do
@@ -123,5 +106,9 @@ defmodule ApiWeb.RoomChannel do
       {:error, :timeout} ->
         handle_in(msg, payload, socket)
     end
+  end
+
+  def handle_in(_, _, socket) do
+    {:reply, {:error, %{reason: "Bad request"}}, socket}
   end
 end

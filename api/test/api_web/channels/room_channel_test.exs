@@ -281,12 +281,16 @@ defmodule ApiWeb.RoomChannelTest do
     assert %{metas: [_meta]} = leaves[client_id]
   end
 
-  def assert_host_change(old_meta, new_meta) do
+  defp assert_host_change(old_meta, new_meta) do
+    assert_meta_change(@host_client_id, old_meta, new_meta)
+  end
+
+  defp assert_meta_change(client_id, old_meta, new_meta) do
     assert_push "presence_diff", %{joins: joins, leaves: leaves}
     assert map_size(joins) == 1
     assert map_size(leaves) == 1
-    assert %{metas: [leave_meta]} = leaves[@host_client_id]
-    assert %{metas: [join_meta]} = joins[@host_client_id]
+    assert %{metas: [leave_meta]} = leaves[client_id]
+    assert %{metas: [join_meta]} = joins[client_id]
     assert Enum.all?(old_meta, fn {k, v} -> leave_meta[k] == v end)
     assert Enum.all?(new_meta, fn {k, v} -> join_meta[k] == v end)
   end

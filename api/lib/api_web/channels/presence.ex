@@ -103,4 +103,23 @@ defmodule ApiWeb.Presence do
         {:error, :timeout}
     end
   end
+
+  defp base_meta(type, %{"name" => name}) when is_binary(name) do
+    %{
+      "isHost" => type == :host,
+      "name" => name,
+      "result" => nil,
+      "isFinished" => false
+    }
+  end
+
+  def meta(type = :host, payload = %{"game" => game}) when is_binary(game) do
+    base_meta(type, payload)
+    |> Map.put("game", game)
+    |> Map.put("isStart", false)
+  end
+
+  def meta(type = :non_host, payload) do
+    base_meta(type, payload)
+  end
 end
