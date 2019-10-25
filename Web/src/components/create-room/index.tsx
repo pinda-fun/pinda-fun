@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import useErrorableChannel from 'components/room/hooks/useErrorableChannel';
 import BigButton from 'components/common/BigButton';
 import Loading from 'components/common/Loading';
+import CommContext from 'components/room/comm/CommContext';
+import useCommHooks from 'components/room/comm/useCommHooks';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -120,25 +121,20 @@ interface LobbyReturnPayload {
 }
 
 const CreateRoomPage: React.FC = () => {
-  const [pin, setPin] = useState<string | null>(null);
-  const [numPlayers, setNumPlayers] = useState(0);
+  const comm = useContext(CommContext);
+  const { room, error, database } = useCommHooks(comm);
 
-  const {
-    channel, error, returnPayload, database,
-  } = useErrorableChannel<Payload | {}, LobbyReturnPayload | {}>(
-    pin == null ? 'room:lobby' : `room:${pin}`,
-    pin == null ? {} : { name: 'Julius', game: 'Shake' },
-  );
+  const [numPlayers, setNumPlayers] = useState(0);
   const [names, setNames] = useState<[string, string][]>([]);
 
-  const sharableLink = `${window.location.origin}/join/${pin}`;
-
   useEffect(() => {
-    if (channel == null) return;
-    if (pin == null && returnPayload != null && 'pin' in returnPayload) {
-      setPin(returnPayload.pin);
-    }
-  }, [channel, returnPayload, pin]);
+    comm.createRoom('Julius', 'shake');
+    return () => {
+      comm.leaveRoom();
+    };
+    // Only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (database == null) return;
@@ -151,12 +147,14 @@ const CreateRoomPage: React.FC = () => {
 
   // TODO: stylise error
   if (error != null) {
-    return <p>Error: {error[0].toString()}</p>;
+    return <p>Error: {error.toString()}</p>;
   }
 
-  if (channel == null) {
+  if (room == null) {
     return <Loading />;
   }
+
+  const sharableLink = `${window.location.origin}/join/${room}`;
 
   return (
     <CreateRoomContainer>
@@ -164,7 +162,7 @@ const CreateRoomPage: React.FC = () => {
         <div>
           <GamePinSection>
             <h2>Game PIN:</h2>
-            <h1>{pin}</h1>
+            <h1>{room}</h1>
           </GamePinSection>
           <NumPlayers numPlayers={numPlayers} hideOnMedium />
         </div>
@@ -181,7 +179,7 @@ const CreateRoomPage: React.FC = () => {
         <StartButton>START!</StartButton>
       </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
-      <p>{channel != null && `UserMetas: ${JSON.stringify(names)}`}</p>
+      <p>{room != null && `UserMetas: ${JSON.stringify(names)}`}</p>
       <PindaHappy />
     </CreateRoomContainer>
   );
