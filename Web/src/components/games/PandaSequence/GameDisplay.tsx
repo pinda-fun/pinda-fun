@@ -37,17 +37,23 @@ const GameContainer = styled.div`
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 `;
 
-const WobbleAnimation = keyframes`${wobble}`;
+/**
+ * Wrapper to remove custom DOM attributes before rendering HTML DOM
+ * See: https://www.styled-components.com/docs/faqs#why-am-i-getting-html-attribute-warnings
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const BalloonSVGElement = ({ duration, isselected, ...props }:any) => (<BalloonSVG {...props} />);
 
-const DisplayBalloon = styled(BalloonSVG)`
+const DisplayBalloon = styled(BalloonSVGElement)`
   width: 70px;
   margin: 12px;
-  animation: ${(tags: {duration: number}) => (tags.duration === 0
-    ? undefined : css`${tags.duration / 1000}s ${WobbleAnimation} ease-in-out infinite;`)}
+  animation: ${(props: {duration: number}) => (props.duration === 0
+    ? undefined : css`${props.duration / 1000}s ${keyframes`${wobble}`} ease-in-out infinite;`)}
 `;
 
-const InputBalloon = styled(BalloonSVG)`
-  width: ${(tags: {isselected: number}) => (tags.isselected === 1 ? '100px' : '70px')}
+// custom DOM attribute 'isselected' has to be in lowercase
+const InputBalloon = styled(BalloonSVGElement)`
+  width: ${(props: {isselected: boolean}) => (props.isselected ? '100px' : '70px')}
   margin: 12px;
 `;
 
@@ -100,7 +106,7 @@ const GameDisplay: React.FC<IProps> = ({
       <InputBalloon
         onTouchStart={() => handleTouch(index)}
         onTouchEnd={() => handleTouchEnd(index)}
-        isselected={selected[index] ? 1 : 0}
+        isselected={selected[index]}
         key={index}
       />
     ));
