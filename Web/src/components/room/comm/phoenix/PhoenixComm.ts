@@ -6,6 +6,7 @@ import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import Comm, { Handlers, noOpHandlers } from '../Comm';
 import HostCommand from '../HostCommand';
 import { CommError, PushError } from '../Errors';
+import ClientCommand from '../ClientCommand';
 
 const SOCKET_URL = isDeployPreview()
   ? process.env.REACT_APP_WEBSOCKET_STAGING_URL!
@@ -145,22 +146,44 @@ export default class PhoenixComm implements Comm {
     this.cleanup();
   }
 
-  pushHostCommand(
-    { message, payload }: HostCommand,
-    onOk?: (() => void) | undefined,
-    onError?: ((error: PushError, errorDescription: string | null) => void) | undefined,
+  private pushCommand(
+    message: string,
+    payload: object,
+    onOk: () => void = noOp,
+    onError: (error: PushError, errorDescription: string | null) => void = noOp,
+    isHost: boolean = false,
   ): void {
-    if (this.channel == null) {
-      if (onError) onError(PushError.NoChannel, null);
+    if (this.channel == null || this.database == null) {
+      onError(PushError.NoChannel, null);
+      return;
+    }
+    if (isHost && this.database.hostId !== getClientId()) {
+      onError(PushError.Unauthorised, null);
       return;
     }
     this.channel
       .push(message, payload)
-      .receive(ChannelResponse.OK, onOk || noOp)
+      .receive(ChannelResponse.OK, onOk)
       .receive(
         ChannelResponse.ERROR,
-        ({ reason }: ErrorPayload) => (onError || noOp)(PushError.Other, reason),
+        ({ reason }: ErrorPayload) => onError(PushError.Other, reason),
       )
-      .receive(ChannelResponse.TIMEOUT, () => (onError || noOp)(PushError.Timeout, null));
+      .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
+  }
+
+  pushHostCommand(
+    { message, payload }: HostCommand,
+    onOk?: (() => void),
+    onError?: ((error: PushError, errorDescription: string | null) => void),
+  ): void {
+    this.pushCommand(message, payload, onOk, onError, true);
+  }
+
+  pushClientCommand(
+    { message, payload }: ClientCommand,
+    onOk?: (() => void),
+    onError?: (error: PushError, errorDescription: string | null) => void,
+  ): void {
+    this.pushCommand(message, payload, onOk, onError);
   }
 }

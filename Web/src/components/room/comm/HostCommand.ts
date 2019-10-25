@@ -1,6 +1,7 @@
+import { GameState } from 'components/games/GameStates';
+
 export enum HostMessage {
-  START = 'start',
-  STOP = 'stop',
+  GAME_STATE = 'gameState',
 }
 
 export interface HostCommandPayload { }
@@ -10,22 +11,16 @@ export interface HostCommandBase<T extends HostCommandPayload> {
   payload: T,
 }
 
-type HostCommand = StartHostCommand | StopHostCommand;
+type HostCommand = UpdateGameStateHostCommand;
 
 export default HostCommand;
 
 /* StartHostCommand */
-export interface StartHostCommandPayload extends HostCommandPayload { }
-
-export interface StartHostCommand extends HostCommandBase<StartHostCommandPayload> {
-  message: HostMessage.START,
-  payload: StartHostCommandPayload,
+export interface GameStateHostCommandPayload extends HostCommandPayload {
+  newGameState: GameState,
 }
 
-/* StopHostCommand */
-export interface StopHostCommandPayload extends HostCommandPayload { }
-
-export interface StopHostCommand extends HostCommandBase<StopHostCommandPayload> {
-  message: HostMessage.STOP,
-  payload: StopHostCommandPayload,
+export interface UpdateGameStateHostCommand extends HostCommandBase<GameStateHostCommandPayload> {
+  message: HostMessage.GAME_STATE,
+  payload: GameStateHostCommandPayload,
 }

@@ -1,6 +1,7 @@
 import Database from 'components/room/database/Database';
 import HostCommand from './HostCommand';
 import { CommError, PushError } from './Errors';
+import ClientCommand from './ClientCommand';
 
 export interface CommAttributes {
   room: string | null;
@@ -32,6 +33,11 @@ export default interface Comm {
   leaveRoom(): void
   pushHostCommand(
     hostCommand: HostCommand,
+    onOk?: (() => void),
+    onError?: ((error: PushError, errorDescription: string | null) => void)
+  ): void
+  pushClientCommand(
+    command: ClientCommand,
     onOk?: (() => void),
     onError?: ((error: PushError, errorDescription: string | null) => void)
   ): void

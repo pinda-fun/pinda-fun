@@ -7,5 +7,6 @@ export enum CommError {
 export enum PushError {
   NoChannel = 'NoChannel',
   Timeout = 'Timeout',
+  Unauthorised = 'Unauthorised',
   Other = 'Other',
 }
