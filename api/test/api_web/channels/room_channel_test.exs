@@ -4,14 +4,26 @@ defmodule ApiWeb.RoomChannelTest do
   alias ApiWeb.RoomChannel
 
   @game "Shake"
+
+  @host_client_id "host"
   @host_name "Julius"
+  @default_host_meta %{
+    "isHost" => true,
+    "isStart" => false,
+    "game" => @game,
+    "name" => @host_name
+  }
+
+  @non_host_client_id "non-host"
   @non_host_name "asd"
+
+  @non_host2_client_id "non-host2"
   @non_host2_name "zxc"
 
   test "Lobby returns pin" do
     Enum.each(1..10, fn _ ->
       assert {:ok, %{"pin" => pin}, socket} =
-               socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+               socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                |> subscribe_and_join(RoomChannel, "room:lobby")
 
       assert :error = Api.PINGenerator.mark_pin_as_unavailable(pin)
@@ -39,53 +51,39 @@ defmodule ApiWeb.RoomChannelTest do
         # Connect host
         # As host, must provide both name and game, bad request otherwise
         assert {:error, %{reason: "Bad request"}} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}")
 
         assert {:error, %{reason: "Bad request"}} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name})
 
         assert {:ok, %{}, socket} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name, "game" => @game})
 
         # Also check that only 1 connection per client is allowed
         assert {:error, %{reason: "Existing connection"}} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name, "game" => @game})
 
         send(tester_pid, {:host, :non_host, :connected})
 
         # Host should receive presence
         assert_push "presence_state", %{}
-        assert_push "presence_diff", %{joins: joins, leaves: leaves}
-        assert Enum.empty?(leaves)
-        assert map_size(joins) == 1
-        assert %{"host" => %{metas: [host_meta]}} = joins
-
-        assert %{"isHost" => true, "isStart" => false, "game" => @game, "name" => @host_name} =
-                 host_meta
+        assert_join(@host_client_id, @default_host_meta)
 
         receive do
           {:non_host, :connected} -> nil
         end
 
-        assert_push "presence_diff", %{joins: joins, leaves: leaves}
-        assert Enum.empty?(leaves)
-        assert map_size(joins) == 1
-        assert %{"non-host" => %{metas: [non_host_meta]}} = joins
-        assert %{"isHost" => false, "name" => @non_host_name} = non_host_meta
+        assert_join(@non_host_client_id, %{"isHost" => false, "name" => @non_host_name})
 
         receive do
           {:non_host2, :connected} -> nil
         end
 
-        assert_push "presence_diff", %{joins: joins, leaves: leaves}
-        assert Enum.empty?(leaves)
-        assert map_size(joins) == 1
-        assert %{"non-host2" => %{metas: [meta]}} = joins
-        assert %{"isHost" => false, "name" => @non_host2_name} = meta
+        assert_join(@non_host2_client_id, %{"isHost" => false, "name" => @non_host2_name})
 
         receive do
           {:non_host, :start} -> nil
@@ -95,10 +93,7 @@ defmodule ApiWeb.RoomChannelTest do
         send(tester_pid, {:host, :non_host, :start})
         send(tester_pid, {:host, :non_host2, :start})
 
-        assert_push "presence_diff", %{
-          leaves: %{"host" => %{metas: [%{"isStart" => false}]}},
-          joins: %{"host" => %{metas: [%{"isStart" => true}]}}
-        }
+        assert_host_change(%{"isStart" => false}, %{"isStart" => true})
 
         receive do
           {:non_host, :stop} -> nil
@@ -108,10 +103,7 @@ defmodule ApiWeb.RoomChannelTest do
         send(tester_pid, {:host, :non_host, :stop})
         send(tester_pid, {:host, :non_host2, :stop})
 
-        assert_push "presence_diff", %{
-          leaves: %{"host" => %{metas: [%{"isStart" => true}]}},
-          joins: %{"host" => %{metas: [%{"isStart" => false}]}}
-        }
+        assert_host_change(%{"isStart" => true}, %{"isStart" => false})
 
         send(tester_pid, {:host, :non_host2, :disconnect})
 
@@ -119,11 +111,11 @@ defmodule ApiWeb.RoomChannelTest do
           {:non_host2, :disconnected} -> nil
         end
 
-        assert_push "presence_diff", %{leaves: leaves, joins: joins}
-        assert Enum.empty?(joins)
-        assert map_size(leaves) == 1
-        assert %{"non-host2" => %{metas: [_meta]}} = leaves
+        assert_leave(@non_host2_client_id)
 
+        # Ensure mailbox is empty
+        refute_receive %Phoenix.Socket.Reply{}
+        refute_receive %Phoenix.Socket.Message{}
         send(tester_pid, {:host, :done})
       end)
 
@@ -136,16 +128,16 @@ defmodule ApiWeb.RoomChannelTest do
         # Now that the host is connected, try to connect as a non-host, who must provide name
         # Bad request otherwise
         assert {:error, %{reason: "Bad request"}} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "non-host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @non_host_client_id})
                  |> join(RoomChannel, "room:#{pin}")
 
         assert {:ok, %{}, socket} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "non-host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @non_host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host_name})
 
         # Also check that only 1 connection per client is allowed
         assert {:error, %{reason: "Existing connection"}} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "non-host"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @non_host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host_name})
 
         send(tester_pid, {:non_host, :host, :connected})
@@ -153,17 +145,10 @@ defmodule ApiWeb.RoomChannelTest do
         # Must get the current state, consisting of the current host
         assert_push "presence_state", state
         assert map_size(state) == 1
-        assert %{"host" => %{metas: [host_meta]}} = state
-
-        assert %{"isHost" => true, "isStart" => false, "game" => @game, "name" => @host_name} =
-                 host_meta
+        assert %{@host_client_id => %{metas: [@default_host_meta]}} = state
 
         # And the diff, consisting of yourself
-        assert_push "presence_diff", %{leaves: leaves, joins: joins}
-        assert Enum.empty?(leaves)
-        assert map_size(joins) == 1
-        assert %{"non-host" => %{metas: [non_host_meta]}} = joins
-        assert %{"isHost" => false, "name" => @non_host_name} = non_host_meta
+        assert_join(@non_host_client_id, %{"isHost" => false, "name" => @non_host_name})
 
         ref = push(socket, "start", %{})
         assert_reply ref, :error, %{reason: "Only host can perform this"}
@@ -174,11 +159,7 @@ defmodule ApiWeb.RoomChannelTest do
           {:non_host2, :connected} -> nil
         end
 
-        assert_push "presence_diff", %{leaves: leaves, joins: joins}
-        assert Enum.empty?(leaves)
-        assert map_size(joins) == 1
-        assert %{"non-host2" => %{metas: [meta]}} = joins
-        assert %{"name" => @non_host2_name, "isHost" => false} = meta
+        assert_join(@non_host2_client_id, %{"isHost" => false, "name" => @non_host2_name})
 
         send(tester_pid, {:non_host, :host, :start})
 
@@ -186,10 +167,7 @@ defmodule ApiWeb.RoomChannelTest do
           {:host, :start} -> nil
         end
 
-        assert_push "presence_diff", %{
-          leaves: %{"host" => %{metas: [%{"isStart" => false}]}},
-          joins: %{"host" => %{metas: [%{"isStart" => true}]}}
-        }
+        assert_host_change(%{"isStart" => false}, %{"isStart" => true})
 
         ref = push(socket, "stop", %{})
         assert_reply ref, :error, %{reason: "Only host can perform this"}
@@ -200,20 +178,17 @@ defmodule ApiWeb.RoomChannelTest do
           {:host, :stop} -> nil
         end
 
-        assert_push "presence_diff", %{
-          leaves: %{"host" => %{metas: [%{"isStart" => true}]}},
-          joins: %{"host" => %{metas: [%{"isStart" => false}]}}
-        }
+        assert_host_change(%{"isStart" => true}, %{"isStart" => false})
 
         receive do
           {:non_host2, :disconnected} -> nil
         end
 
-        assert_push "presence_diff", %{leaves: leaves, joins: joins}
-        assert Enum.empty?(joins)
-        assert map_size(leaves) == 1
-        assert %{"non-host2" => %{metas: [_meta]}} = leaves
+        assert_leave(@non_host2_client_id)
 
+        # Ensure mailbox is empty
+        refute_receive %Phoenix.Socket.Reply{}
+        refute_receive %Phoenix.Socket.Message{}
         send(tester_pid, {:non_host, :done})
       end)
 
@@ -224,34 +199,37 @@ defmodule ApiWeb.RoomChannelTest do
         end
 
         assert {:ok, %{}, socket} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "non-host2"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @non_host2_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host2_name})
 
         # Also check that only 1 connection per client is allowed
         assert {:error, %{reason: "Existing connection"}} =
-                 socket(ApiWeb.UserSocket, "", %{client_id: "non-host2"})
+                 socket(ApiWeb.UserSocket, "", %{client_id: @non_host2_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host2_name})
 
         send(tester_pid, {:non_host2, :non_host, :connected})
         send(tester_pid, {:non_host2, :host, :connected})
 
+        assert_push "presence_state", state
+        assert map_size(state) == 2
+        assert %{metas: [@default_host_meta]} = state[@host_client_id]
+
+        assert %{metas: [%{"isHost" => false, "name" => @non_host_name}]} =
+                 state[@non_host_client_id]
+
+        assert_join(@non_host2_client_id, %{"isHost" => false, "name" => @non_host2_name})
+
         receive do
           {:host, :start} -> nil
         end
 
-        assert_push "presence_diff", %{
-          leaves: %{"host" => %{metas: [%{"isStart" => false}]}},
-          joins: %{"host" => %{metas: [%{"isStart" => true}]}}
-        }
+        assert_host_change(%{"isStart" => false}, %{"isStart" => true})
 
         receive do
           {:host, :stop} -> nil
         end
 
-        assert_push "presence_diff", %{
-          leaves: %{"host" => %{metas: [%{"isStart" => true}]}},
-          joins: %{"host" => %{metas: [%{"isStart" => false}]}}
-        }
+        assert_host_change(%{"isStart" => true}, %{"isStart" => false})
 
         receive do
           {:host, :disconnect} -> nil
@@ -264,6 +242,9 @@ defmodule ApiWeb.RoomChannelTest do
         send(tester_pid, {:non_host2, :host, :disconnected})
         send(tester_pid, {:non_host2, :non_host, :disconnected})
 
+        # Ensure mailbox is empty
+        refute_receive %Phoenix.Socket.Reply{}
+        refute_receive %Phoenix.Socket.Message{}
         send(tester_pid, {:non_host2, :done})
       end)
 
@@ -283,5 +264,30 @@ defmodule ApiWeb.RoomChannelTest do
           receive_loop(mapping, done_set)
       end
     end
+  end
+
+  defp assert_join(client_id, expected_meta) do
+    assert_push "presence_diff", %{joins: joins, leaves: leaves}
+    assert Enum.empty?(leaves)
+    assert map_size(joins) == 1
+    assert %{metas: [meta]} = joins[client_id]
+    assert Enum.all?(expected_meta, fn {k, v} -> meta[k] == v end)
+  end
+
+  defp assert_leave(client_id) do
+    assert_push "presence_diff", %{joins: joins, leaves: leaves}
+    assert Enum.empty?(joins)
+    assert map_size(leaves) == 1
+    assert %{metas: [_meta]} = leaves[client_id]
+  end
+
+  def assert_host_change(old_meta, new_meta) do
+    assert_push "presence_diff", %{joins: joins, leaves: leaves}
+    assert map_size(joins) == 1
+    assert map_size(leaves) == 1
+    assert %{metas: [leave_meta]} = leaves[@host_client_id]
+    assert %{metas: [join_meta]} = joins[@host_client_id]
+    assert Enum.all?(old_meta, fn {k, v} -> leave_meta[k] == v end)
+    assert Enum.all?(new_meta, fn {k, v} -> join_meta[k] == v end)
   end
 end
