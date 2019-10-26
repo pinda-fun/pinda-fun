@@ -37,24 +37,44 @@ const GameContainer = styled.div`
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 `;
 
+interface BalloonSVGElementProps extends React.ComponentProps<typeof BalloonSVG> {
+  duration?: number,
+  isSelected?: boolean,
+}
+
 /**
  * Wrapper to remove custom DOM attributes before rendering HTML DOM
  * See: https://www.styled-components.com/docs/faqs#why-am-i-getting-html-attribute-warnings
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const BalloonSVGElement = ({ duration, isselected, ...props }:any) => (<BalloonSVG {...props} />);
+const BalloonSVGElement = ({ duration, isSelected, ...props }: BalloonSVGElementProps) => (
+  <BalloonSVG {...props} />
+);
+
+interface DisplayBalloonProps extends BalloonSVGElementProps {
+  duration: number,
+}
+
+interface InputBalloonProps extends BalloonSVGElementProps {
+  isSelected: boolean,
+}
 
 const DisplayBalloon = styled(BalloonSVGElement)`
   width: 70px;
   margin: 12px;
-  animation: ${(props: {duration: number}) => (props.duration === 0
-    ? undefined : css`${props.duration / 1000}s ${keyframes`${wobble}`} ease-in-out infinite;`)}
+  ${({ duration }:DisplayBalloonProps) => duration !== 0
+    && css`
+    animation: ${duration / 1000}s ${keyframes`${wobble}`} ease-in-out infinite;
+`};
 `;
 
-// custom DOM attribute 'isselected' has to be in lowercase
+// touch-action set to none to inform chrome that no scrolling is performed on this element,
+// preventing it from setting the event as passive by default, which would in turn stop us
+// from calling preventDefault() to curb propagation of touch events to mouse events
 const InputBalloon = styled(BalloonSVGElement)`
-  width: ${(props: {isselected: boolean}) => (props.isselected ? '100px' : '70px')}
+  width: ${({ isSelected }:InputBalloonProps) => (isSelected ? '100px' : '70px')}
   margin: 12px;
+  touch-action: none;
 `;
 
 const BalloonContainer = styled.div`
@@ -84,30 +104,36 @@ const GameDisplay: React.FC<IProps> = ({
 }) => {
   const [selected, setSelected] = useState(Array(5).fill(false));
 
-  const handleTouch = (index:number) => {
+  const handleTouch = (event: React.SyntheticEvent, index:number) => {
+    event.preventDefault();
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: true }));
   };
 
-  const handleTouchEnd = (index:number) => {
+  const handleTouchEnd = (event: React.SyntheticEvent, index:number) => {
+    event.preventDefault();
     processInput(index);
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: false }));
   };
 
   let balloons;
   if (mode === PandaSequenceMode.DISPLAY) {
-    balloons = Array.from(Array(5).keys()).map((index) => (
+    balloons = Array(5).fill(null).map((_, index) => (
       <DisplayBalloon
+        // eslint-disable-next-line react/no-array-index-key
         key={index}
         duration={displaying === index ? timestep : 0}
       />
     ));
   } else {
-    balloons = Array.from(Array(5).keys()).map((index) => (
+    balloons = Array(5).fill(null).map((_, index) => (
       <InputBalloon
-        onTouchStart={() => handleTouch(index)}
-        onTouchEnd={() => handleTouchEnd(index)}
-        isselected={selected[index]}
+        // eslint-disable-next-line react/no-array-index-key
         key={index}
+        onTouchStart={(event: React.SyntheticEvent) => handleTouch(event, index)}
+        onTouchEnd={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
+        onMouseDown={(event: React.SyntheticEvent) => handleTouch(event, index)}
+        onMouseUp={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
+        isSelected={selected[index]}
       />
     ));
   }
