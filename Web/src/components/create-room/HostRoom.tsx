@@ -113,7 +113,7 @@ const PindaHappy = styled(PindaHappySVG)`
 `;
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, results, game,
+  room, error, users, allMetas, game,
 }) => {
   const comm = useContext(CommContext);
 
@@ -138,10 +138,10 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   return (
     <CreateRoomContainer>
-      {resultsExist(results) && (
+      {resultsExist(allMetas) && (
         <>
           <h1>Last Game:</h1>
-          {Object.entries(results).map(([clientId, { name, result }]) => (
+          {Object.entries(allMetas).map(([clientId, { name, result }]) => (
             <p key={clientId}>{name}: {result}</p>
           ))}
         </>

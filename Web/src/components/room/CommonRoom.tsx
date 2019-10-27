@@ -15,7 +15,7 @@ const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
 export interface FinishedComponentProps {
-  results: ResultMap | null;
+  allMetas: ResultMap | null;
   room: string | null;
   error: CommError | null;
   users: string[];
@@ -52,7 +52,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   }, [comm]);
 
   const {
-    hostMeta, room, error, users, results, myMeta,
+    hostMeta, room, error, users, allMetas, myMeta,
   } = useCommHooks(comm);
 
   const onReadyClick = () => {
@@ -82,7 +82,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
         && (
           <FinishedComponent
             {... {
-              results, room, users, error, game,
+              allMetas, room, users, error, game,
             }}
           />
         )}

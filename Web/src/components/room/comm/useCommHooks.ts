@@ -25,7 +25,7 @@ export default function useCommHooks(
   const [hostMeta, setHostMeta] = useState<HostMeta | null>(
     currentAttributes.hostMeta,
   );
-  const [results, setResults] = useState<ResultMap | null>(currentAttributes.results);
+  const [allMetas, setAllMetas] = useState<ResultMap | null>(currentAttributes.allMetas);
   const [myMeta, setMyMeta] = useState(currentAttributes.myMeta);
 
   const handlers: Handlers = {
@@ -34,7 +34,7 @@ export default function useCommHooks(
     setErrorDescription,
     setUsers,
     setHostMeta,
-    setResults,
+    setAllMetas,
     setMyMeta,
   };
 
@@ -58,7 +58,7 @@ export default function useCommHooks(
     errorDescription,
     users,
     hostMeta,
-    results,
+    allMetas,
     myMeta,
   };
 }

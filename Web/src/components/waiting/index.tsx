@@ -39,7 +39,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  room, users, error, results,
+  room, users, error, allMetas,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -55,10 +55,10 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
     return <Redirect to="/join" />;
   }
 
-  if (resultsExist(results)) {
+  if (resultsExist(allMetas)) {
     return (
       <WaitingDiv>
-        {Object.entries(results).map(([clientId, { name, result }]) => (
+        {Object.entries(allMetas).map(([clientId, { name, result }]) => (
           <p key={clientId}>{name}: {result}</p>
         ))}
         <Heading>

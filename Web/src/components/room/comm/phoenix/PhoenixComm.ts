@@ -94,12 +94,9 @@ export default class PhoenixComm implements Comm {
     return this.database.getHostMeta();
   }
 
-  private getResults(): ResultMap | null {
+  private getAllMetas(): ResultMap | null {
     if (this.database == null) return null;
-    return Object.fromEntries(
-      Object.entries(this.database.getMetas())
-        .map(([clientId, { name, result }]) => [clientId, { name, result: result || [] }]),
-    );
+    return this.database.getMetas();
   }
 
   private getMyMeta(): Meta | null {
@@ -108,22 +105,26 @@ export default class PhoenixComm implements Comm {
   }
 
   private flush(): void {
+    const currentHandlers = this.handlers;
     const {
       setError,
       setErrorDescription,
       setRoom,
       setUsers,
       setHostMeta,
-      setResults,
+      setAllMetas,
       setMyMeta,
-    } = this.handlers;
-    if (setError) setError(this.error);
-    if (setErrorDescription) setErrorDescription(this.errorDescription);
-    if (setRoom) setRoom(this.room);
-    if (setUsers) setUsers(this.getUsers());
-    if (setHostMeta) setHostMeta(this.getHostMeta());
-    if (setResults) setResults(this.getResults());
-    if (setMyMeta) setMyMeta(this.getMyMeta());
+    } = currentHandlers;
+    // Always check whether the handlers has changed
+    if (currentHandlers === this.handlers && setError) setError(this.error);
+    if (currentHandlers === this.handlers && setErrorDescription) {
+      setErrorDescription(this.errorDescription);
+    }
+    if (currentHandlers === this.handlers && setRoom) setRoom(this.room);
+    if (currentHandlers === this.handlers && setUsers) setUsers(this.getUsers());
+    if (currentHandlers === this.handlers && setHostMeta) setHostMeta(this.getHostMeta());
+    if (currentHandlers === this.handlers && setAllMetas) setAllMetas(this.getAllMetas());
+    if (currentHandlers === this.handlers && setMyMeta) setMyMeta(this.getMyMeta());
   }
 
   private cleanup(): void {
@@ -290,7 +291,7 @@ export default class PhoenixComm implements Comm {
     const { room, error, errorDescription } = this;
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
-    const results = this.getResults();
+    const allMetas = this.getAllMetas();
     const myMeta = this.getMyMeta();
 
     return {
@@ -299,7 +300,7 @@ export default class PhoenixComm implements Comm {
       errorDescription,
       users,
       hostMeta,
-      results,
+      allMetas,
       myMeta,
     };
   }

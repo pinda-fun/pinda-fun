@@ -3,12 +3,14 @@ import Meta, { HostMeta } from '../database/Meta';
 import Game from '../Games';
 
 export interface ResultMap {
-  [clientId: string]: { result: number[], name: string },
+  [clientId: string]: Meta,
 }
 
-export const resultsExist = (res: ResultMap | null): res is ResultMap => Boolean(
-  res && Object.values(res)[0] && Object.values(res)[0].result.length,
-);
+export const resultsExist = (res: ResultMap | null): res is ResultMap => {
+  if (res == null) return false;
+  const firstResult = Object.values(res)[0].result;
+  return Boolean(firstResult !== null && firstResult.length);
+};
 
 export interface CommAttributes {
   room: string | null,
@@ -16,7 +18,7 @@ export interface CommAttributes {
   errorDescription: string | null,
   users: string[],
   hostMeta: HostMeta | null,
-  results: ResultMap | null,
+  allMetas: ResultMap | null,
   myMeta: Meta | null,
 }
 
@@ -26,18 +28,18 @@ export interface Handlers {
   setErrorDescription: React.Dispatch<React.SetStateAction<string | null>>,
   setUsers: React.Dispatch<React.SetStateAction<string[]>>,
   setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
-  setResults: React.Dispatch<React.SetStateAction<ResultMap | null>>,
+  setAllMetas: React.Dispatch<React.SetStateAction<ResultMap | null>>,
   setMyMeta: React.Dispatch<React.SetStateAction<Meta | null>>,
 }
 
 const noOp = () => { };
-export const noOpHandlers = {
+export const noOpHandlers: Handlers = {
   setRoom: noOp,
   setError: noOp,
   setErrorDescription: noOp,
   setUsers: noOp,
   setHostMeta: noOp,
-  setResults: noOp,
+  setAllMetas: noOp,
   setMyMeta: noOp,
 };
 
