@@ -9,13 +9,14 @@ defmodule ApiWeb.RoomChannelTest do
   @host_name "Julius"
   @default_host_meta %{
     "isHost" => true,
-    "isStart" => false,
+    "state" => 0,
     "game" => @game,
     "name" => @host_name
   }
 
   @non_host_client_id "non-host"
   @non_host_name "asd"
+  @non_host_result [42, 69]
 
   @non_host2_client_id "non-host2"
   @non_host2_name "zxc"
@@ -35,11 +36,13 @@ defmodule ApiWeb.RoomChannelTest do
   # - host checks its presence
   # - non-host connected
   # - host and non-host check their presences
-  # - non-host tries to issue hostcommand and fails
+  # - non-host issues hostcommand
+  # - host and non-host check there's no change
   # - non-host2 connected
   # - host, non-host and non-host2 all check their presences
-  # - host issues hostcommands and succeeds
+  # - host issues hostcommands
   # - host, non-host and non-host2 all checks their presences
+  # - non-host issues result clientcommand
   # - non-host2 leaves
   # - host, non-host check their presences
   test "Integration test" do
@@ -80,30 +83,38 @@ defmodule ApiWeb.RoomChannelTest do
         assert_join(@non_host_client_id, %{"isHost" => false, "name" => @non_host_name})
 
         receive do
+          {:non_host, :state} -> nil
+        end
+
+        assert_no_change(@non_host_client_id)
+
+        send(tester_pid, {:host, :non_host2, :connect})
+
+        receive do
           {:non_host2, :connected} -> nil
         end
 
         assert_join(@non_host2_client_id, %{"isHost" => false, "name" => @non_host2_name})
 
+        # Try bad push request
+        ref = push(socket, "state", %{})
+        assert_reply ref, :error, %{reason: "Bad request"}
+
+        ref = push(socket, "state", %{"state" => 1})
+        assert_reply ref, :ok
+
+        send(tester_pid, {:host, :non_host, :state})
+        send(tester_pid, {:host, :non_host2, :state})
+
+        assert_host_change(%{"state" => 0}, %{"state" => 1})
+
         receive do
-          {:non_host, :start} -> nil
+          {:non_host, :result} -> nil
         end
 
-        push(socket, "start", %{})
-        send(tester_pid, {:host, :non_host, :start})
-        send(tester_pid, {:host, :non_host2, :start})
-
-        assert_host_change(%{"isStart" => false}, %{"isStart" => true})
-
-        receive do
-          {:non_host, :stop} -> nil
-        end
-
-        push(socket, "stop", %{})
-        send(tester_pid, {:host, :non_host, :stop})
-        send(tester_pid, {:host, :non_host2, :stop})
-
-        assert_host_change(%{"isStart" => true}, %{"isStart" => false})
+        assert_meta_change(@non_host_client_id, %{"result" => []}, %{
+          "result" => @non_host_result
+        })
 
         send(tester_pid, {:host, :non_host2, :disconnect})
 
@@ -150,10 +161,16 @@ defmodule ApiWeb.RoomChannelTest do
         # And the diff, consisting of yourself
         assert_join(@non_host_client_id, %{"isHost" => false, "name" => @non_host_name})
 
-        ref = push(socket, "start", %{})
-        assert_reply ref, :error, %{reason: "Only host can perform this"}
+        # Try bad push request
+        ref = push(socket, "state", %{})
+        assert_reply ref, :error, %{reason: "Bad request"}
 
-        send(tester_pid, {:non_host, :non_host2, :connect})
+        ref = push(socket, "state", %{"state" => 1})
+        assert_reply ref, :ok
+
+        send(tester_pid, {:non_host, :host, :state})
+
+        assert_no_change(@non_host_client_id)
 
         receive do
           {:non_host2, :connected} -> nil
@@ -161,24 +178,27 @@ defmodule ApiWeb.RoomChannelTest do
 
         assert_join(@non_host2_client_id, %{"isHost" => false, "name" => @non_host2_name})
 
-        send(tester_pid, {:non_host, :host, :start})
+        send(tester_pid, {:non_host, :host, :state})
 
         receive do
-          {:host, :start} -> nil
+          {:host, :state} -> nil
         end
 
-        assert_host_change(%{"isStart" => false}, %{"isStart" => true})
+        assert_host_change(%{"state" => 0}, %{"state" => 1})
 
-        ref = push(socket, "stop", %{})
-        assert_reply ref, :error, %{reason: "Only host can perform this"}
+        # Try bad push request
+        ref = push(socket, "result", %{})
+        assert_reply ref, :error, %{reason: "Bad request"}
 
-        send(tester_pid, {:non_host, :host, :stop})
+        ref = push(socket, "result", %{"result" => @non_host_result})
+        assert_reply ref, :ok
 
-        receive do
-          {:host, :stop} -> nil
-        end
+        send(tester_pid, {:non_host, :host, :result})
+        send(tester_pid, {:non_host, :non_host2, :result})
 
-        assert_host_change(%{"isStart" => true}, %{"isStart" => false})
+        assert_meta_change(@non_host_client_id, %{"result" => []}, %{
+          "result" => @non_host_result
+        })
 
         receive do
           {:non_host2, :disconnected} -> nil
@@ -195,7 +215,7 @@ defmodule ApiWeb.RoomChannelTest do
     {:ok, non_host2_pid} =
       Task.start_link(fn ->
         receive do
-          {:non_host, :connect} -> nil
+          {:host, :connect} -> nil
         end
 
         assert {:ok, %{}, socket} =
@@ -220,16 +240,18 @@ defmodule ApiWeb.RoomChannelTest do
         assert_join(@non_host2_client_id, %{"isHost" => false, "name" => @non_host2_name})
 
         receive do
-          {:host, :start} -> nil
+          {:host, :state} -> nil
         end
 
-        assert_host_change(%{"isStart" => false}, %{"isStart" => true})
+        assert_host_change(%{"state" => 0}, %{"state" => 1})
 
         receive do
-          {:host, :stop} -> nil
+          {:non_host, :result} -> nil
         end
 
-        assert_host_change(%{"isStart" => true}, %{"isStart" => false})
+        assert_meta_change(@non_host_client_id, %{"result" => []}, %{
+          "result" => @non_host_result
+        })
 
         receive do
           {:host, :disconnect} -> nil
@@ -292,12 +314,33 @@ defmodule ApiWeb.RoomChannelTest do
   end
 
   def assert_host_change(old_meta, new_meta) do
+    assert_meta_change(@host_client_id, old_meta, new_meta)
+  end
+
+  def assert_meta_change(client_id, old_meta, new_meta) do
     assert_push "presence_diff", %{joins: joins, leaves: leaves}
     assert map_size(joins) == 1
     assert map_size(leaves) == 1
-    assert %{metas: [leave_meta]} = leaves[@host_client_id]
-    assert %{metas: [join_meta]} = joins[@host_client_id]
+    assert %{metas: [leave_meta]} = leaves[client_id]
+    assert %{metas: [join_meta]} = joins[client_id]
     assert Enum.all?(old_meta, fn {k, v} -> leave_meta[k] == v end)
     assert Enum.all?(new_meta, fn {k, v} -> join_meta[k] == v end)
+  end
+
+  def assert_no_change(client_id) do
+    receive do
+      %Phoenix.Socket.Message{event: "presence_diff", payload: %{joins: joins, leaves: leaves}} ->
+        %{metas: [leave_meta]} = leaves[client_id]
+        %{metas: [join_meta]} = joins[client_id]
+
+        leave_meta = Map.delete(leave_meta, :phx_ref)
+        leave_meta = Map.delete(leave_meta, :phx_ref_prev)
+        join_meta = Map.delete(join_meta, :phx_ref)
+        join_meta = Map.delete(join_meta, :phx_ref_prev)
+
+        assert leave_meta == join_meta
+    after
+      100 -> nil
+    end
   end
 end
