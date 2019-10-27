@@ -1,10 +1,12 @@
+/* eslint-disable class-methods-use-this, @typescript-eslint/no-unused-vars */
+
 import { Socket, Channel } from 'phoenix';
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import Comm, { Handlers, noOpHandlers } from '../Comm';
-import HostCommand from '../HostCommand';
+import HostCommand from '../commands/HostCommand';
 import { CommError, PushError } from '../Errors';
 
 const SOCKET_URL = isDeployPreview()
@@ -162,5 +164,21 @@ export default class PhoenixComm implements Comm {
         ({ reason }: ErrorPayload) => (onError || noOp)(PushError.Other, reason),
       )
       .receive(ChannelResponse.TIMEOUT, () => (onError || noOp)(PushError.Timeout, null));
+  }
+
+  sendResult(result: number[]): void {
+    throw new Error('Method not implemented.');
+  }
+
+  onGameStart(handler: () => void): void {
+    throw new Error('Method not implemented.');
+  }
+
+  onGameEnd(handler: () => void): void {
+    throw new Error('Method not implemented.');
+  }
+
+  prepare(): void {
+    throw new Error('Method not implemented.');
   }
 }

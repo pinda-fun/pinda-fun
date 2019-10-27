@@ -1,5 +1,5 @@
 import Database from 'components/room/database/Database';
-import HostCommand from './HostCommand';
+import HostCommand from './commands/HostCommand';
 import { CommError, PushError } from './Errors';
 
 export interface CommAttributes {
@@ -35,4 +35,13 @@ export default interface Comm {
     onOk?: (() => void),
     onError?: ((error: PushError, errorDescription: string | null) => void)
   ): void
+
+  /* RFC #108 */
+  // For Client
+  sendResult(result: number[]): void
+  // Client callback
+  onGameStart(handler: () => void): void
+  onGameEnd(handler: () => void): void
+  // Host
+  prepare(): void
 }
