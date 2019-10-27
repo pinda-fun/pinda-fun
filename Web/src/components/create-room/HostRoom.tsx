@@ -3,13 +3,12 @@ import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
-import useCommHooks from 'components/room/comm/useCommHooks';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
-import CommonRoom from 'components/room/CommonRoom';
+import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -111,11 +110,10 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-const HostRoomLobby: React.FC = () => {
+const HostRoomLobby: React.FC<FinishedComponentProps> = ({
+  room, error, users
+}) => {
   const comm = useContext(CommContext);
-  const {
-    room, error, users,
-  } = useCommHooks(comm);
 
   // general hook to disconnect host from room when he leaves.
   useEffect(() => () => comm.leaveRoom(), [comm]);

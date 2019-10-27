@@ -4,9 +4,13 @@ import useCommHooks from 'components/room/comm/useCommHooks';
 import Loading from 'components/common/Loading';
 import GameState from './comm/GameState';
 import Game from './Games';
+import { CommError } from './comm/Errors';
 
 export interface FinishedComponentProps {
   results?: any[];
+  room: string | null;
+  error: CommError | null;
+  users: string[];
 }
 
 interface CommonRoomProps {
@@ -20,11 +24,14 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   const [game] = useState(Game.SHAKE);
 
   const {
-    hostMeta
+    hostMeta, room, error, users
   } = useCommHooks(comm);
 
   useEffect(() => {
-    if (hostMeta === null) return;
+    if (hostMeta === null) {
+      console.log('null for some reason');
+      return;
+    }
     let roomState = hostMeta.state;
     console.log(roomState);
   }, [hostMeta]);
@@ -36,7 +43,14 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   return (
     <>
       {hostMeta.state === GameState.FINISHED
-        && <FinishedComponent />}
+        && (
+          <FinishedComponent
+            results={[]}
+            room={room}
+            users={users}
+            error={error}
+          />
+        )}
       {hostMeta.state === GameState.PREPARE
         && <Loading />}
       {hostMeta.state === GameState.ONGOING

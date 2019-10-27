@@ -122,7 +122,6 @@ export default class PhoenixComm implements Comm {
   }
 
   private handleStateChange(oldState: GameState, newState: GameState): void {
-    console.log({ oldState, newState });
     // State transition handler for client
     if (oldState === GameState.FINISHED && newState === GameState.PREPARE) {
       this.pushClientCommand(
@@ -141,7 +140,6 @@ export default class PhoenixComm implements Comm {
   private hostWatcher(state: GameState): void {
     if (this.database == null) return;
     if (state === GameState.PREPARE) {
-      console.log("aaa");
       // `result` being null is indication that the client is ready
       const allReady = (Object
         .values(this.database.getMetas())
