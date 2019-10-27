@@ -176,6 +176,14 @@ export default class PhoenixComm implements Comm {
     const newDatabase = new PhoenixDatabase(newChannel);
     newDatabase.onSync((oldHostMeta) => {
       const currentHostMeta = newDatabase.getHostMeta();
+      // Disconnect if we join when the state is not FINISHED
+      if (oldHostMeta == null && currentHostMeta != null
+        && currentHostMeta.state !== GameState.FINISHED) {
+        this.leaveRoom();
+        this.error = CommError.RoomNotAccepting;
+        this.flush();
+        return;
+      }
       if (oldHostMeta != null && currentHostMeta != null) {
         this.handleStateChange(oldHostMeta.state, currentHostMeta.state);
       }
