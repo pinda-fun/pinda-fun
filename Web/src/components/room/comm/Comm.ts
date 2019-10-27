@@ -1,13 +1,16 @@
 import { CommError, PushError } from './Errors';
-import { HostMeta } from '../database/Meta';
+import Meta, { HostMeta } from '../database/Meta';
+import Game from '../Games';
 
 export interface ResultMap {
-  [name: string]: number[],
+  [clientId: string]: Meta,
 }
 
-export const resultsExist = (res: ResultMap | null): res is ResultMap => Boolean(
-  res && Object.values(res)[0] && Object.values(res)[0].length,
-);
+export const resultsExist = (res: ResultMap | null): res is ResultMap => {
+  if (res == null) return false;
+  const firstResult = Object.values(res)[0].result;
+  return Boolean(firstResult !== null && firstResult.length);
+};
 
 export interface CommAttributes {
   room: string | null,
@@ -15,27 +18,9 @@ export interface CommAttributes {
   errorDescription: string | null,
   users: string[],
   hostMeta: HostMeta | null,
-  results: ResultMap | null,
+  allMetas: ResultMap | null,
+  myMeta: Meta | null,
 }
-
-export interface Handlers {
-  setRoom: React.Dispatch<React.SetStateAction<string | null>>,
-  setError: React.Dispatch<React.SetStateAction<CommError | null>>,
-  setErrorDescription: React.Dispatch<React.SetStateAction<string | null>>,
-  setUsers: React.Dispatch<React.SetStateAction<string[]>>,
-  setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
-  setResults: React.Dispatch<React.SetStateAction<ResultMap | null>>,
-}
-
-const noOp = () => { };
-export const noOpHandlers = {
-  setRoom: noOp,
-  setError: noOp,
-  setErrorDescription: noOp,
-  setUsers: noOp,
-  setHostMeta: noOp,
-  setResults: noOp,
-};
 
 export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;
 
@@ -49,7 +34,7 @@ export default interface Comm {
   leaveRoom(): void
 
   // For useCommHooks use
-  _register(handlers: Handlers): void
+  _register(handler: (attributes: CommAttributes) => void): void
   _getAttributes(): CommAttributes
 
   /* RFC #108 */
@@ -58,10 +43,12 @@ export default interface Comm {
   /**
    * Sends current result
    */
-  sendResult(result: number[], onError?: PushErrorHandler): void
+  readyUp(onOk?: () => void, onError?: PushErrorHandler): void
+  sendResult(result: number[], onOk?: () => void, onError?: PushErrorHandler): void
 
   // Host
-  prepare(onError?: PushErrorHandler): void
+  prepare(onOk?: () => void, onError?: PushErrorHandler): void
+  changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void
 
   // For useCommHooks use
   // Client callbacks
