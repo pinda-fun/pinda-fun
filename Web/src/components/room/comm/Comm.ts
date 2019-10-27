@@ -4,6 +4,11 @@ import { HostMeta } from '../database/Meta';
 export interface ResultMap {
   [name: string]: number[],
 }
+
+export const resultsExist = (res: ResultMap | null): res is ResultMap => Boolean(
+  res && Object.values(res)[0] && Object.values(res)[0].length,
+);
+
 export interface CommAttributes {
   room: string | null,
   error: CommError | null,
@@ -12,7 +17,6 @@ export interface CommAttributes {
   hostMeta: HostMeta | null,
   results: ResultMap | null,
 }
-
 
 export interface Handlers {
   setRoom: React.Dispatch<React.SetStateAction<string | null>>,

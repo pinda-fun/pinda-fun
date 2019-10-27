@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
+import { resultsExist } from 'components/room/comm/Comm';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -111,7 +112,7 @@ const PindaHappy = styled(PindaHappySVG)`
 `;
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users,
+  room, error, users, results,
 }) => {
   const comm = useContext(CommContext);
 
@@ -130,6 +131,14 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   return (
     <CreateRoomContainer>
+      {resultsExist(results) && (
+        <>
+          <h1>Last Game:</h1>
+          {Object.entries(results).map(([guy, score]) => (
+            <p>{guy}: {score}</p>
+          ))}
+        </>
+      )}
       <TwoColumnDiv>
         <div>
           <GamePinSection>

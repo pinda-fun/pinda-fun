@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link, Redirect } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
+import { resultsExist } from 'components/room/comm/Comm';
 import { mdMin } from '../../utils/media';
 
 const WaitingDiv = styled.div`
@@ -38,7 +39,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  room, users, error, game,
+  room, users, error, game, results,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -54,6 +55,18 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
     return <Redirect to="/join" />;
   }
 
+  if (resultsExist(results)) {
+    return (
+      <WaitingDiv>
+        {Object.entries(results).map(([guy, score]) => (
+          <p>{guy}: {score}</p>
+        ))}
+        <Heading>
+          Waiting for next game...
+        </Heading>
+      </WaitingDiv>
+    );
+  }
   return (
     <WaitingDiv>
       <Heading>

@@ -7,13 +7,14 @@ import Loading from 'components/common/Loading';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommError } from './comm/Errors';
+import { ResultMap } from './comm/Comm';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
 export interface FinishedComponentProps {
-  results?: any[];
+  results: ResultMap | null;
   room: string | null;
   error: CommError | null;
   users: string[];
@@ -47,7 +48,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   useEffect(() => () => comm.leaveRoom(), [comm]);
 
   const {
-    hostMeta, room, error, users,
+    hostMeta, room, error, users, results,
   } = useCommHooks(comm);
 
   useEffect(() => {
@@ -64,11 +65,9 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.FINISHED
         && (
           <FinishedComponent
-            results={[]}
-            room={room}
-            users={users}
-            error={error}
-            game={game}
+            {... {
+              results, room, users, error, game,
+            }}
           />
         )}
       {hostMeta.state === GameState.ONGOING

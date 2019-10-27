@@ -60,6 +60,16 @@ const ErrorText = styled.p`
   color: red;
 `;
 
+const Heading = styled.h1`
+  width: 300px;
+
+  font-family: var(--primary-font);
+  color: var(--dark-purple);
+  font-weight: normal;
+  font-size: 1.8rem;
+  text-align: center;
+`;
+
 const CreateRoomPage: React.FC = () => {
   const comm = useContext(CommContext);
   const { room, error } = useCommHooks(comm);
@@ -106,6 +116,9 @@ const CreateRoomPage: React.FC = () => {
   return (
     <CreateRoomContainer>
       <PindaHappySVG />
+      <Heading>
+        Enter your name:
+      </Heading>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
@@ -115,10 +128,9 @@ const CreateRoomPage: React.FC = () => {
         <StyledInput
           name="host-name"
           type="text"
-          pattern="[a-zA-Z\s]*"
           value={hostName}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setHostName(event.target.value);
+            setHostName(event.target.value.replace(/[^a-z0-9 ]/gi, ''));
           }}
         />
         <CreateRoomButton
