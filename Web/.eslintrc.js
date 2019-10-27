@@ -22,6 +22,7 @@ module.exports = {
 
     'no-alert': 'off',
     'prefer-destructuring': 'off',
+    'no-underscore-dangle': 'off',
 
     // TypeScript lints this for us
     'react/prop-types': 'off',

@@ -6,9 +6,13 @@ import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import { HostMeta } from 'components/room/database/Meta';
-import HostCommand from '../commands/HostCommand';
-import Comm, { Handlers, noOpHandlers, CommAttributes } from '../Comm';
+import HostCommand, { HostMessage } from '../commands/HostCommand';
+import Comm, {
+  Handlers, noOpHandlers, CommAttributes, PushErrorHandler,
+} from '../Comm';
 import { CommError, PushError } from '../Errors';
+import ClientCommand, { ClientMessage } from '../commands/ClientCommand';
+import GameState from '../GameState';
 
 const SOCKET_URL = isDeployPreview()
   ? process.env.REACT_APP_WEBSOCKET_STAGING_URL!
@@ -51,6 +55,10 @@ export default class PhoenixComm implements Comm {
 
   private handlers: Handlers;
 
+  private gameStartHandler: () => void;
+
+  private gameStopHandler: () => void;
+
   constructor() {
     this.room = null;
     this.error = null;
@@ -58,6 +66,8 @@ export default class PhoenixComm implements Comm {
     this.database = null;
     this.channel = null;
     this.handlers = noOpHandlers;
+    this.gameStartHandler = noOp;
+    this.gameStopHandler = noOp;
 
     this.socket = new Socket(SOCKET_URL, {
       params: { clientId: getClientId() },
@@ -68,7 +78,7 @@ export default class PhoenixComm implements Comm {
     if (process.env.NODE_ENV !== 'test') this.socket.connect();
   }
 
-  register(handlers: Handlers): void {
+  _register(handlers: Handlers): void {
     this.handlers = handlers;
   }
 
@@ -110,6 +120,53 @@ export default class PhoenixComm implements Comm {
     this.flush();
   }
 
+  private handleStateChange(oldState: GameState, newState: GameState): void {
+    // State transition handler for client
+    if (oldState === GameState.FINISHED && newState === GameState.PREPARE) {
+      this.pushClientCommand(
+        { message: ClientMessage.RESULT, payload: { result: null } },
+        noOp,
+        noOp,
+      );
+    } else if (oldState === GameState.PREPARE && newState === GameState.ONGOING) {
+      this.gameStartHandler();
+    } else if (oldState === GameState.ONGOING && newState === GameState.FINISHED) {
+      this.gameStopHandler();
+    }
+    if (this.database != null && this.database.hostId === getClientId()) this.hostWatcher(newState);
+  }
+
+  private hostWatcher(state: GameState): void {
+    if (this.database == null) return;
+    if (state === GameState.PREPARE) {
+      // `result` being null is indication that the client is ready
+      const allReady = (Object
+        .values(this.database.getMetas())
+        .filter((meta) => meta.result != null)
+        .length) === 0;
+      if (allReady) {
+        this.pushHostCommand(
+          { message: HostMessage.STATE, payload: { state: GameState.ONGOING } },
+          noOp,
+          noOp,
+        );
+      }
+    }
+    if (state === GameState.ONGOING) {
+      const allFinished = (Object
+        .values(this.database.getMetas())
+        .filter((meta) => meta.result == null)
+        .length) === 0;
+      if (allFinished) {
+        this.pushHostCommand(
+          { message: HostMessage.STATE, payload: { state: GameState.FINISHED } },
+          noOp,
+          noOp,
+        );
+      }
+    }
+  }
+
   private joinChannel<T>(
     topic: string,
     channelPayload: object,
@@ -117,7 +174,11 @@ export default class PhoenixComm implements Comm {
   ): void {
     const newChannel = this.socket.channel(topic, channelPayload);
     const newDatabase = new PhoenixDatabase(newChannel);
-    newDatabase.onSync(() => {
+    newDatabase.onSync((oldHostMeta) => {
+      const currentHostMeta = newDatabase.getHostMeta();
+      if (oldHostMeta != null && currentHostMeta != null) {
+        this.handleStateChange(oldHostMeta.state, currentHostMeta.state);
+      }
       this.flush();
     });
 
@@ -172,28 +233,37 @@ export default class PhoenixComm implements Comm {
     this.cleanup();
   }
 
-  pushHostCommand(
-    { message, payload }: HostCommand,
-    onOk?: (() => void) | undefined,
-    onError?:
-    | ((error: PushError, errorDescription: string | null) => void)
-    | undefined,
-  ): void {
+  private pushCommand(
+    { message, payload }: { message: string, payload: object },
+    onOk: () => void,
+    onError: PushErrorHandler,
+  ) {
     if (this.channel == null) {
-      if (onError) onError(PushError.NoChannel, null);
+      onError(PushError.NoChannel, null);
       return;
     }
     this.channel
       .push(message, payload)
-      .receive(ChannelResponse.OK, onOk || noOp)
-      .receive(
-        ChannelResponse.ERROR,
-        ({ reason }: ErrorPayload) => (onError || noOp)(PushError.Other, reason),
-      )
-      .receive(ChannelResponse.TIMEOUT, () => (onError || noOp)(PushError.Timeout, null));
+      .receive(ChannelResponse.OK, onOk)
+      .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
+        onError(PushError.Other, reason);
+      })
+      .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
   }
 
-  getAttributes(): CommAttributes {
+  private pushHostCommand(command: HostCommand, onOk: () => void, onError: PushErrorHandler): void {
+    this.pushCommand(command, onOk, onError);
+  }
+
+  private pushClientCommand(
+    command: ClientCommand,
+    onOk: () => void,
+    onError: PushErrorHandler,
+  ): void {
+    this.pushCommand(command, onOk, onError);
+  }
+
+  _getAttributes(): CommAttributes {
     const { room, error, errorDescription } = this;
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
@@ -207,19 +277,34 @@ export default class PhoenixComm implements Comm {
     };
   }
 
-  sendResult(result: number[]): void {
-    throw new Error('Method not implemented.');
+  sendResult(result: number[], onError?: PushErrorHandler): void {
+    this.pushClientCommand(
+      { message: ClientMessage.RESULT, payload: { result } },
+      noOp,
+      onError || noOp,
+    );
   }
 
-  onGameStart(handler: () => void): void {
-    throw new Error('Method not implemented.');
+  _onGameStart(handler: () => void): void {
+    this.gameStartHandler = handler;
   }
 
-  onGameEnd(handler: () => void): void {
-    throw new Error('Method not implemented.');
+  _onGameEnd(handler: () => void): void {
+    this.gameStopHandler = handler;
   }
 
-  prepare(): void {
-    throw new Error('Method not implemented.');
+  prepare(onError?: PushErrorHandler): void {
+    if (this.database == null) return;
+    if (this.database.hostId !== getClientId()) return;
+    const maybeHostMeta = this.database.getHostMeta();
+    if (maybeHostMeta == null) return;
+    if (maybeHostMeta.state !== GameState.FINISHED) {
+      throw new Error(`Cannot invoke prepare() when state is ${maybeHostMeta.state.toString()}`);
+    }
+    this.pushHostCommand(
+      { message: HostMessage.STATE, payload: { state: GameState.PREPARE } },
+      noOp,
+      onError || noOp,
+    );
   }
 }

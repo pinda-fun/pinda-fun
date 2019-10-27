@@ -1,4 +1,4 @@
-import { GameState } from 'components/games/GameStates';
+import GameState from '../GameState';
 
 export enum HostMessage {
   STATE = 'state',
