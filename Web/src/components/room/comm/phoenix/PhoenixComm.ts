@@ -3,6 +3,7 @@ import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
+import { HostMeta } from 'components/room/database/Meta';
 import Comm, { Handlers, noOpHandlers, CommAttributes } from '../Comm';
 import HostCommand from '../HostCommand';
 import { CommError, PushError } from '../Errors';
@@ -27,7 +28,9 @@ interface ErrorPayload {
   reason: string
 }
 
-const customErrorMapping: { [reason: string]: CommError } = { 'Ran out of PIN': CommError.NoMorePin };
+const customErrorMapping: { [reason: string]: CommError } = {
+  'Ran out of PIN': CommError.NoMorePin,
+};
 
 const noOp = () => { };
 
@@ -54,10 +57,10 @@ export default class PhoenixComm implements Comm {
     this.channel = null;
     this.handlers = noOpHandlers;
 
-    this.socket = new Socket(
-      SOCKET_URL,
-      { params: { clientId: getClientId() }, timeout: TIMEOUT_DURATION },
-    );
+    this.socket = new Socket(SOCKET_URL, {
+      params: { clientId: getClientId() },
+      timeout: TIMEOUT_DURATION,
+    });
 
     // Do not connect if we are testing
     if (process.env.NODE_ENV !== 'test') this.socket.connect();
@@ -68,14 +71,29 @@ export default class PhoenixComm implements Comm {
     this.flush();
   }
 
+  private getUsers(): string[] {
+    if (this.database == null) return [];
+    return Object.values(this.database.getMetas()).map((meta) => meta.name);
+  }
+
+  private getHostMeta(): HostMeta | null {
+    if (this.database == null) return null;
+    return this.database.getHostMeta();
+  }
+
   private flush(): void {
     const {
-      setError, setErrorDescription, setDatabase, setRoom,
+      setError,
+      setErrorDescription,
+      setRoom,
+      setUsers,
+      setHostMeta,
     } = this.handlers;
     if (setError) setError(this.error);
     if (setErrorDescription) setErrorDescription(this.errorDescription);
-    if (setDatabase) setDatabase(this.database);
     if (setRoom) setRoom(this.room);
+    if (setUsers) setUsers(this.getUsers());
+    if (setHostMeta) setHostMeta(this.getHostMeta());
   }
 
   private cleanup(): void {
@@ -98,6 +116,9 @@ export default class PhoenixComm implements Comm {
   ): void {
     const newChannel = this.socket.channel(topic, channelPayload);
     const newDatabase = new PhoenixDatabase(newChannel);
+    newDatabase.onSync(() => {
+      this.flush();
+    });
 
     newChannel
       .join()
@@ -130,12 +151,16 @@ export default class PhoenixComm implements Comm {
   joinRoom(pin: string, name: string, game?: string | undefined): void {
     this.cleanup();
     const joinPayload = game === undefined ? { name } : { name, game };
-    this.joinChannel(`room:${pin}`, joinPayload, (_, newChannel, newDatabase) => {
-      this.database = newDatabase;
-      this.channel = newChannel;
-      this.room = pin;
-      this.flush();
-    });
+    this.joinChannel(
+      `room:${pin}`,
+      joinPayload,
+      (_, newChannel, newDatabase) => {
+        this.database = newDatabase;
+        this.channel = newChannel;
+        this.room = pin;
+        this.flush();
+      },
+    );
   }
 
   leaveRoom(): void {
@@ -149,7 +174,9 @@ export default class PhoenixComm implements Comm {
   pushHostCommand(
     { message, payload }: HostCommand,
     onOk?: (() => void) | undefined,
-    onError?: ((error: PushError, errorDescription: string | null) => void) | undefined,
+    onError?:
+      | ((error: PushError, errorDescription: string | null) => void)
+      | undefined,
   ): void {
     if (this.channel == null) {
       if (onError) onError(PushError.NoChannel, null);
@@ -166,11 +193,16 @@ export default class PhoenixComm implements Comm {
   }
 
   getAttributes(): CommAttributes {
-    const {
-      room, error, errorDescription, database,
-    } = this;
+    const { room, error, errorDescription } = this;
+    const users = this.getUsers();
+    const hostMeta = this.getHostMeta();
+
     return {
-      room, error, errorDescription, database,
+      room,
+      error,
+      errorDescription,
+      users,
+      hostMeta,
     };
   }
 }

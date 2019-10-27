@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Comm, { Handlers, CommAttributes, noOpHandlers } from './Comm';
-import Database from '../database/Database';
 import { CommError } from './Errors';
+import { HostMeta } from '../database/Meta';
 
 export default function useCommHooks(comm: Comm): CommAttributes {
   const currentAttributes = comm.getAttributes();
@@ -10,15 +10,17 @@ export default function useCommHooks(comm: Comm): CommAttributes {
   const [errorDescription, setErrorDescription] = useState<string | null>(
     currentAttributes.errorDescription,
   );
-  const [database, setDatabase] = useState<Database | null>(
-    currentAttributes.database,
+  const [users, setUsers] = useState<string[]>(currentAttributes.users);
+  const [hostMeta, setHostMeta] = useState<HostMeta | null>(
+    currentAttributes.hostMeta,
   );
 
   const handlers: Handlers = {
     setRoom,
     setError,
     setErrorDescription,
-    setDatabase,
+    setUsers,
+    setHostMeta,
   };
   useEffect(() => {
     comm.register(handlers);
@@ -31,6 +33,7 @@ export default function useCommHooks(comm: Comm): CommAttributes {
     room,
     error,
     errorDescription,
-    database,
+    users,
+    hostMeta,
   };
 }

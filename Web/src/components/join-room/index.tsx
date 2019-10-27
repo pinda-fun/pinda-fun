@@ -35,7 +35,11 @@ interface JoinRoomProps {
   match: match<{ id?: string }>;
 }
 
-const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) => {
+const JoinRoomPage: React.FC<JoinRoomProps> = ({
+  match: {
+    params: { id },
+  },
+}) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
 
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
@@ -68,7 +72,9 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
       setPermission(MotionPermission.DENIED);
       return;
     }
-    if (typeof (window.DeviceMotionEvent as any).requestPermission === 'function') {
+    if (
+      typeof (window.DeviceMotionEvent as any).requestPermission === 'function'
+    ) {
       setPermissionDialog(true);
     } else {
       setPermission(MotionPermission.GRANTED);
