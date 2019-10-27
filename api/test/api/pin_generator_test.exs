@@ -17,10 +17,12 @@ defmodule Api.PINGeneratorTest do
       end)
 
     assert is_nil(PINGenerator.generate_pin(pid))
+    refute PINGenerator.has_pin?(pid)
 
     Enum.each(pins, fn pin ->
       assert :ok = PINGenerator.mark_pin_as_available(pin, pid)
       assert :error = PINGenerator.mark_pin_as_available(pin, pid)
+      assert PINGenerator.has_pin?(pid)
     end)
 
     Enum.each(1..PINGenerator.max_num_pins(), fn _ ->
@@ -30,5 +32,25 @@ defmodule Api.PINGeneratorTest do
     end)
 
     assert is_nil(PINGenerator.generate_pin(pid))
+    refute PINGenerator.has_pin?(pid)
+  end
+
+  test "mark_pin_as_unavailable/2", %{pid: pid} do
+    assert :ok = PINGenerator.mark_pin_as_unavailable("1234", pid)
+    assert :error = PINGenerator.mark_pin_as_unavailable("1234", pid)
+    assert :ok = PINGenerator.mark_pin_as_available("1234", pid)
+    assert :error = PINGenerator.mark_pin_as_available("1234", pid)
+  end
+
+  test "Does cleanup properly" do
+    assert :ok = PINGenerator.mark_pin_as_unavailable("1234")
+
+    PINGenerator
+    |> GenServer.whereis()
+    |> send(:cleanup)
+
+    # Make a GenServer call just to make sure that the process message has been processed
+    assert PINGenerator.has_pin?()
+    assert :ok = PINGenerator.mark_pin_as_unavailable("1234")
   end
 end
