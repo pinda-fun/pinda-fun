@@ -35,7 +35,6 @@ const PindaWaving = styled(PindaWavingSVG)`
 `;
 
 const ErrorHeading = styled(Heading)`
-  font-size: 1rem;
   color: var(--red);
 `;
 
@@ -46,47 +45,49 @@ const Waiting: React.FC = () => {
   const [hostPresent, setHostPresent] = useState(true);
 
   const {
-    database, error,
+    room, error, hostMeta, users,
   } = useCommHooks(comm);
 
   useEffect(() => {
-    if (database === null) return;
-    database.onSync(() => {
-      setFunMessage(`${database.getNumPlayers()} are now in the game!`);
-      const maybeHostMeta = database.getHostMeta();
-      if (maybeHostMeta == null) {
-        // Handle the case when the host left
-        setHostPresent(false);
-        return;
-      }
-      const { game } = maybeHostMeta;
-      selectGame(game);
-    });
-  }, [database]);
+    if (hostMeta === null) {
+      setHostPresent(false);
+      return;
+    }
+    setFunMessage(`${users.length} are now in the game!`);
+    const { game } = hostMeta;
+    selectGame(game);
+  }, [hostMeta, users]);
 
   if (error) {
     return <Redirect to="/join" />;
   }
 
+  if (room === null) {
+    return <Redirect to="/join" />;
+  }
+
   return (
     <WaitingDiv>
-      <Heading>
-        {funMessage}
-      </Heading>
       {hostPresent
         && (
-          <Heading>
-            We are going to play {selectedGame}
-          </Heading>
+          <>
+            <Heading>
+              {funMessage}
+            </Heading>
+            <Heading>
+              We are going to play {selectedGame}
+            </Heading>
+          </>
         )}
       {!hostPresent
         && (
           <>
             <ErrorHeading>
-              Oh no! looks like host has left!
+              Oh no! <br />
+              Looks like host has left!
             </ErrorHeading>
             <Link to="/">
-              Go Back Home.
+              Go Back
             </Link>
           </>
         )}

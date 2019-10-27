@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
-import Meta from 'components/room/database/Meta';
 import CommContext from 'components/room/comm/CommContext';
 import useCommHooks from 'components/room/comm/useCommHooks';
 import NumPlayers from './NumPlayers';
@@ -112,23 +111,11 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-interface MetaMap {
-  [clientId: string]: Meta;
-}
-
 const HostRoomPage: React.FC = () => {
   const comm = useContext(CommContext);
   const {
-    room, error, database,
+    room, error, users,
   } = useCommHooks(comm);
-  const [players, setPlayers] = useState<MetaMap>({});
-
-  useEffect(() => {
-    if (!database || !database.getMetas()) return;
-    database.onSync(() => {
-      setPlayers(database.getMetas());
-    });
-  }, [database]);
 
   // general hook to disconnect host from room when he leaves.
   useEffect(() => () => comm.leaveRoom(), [comm]);
@@ -154,7 +141,7 @@ const HostRoomPage: React.FC = () => {
             <h2>Game PIN:</h2>
             <h1>{room}</h1>
           </GamePinSection>
-          <NumPlayers numPlayers={Object.entries(players).length} hideOnMedium />
+          <NumPlayers numPlayers={users.length} hideOnMedium />
         </div>
         <ShareSection>
           <h2>Share via</h2>
@@ -162,15 +149,16 @@ const HostRoomPage: React.FC = () => {
             <QrCode sharableLink={sharableLink} />
             <SocialShare sharableLink={sharableLink} />
           </ShareContent>
-          <NumPlayers numPlayers={Object.entries(players).length} hideOnLarge />
+          <NumPlayers numPlayers={users.length} hideOnLarge />
         </ShareSection>
       </TwoColumnDiv>
       <Link to={{ pathname: '/room' }}>
         <StartButton>START!</StartButton>
       </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
-      {Object.entries(players).map(([name, meta]) => (
-        <p key={name}>{name}: {meta.name}</p>
+      <h3>Connected:</h3>
+      {users.map((name) => (
+        <p key={name}>{name}</p>
       ))}
       <PindaHappy />
     </CreateRoomContainer>

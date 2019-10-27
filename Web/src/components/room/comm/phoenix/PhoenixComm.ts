@@ -175,8 +175,8 @@ export default class PhoenixComm implements Comm {
     { message, payload }: HostCommand,
     onOk?: (() => void) | undefined,
     onError?:
-      | ((error: PushError, errorDescription: string | null) => void)
-      | undefined,
+    | ((error: PushError, errorDescription: string | null) => void)
+    | undefined,
   ): void {
     if (this.channel == null) {
       if (onError) onError(PushError.NoChannel, null);
