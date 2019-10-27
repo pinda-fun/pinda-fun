@@ -41,6 +41,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   },
 }) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
+  const [username, setUsername] = useState('');
 
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionDialog, setPermissionDialog] = useState(false);
@@ -80,13 +81,15 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
     }
   };
 
-  const onJoinRoomFormSubmit = (newGamePin: string) => {
+  const onJoinRoomFormSubmit = (newGamePin: string, newUsername: string) => {
     if (joinRequested && newGamePin === gamePin) return;
     if (newGamePin.length !== PIN_LENGTH) return;
+    if (newUsername === '') return;
 
     setJoinRequested(true);
 
     setGamePin(newGamePin);
+    setUsername(newUsername);
   };
 
   useEffect(() => {
@@ -94,17 +97,11 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       getPermissionAvailability();
     }
     if (joinRequested && permission === MotionPermission.GRANTED) {
-      const name = prompt('What is your name?');
-      if (name == null || name === '') {
-        alert('Name cannot be empty');
-        setJoinRequested(false);
-        return undefined;
-      }
-      comm.joinRoom(gamePin, name);
+      comm.joinRoom(gamePin, username);
       return () => comm.leaveRoom();
     }
     return undefined;
-  }, [permission, joinRequested, gamePin, comm]);
+  }, [permission, joinRequested, gamePin, username, comm]);
 
   useEffect(() => {
     if (error != null) setJoinRequested(false);
@@ -116,15 +113,16 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       <JoinRoomForm
         submitJoinRoomForm={onJoinRoomFormSubmit}
         initialId={id}
+        pinLength={PIN_LENGTH}
         permission={permission}
       />
-      <p>{room != null && `Connected, numPlayers = ${users.length}`}</p>
       <p>
+        {room != null && `Connected, numPlayers = ${users.length}`}
         {error != null && `Error: ${error.toString()} -- ${errorDescription}`}
+        {room != null && hostMeta == null && 'Host left us :('}
+        {hostMeta != null && `Game: ${hostMeta.game}`}
+        Users: {JSON.stringify(users)}
       </p>
-      <p>{room != null && hostMeta == null && 'Host left us :('}</p>
-      <p>{hostMeta != null && `Game: ${hostMeta.game}`}</p>
-      <p>Users: {JSON.stringify(users)}</p>
       <Modal
         isVisible={showPermissionDialog}
         title="Give Permissions?"
