@@ -4,6 +4,7 @@ import React, {
 import CommContext from 'components/room/comm/CommContext';
 import useCommHooks from 'components/room/comm/useCommHooks';
 import Loading from 'components/common/Loading';
+import BigButton from 'components/common/BigButton';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommError } from './comm/Errors';
@@ -14,7 +15,7 @@ const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
 export interface FinishedComponentProps {
-  results: ResultMap | null;
+  allMetas: ResultMap | null;
   room: string | null;
   error: CommError | null;
   users: string[];
@@ -43,18 +44,33 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
 }) => {
   const comm = useContext(CommContext);
   const [game, setGame] = useState(Game.SHAKE);
+  const [isReady, setIsReady] = useState(false);
 
   // general hook to disconnect host from room when he leaves.
-  useEffect(() => () => comm.leaveRoom(), [comm]);
+  useEffect(() => () => {
+    comm.leaveRoom();
+  }, [comm]);
 
   const {
-    hostMeta, room, error, users, results,
+    hostMeta, room, error, users, allMetas, myMeta,
   } = useCommHooks(comm);
 
+  const onReadyClick = () => {
+    comm.readyUp();
+    setIsReady(true);
+  };
+
   useEffect(() => {
-    if (hostMeta === null) return;
+    if (hostMeta === null) {
+      // If host left, leave the room
+      if (myMeta !== null && !myMeta.isHost && room !== null) comm.leaveRoom();
+      return;
+    }
     setGame(hostMeta.game);
-  }, [hostMeta]);
+    if (hostMeta.state === GameState.FINISHED) {
+      setIsReady(false);
+    }
+  }, [comm, hostMeta, myMeta, room]);
 
   if (hostMeta === null) {
     return <NoHostComponent />;
@@ -66,14 +82,19 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
         && (
           <FinishedComponent
             {... {
-              results, room, users, error, game,
+              allMetas, room, users, error, game,
             }}
           />
         )}
       {hostMeta.state === GameState.ONGOING
         && <GameComponent game={game} />}
       {hostMeta.state === GameState.PREPARE
-        && <Loading />}
+        && (
+          <Loading>
+            {isReady && <p>You are ready!</p>}
+            {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
+          </Loading>
+        )}
     </>
   );
 };
