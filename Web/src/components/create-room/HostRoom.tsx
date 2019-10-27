@@ -2,16 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
+import Meta from 'components/room/database/Meta';
+import CommContext from 'components/room/comm/CommContext';
+import useCommHooks from 'components/room/comm/useCommHooks';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
-import Meta from 'components/room/database/Meta';
-import CommContext from 'components/room/comm/CommContext';
-import useCommHooks from 'components/room/comm/useCommHooks';
-import { metaIsHost } from 'components/room/database/Meta';
-import Database from 'components/room/database/Database';
+
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -116,12 +115,6 @@ const PindaHappy = styled(PindaHappySVG)`
 interface MetaMap {
   [clientId: string]: Meta;
 }
-
-const userIsHost = (database: Database | null): boolean => {
-  if (!database) return false;
-  const meta = database.getMyMeta();
-  return !!(meta && metaIsHost(meta));
-};
 
 const HostRoomPage: React.FC = () => {
   const comm = useContext(CommContext);

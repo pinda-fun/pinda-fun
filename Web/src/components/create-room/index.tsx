@@ -69,18 +69,19 @@ const CreateRoomPage: React.FC = () => {
 
   const validated = (name: string, game: string) => {
     const trimmedName = name.trim();
-    if (name.trim().length === 0)
+    if (name.trim().length === 0) {
       return {
-        name: name,
+        name,
         gameName: game,
-        errors: ["Host name cannot be empty"],
+        errors: ['Host name cannot be empty'],
       };
+    }
     return {
       name: trimmedName,
       gameName: game,
       errors: [] as string[],
     };
-  }
+  };
 
   const attemptCreation = () => {
     const { name, gameName, errors } = validated(hostName, selectedGame);
@@ -99,14 +100,14 @@ const CreateRoomPage: React.FC = () => {
   }
 
   if (room !== null) {
-    return <Redirect to="/room" />
+    return <Redirect to="/room" />;
   }
 
   return (
     <CreateRoomContainer>
       <PindaHappySVG />
       <Form
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault();
           attemptCreation();
         }}
@@ -125,7 +126,7 @@ const CreateRoomPage: React.FC = () => {
           disabled={!hostName.length}
         >
           Make Room
-                </CreateRoomButton>
+        </CreateRoomButton>
         {inputErrors.map((inputError) => (
           <ErrorText>
             {inputError}
