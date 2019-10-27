@@ -65,6 +65,7 @@ export default class PhoenixComm implements Comm {
 
   register(handlers: Handlers): void {
     this.handlers = handlers;
+    this.flush();
   }
 
   private flush(): void {

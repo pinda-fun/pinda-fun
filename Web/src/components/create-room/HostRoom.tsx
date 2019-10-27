@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import Meta from 'components/room/database/Meta';
@@ -136,7 +136,7 @@ const HostRoomPage: React.FC = () => {
   }
 
   /*
-  if (room === null || !userIsHost(database)) {
+  if (room === null) {
     // This means that the host is not connected to any room,
     // Or I am not the host of this room.
     console.log(room, database);
@@ -168,7 +168,7 @@ const HostRoomPage: React.FC = () => {
       </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
       {Object.entries(players).map(([name, meta]) => (
-        <p>{name}: {meta.name}</p>
+        <p key={name}>{name}: {meta.name}</p>
       ))}
       <PindaHappy />
     </CreateRoomContainer>

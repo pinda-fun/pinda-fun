@@ -100,7 +100,7 @@ const CreateRoomPage: React.FC = () => {
   }
 
   if (room !== null) {
-    return <Redirect to="/room" />;
+    return <Redirect push={true} to="/room" />;
   }
 
   return (
