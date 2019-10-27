@@ -125,8 +125,13 @@ const HostRoomPage: React.FC = () => {
 
   useEffect(() => {
     if (!database || !database.getMetas()) return;
-    setPlayers(database.getMetas());
+    database.onSync(() => {
+      setPlayers(database.getMetas());
+    });
   }, [database]);
+
+  // general hook to disconnect host from room when he leaves.
+  useEffect(() => () => comm.leaveRoom(), [comm]);
 
   const sharableLink = `${window.location.origin}/join/${room}`;
 
@@ -135,14 +140,11 @@ const HostRoomPage: React.FC = () => {
     return <p>Error: {error}</p>;
   }
 
-  /*
   if (room === null) {
     // This means that the host is not connected to any room,
     // Or I am not the host of this room.
-    console.log(room, database);
     return <Redirect to="/join" />;
   }
-  */
 
   return (
     <CreateRoomContainer>
