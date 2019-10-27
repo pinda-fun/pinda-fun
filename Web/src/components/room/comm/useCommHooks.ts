@@ -48,7 +48,7 @@ export default function useCommHooks(
     };
     // Only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [comm]);
+  }, []);
 
   return {
     room,

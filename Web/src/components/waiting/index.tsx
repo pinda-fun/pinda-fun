@@ -58,8 +58,8 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
   if (resultsExist(results)) {
     return (
       <WaitingDiv>
-        {Object.entries(results).map(([guy, score]) => (
-          <p>{guy}: {score}</p>
+        {Object.entries(results).map(([name, score]) => (
+          <p>{name}: {score}</p>
         ))}
         <Heading>
           Waiting for next game...

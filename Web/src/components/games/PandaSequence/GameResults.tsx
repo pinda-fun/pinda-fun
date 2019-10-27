@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
+import CommContext from 'components/room/comm/CommContext';
 
 const Container = styled.div`
   background: var(--pale-purple);
@@ -20,11 +21,15 @@ const Result = styled.h2`
   justify-content: center;
 `;
 
-const GameResults: React.FC<{ finalCount: number }> = ({ finalCount }) => (
-  <Container>
-    <h2>Your Score:</h2>
-    <Result>{finalCount}</Result>
-  </Container>
-);
+const GameResults: React.FC<{ finalCount: number }> = ({ finalCount }) => {
+  const comm = useContext(CommContext);
+  useEffect(() => comm.sendResult([finalCount]), [finalCount, comm]);
+  return (
+    <Container>
+      <h2>Your Score:</h2>
+      <Result>{finalCount}</Result>
+    </Container>
+  );
+};
 
 export default GameResults;
