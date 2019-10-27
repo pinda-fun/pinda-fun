@@ -1,5 +1,6 @@
 import { CommError, PushError } from './Errors';
 import { HostMeta } from '../database/Meta';
+import Game from '../Games';
 
 export interface ResultMap {
   [name: string]: number[],
@@ -62,6 +63,7 @@ export default interface Comm {
 
   // Host
   prepare(onError?: PushErrorHandler): void
+  changeGame(game: Game, onError?: PushErrorHandler): void
 
   // For useCommHooks use
   // Client callbacks
