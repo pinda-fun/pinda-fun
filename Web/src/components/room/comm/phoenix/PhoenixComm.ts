@@ -143,11 +143,7 @@ export default class PhoenixComm implements Comm {
   private handleStateChange(oldState: GameState, newState: GameState): void {
     // State transition handler for client
     if (oldState === GameState.FINISHED && newState === GameState.PREPARE) {
-      // this.pushClientCommand(
-      //   { message: ClientMessage.RESULT, payload: { result: null } },
-      //   noOp,
-      //   noOp,
-      // );
+      // No automatic action on this state transition
     } else if (oldState === GameState.PREPARE && newState === GameState.ONGOING) {
       this.gameStartHandler();
     } else if (oldState === GameState.ONGOING && newState === GameState.FINISHED) {
