@@ -48,7 +48,7 @@ const BalloonShake: React.FC = () => {
   const [permission, setPermission] = useState(MotionPermission.GRANTED);
   const [showPermissionButton, setPermissionButton] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
-  const [gameState, setGameState] = useState(GameState.WAITING_START);
+  const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
   const { count } = useCounter(obs, -1);
 
   const getPermissionAvailability = () => {

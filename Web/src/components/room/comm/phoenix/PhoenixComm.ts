@@ -80,6 +80,7 @@ export default class PhoenixComm implements Comm {
 
   _register(handlers: Handlers): void {
     this.handlers = handlers;
+    this.flush();
   }
 
   private getUsers(): string[] {

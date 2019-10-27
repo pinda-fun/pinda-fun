@@ -24,18 +24,15 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
   permission,
 }) => {
   const [isGamePinSet, setIsGamePinSet] = useState(false);
-
-  let gamePin = initialId ? initialId.substring(0, pinLength) : '';
-  let username = '';
+  const [gamePin, setGamePin] = useState(initialId || '');
 
   const handleSubmitGamePin = (pin: string) => {
-    gamePin = pin;
+    setGamePin(pin);
     setIsGamePinSet(true);
   };
 
   const handleSubmitUsername = (name: string) => {
-    username = name;
-    submitJoinRoomForm(gamePin, username);
+    submitJoinRoomForm(gamePin, name);
   };
 
   return (
@@ -46,7 +43,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
             <GamePinForm
               onSubmitPin={handleSubmitGamePin}
               pinLength={pinLength}
-              initialPin={gamePin}
+              initialPin={initialId || ''}
               permission={permission}
             />
             <Link to={{ pathname: '/' }}>Cancel</Link>
