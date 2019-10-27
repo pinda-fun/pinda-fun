@@ -37,6 +37,10 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
+  def join(_, _, _) do
+    {:error, %{reason: "Bad request"}}
+  end
+
   defp join("room:" <> pin, payload = %{"name" => name, "game" => game}, socket, :host)
        when is_binary(name) and is_binary(game) do
     Api.PINGenerator.mark_pin_as_unavailable(pin)
@@ -91,13 +95,16 @@ defmodule ApiWeb.RoomChannel do
     client_id = socket.assigns.client_id
 
     with {:ok, presences} <- Presence.safe_list(socket),
-         %{"isHost" => true} <- Map.get(presences, client_id),
+         %{metas: [%{"isHost" => true}]} <- Map.get(presences, client_id),
          {:ok, _} <-
            Presence.safe_update(socket, client_id, fn meta -> %{meta | "isStart" => true} end) do
       {:noreply, socket}
     else
-      %{"isHost" => false} -> {:reply, {:error, %{reason: "Only host can perform this"}}, socket}
-      {:error, :timeout} -> handle_in(msg, payload, socket)
+      %{metas: [%{"isHost" => false}]} ->
+        {:reply, {:error, %{reason: "Only host can perform this"}}, socket}
+
+      {:error, :timeout} ->
+        handle_in(msg, payload, socket)
     end
   end
 
@@ -105,13 +112,16 @@ defmodule ApiWeb.RoomChannel do
     client_id = socket.assigns.client_id
 
     with {:ok, presences} <- Presence.safe_list(socket),
-         %{"isHost" => true} <- Map.get(presences, client_id),
+         %{metas: [%{"isHost" => true}]} <- Map.get(presences, client_id),
          {:ok, _} <-
            Presence.safe_update(socket, client_id, fn meta -> %{meta | "isStart" => false} end) do
       {:noreply, socket}
     else
-      %{"isHost" => false} -> {:reply, {:error, %{reason: "Only host can perform this"}}, socket}
-      {:error, :timeout} -> handle_in(msg, payload, socket)
+      %{metas: [%{"isHost" => false}]} ->
+        {:reply, {:error, %{reason: "Only host can perform this"}}, socket}
+
+      {:error, :timeout} ->
+        handle_in(msg, payload, socket)
     end
   end
 end
