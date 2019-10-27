@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as MentalSumsSVG } from 'svg/metal-sums-badge.svg';
+import { ReactComponent as MentalSumsSVG } from 'svg/mental-sums-badge.svg';
 import GameInstructions from '../GameInstructions';
 
 type GameInstructionsProps = {
