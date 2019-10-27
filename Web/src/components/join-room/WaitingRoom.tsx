@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
-import { resultsExist } from 'components/room/comm/Comm';
+import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import { mdMin } from '../../utils/media';
 
 const WaitingDiv = styled.div`
@@ -39,21 +39,13 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  room, users, error, game, results,
+  users, game, results,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
   useEffect(() => {
     setFunMessage(`${users.length} are now in the game!`);
   }, [users]);
-
-  if (error) {
-    return <Redirect to="/join" />;
-  }
-
-  if (room === null) {
-    return <Redirect to="/join" />;
-  }
 
   if (resultsExist(results)) {
     return (
@@ -93,8 +85,9 @@ const HostLeft: React.FC = () => (
   </WaitingDiv>
 );
 
-const Waiting: React.FC = () => (
+const Waiting: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
   <CommonRoom
+    commHooks={commHooks}
     NoHostComponent={HostLeft}
     FinishedComponent={WaitingLobby}
   />
