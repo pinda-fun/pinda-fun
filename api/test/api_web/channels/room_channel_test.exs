@@ -236,8 +236,18 @@ defmodule ApiWeb.RoomChannelTest do
         end
 
         Process.unlink(socket.channel_pid)
-        ref = leave(socket)
-        assert_reply ref, :ok
+        close(socket)
+
+        # Ignore any potential racey message
+        receive do
+          %Phoenix.Socket.Message{
+            event: "presence_diff",
+            payload: %{leaves: %{@non_host2_client_id => _}}
+          } ->
+            nil
+        after
+          100 -> nil
+        end
 
         send(tester_pid, {:non_host2, :host, :disconnected})
         send(tester_pid, {:non_host2, :non_host, :disconnected})
