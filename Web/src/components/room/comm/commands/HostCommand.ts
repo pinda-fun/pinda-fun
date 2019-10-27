@@ -17,7 +17,7 @@ export default HostCommand;
 
 /* StateHostCommand */
 export interface StateHostCommandPayload extends HostCommandPayload {
-  newState: GameState,
+  state: GameState,
 }
 
 export interface StateHostCommand extends HostCommandBase<StateHostCommandPayload> {

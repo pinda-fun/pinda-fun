@@ -61,7 +61,7 @@ defmodule ApiWeb.RoomChannel do
     case Presence.safe_list(socket) do
       {:ok, presences} ->
         push(socket, "presence_state", presences)
-        Presence.track(socket, socket.assigns.client_id, meta(type, payload))
+        Presence.track(socket, socket.assigns.client_id, Presence.meta(type, payload))
         {:noreply, socket}
 
       {:error, :timeout} ->
@@ -74,54 +74,26 @@ defmodule ApiWeb.RoomChannel do
     {:noreply, socket}
   end
 
-  defp base_meta(type, %{"name" => name}) when is_binary(name) do
-    %{
-      "isHost" => type == :host,
-      "name" => name
-    }
-  end
-
-  defp meta(type = :host, payload = %{"game" => game}) when is_binary(game) do
-    base_meta(type, payload)
-    |> Map.put("game", game)
-    |> Map.put("isStart", false)
-  end
-
-  defp meta(type = :non_host, payload) do
-    base_meta(type, payload)
-  end
-
-  def handle_in(msg = "start", payload, socket) do
-    client_id = socket.assigns.client_id
-
-    with {:ok, presences} <- Presence.safe_list(socket),
-         %{metas: [%{"isHost" => true}]} <- Map.get(presences, client_id),
-         {:ok, _} <-
-           Presence.safe_update(socket, client_id, fn meta -> %{meta | "isStart" => true} end) do
-      {:noreply, socket}
+  def handle_in(msg, payload, socket) when is_map(payload) do
+    if Map.has_key?(payload, msg) do
+      do_update_presence(msg, payload[msg], socket)
     else
-      %{metas: [%{"isHost" => false}]} ->
-        {:reply, {:error, %{reason: "Only host can perform this"}}, socket}
-
-      {:error, :timeout} ->
-        handle_in(msg, payload, socket)
+      handle_in(nil, nil, socket)
     end
   end
 
-  def handle_in(msg = "stop", payload, socket) do
-    client_id = socket.assigns.client_id
+  def handle_in(_, _, socket) do
+    {:reply, {:error, %{reason: "Bad request"}}, socket}
+  end
 
-    with {:ok, presences} <- Presence.safe_list(socket),
-         %{metas: [%{"isHost" => true}]} <- Map.get(presences, client_id),
-         {:ok, _} <-
-           Presence.safe_update(socket, client_id, fn meta -> %{meta | "isStart" => false} end) do
-      {:noreply, socket}
-    else
-      %{metas: [%{"isHost" => false}]} ->
-        {:reply, {:error, %{reason: "Only host can perform this"}}, socket}
+  defp do_update_presence(key, new_value, socket) do
+    updater = fn meta ->
+      if Map.has_key?(meta, key), do: %{meta | key => new_value}, else: meta
+    end
 
-      {:error, :timeout} ->
-        handle_in(msg, payload, socket)
+    case Presence.safe_update(socket, socket.assigns.client_id, updater) do
+      {:ok, _ref} -> {:reply, :ok, socket}
+      {:error, :timeout} -> do_update_presence(key, new_value, socket)
     end
   end
 end
