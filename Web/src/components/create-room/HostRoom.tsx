@@ -9,7 +9,8 @@ import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
-
+import CommonRoom, { PrepareComponentProps } from 'components/room/CommonRoom';
+import { RoomState } from 'components/room/states';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -111,7 +112,7 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-const HostRoomPage: React.FC = () => {
+const HostRoomLobby: React.FC = () => {
   const comm = useContext(CommContext);
   const {
     room, error, users,
@@ -152,9 +153,11 @@ const HostRoomPage: React.FC = () => {
           <NumPlayers numPlayers={users.length} hideOnLarge />
         </ShareSection>
       </TwoColumnDiv>
-      <Link to={{ pathname: '/room' }}>
-        <StartButton>START!</StartButton>
-      </Link>
+      <StartButton
+        onClick={() => comm.prepare()}
+      >
+        START!
+      </StartButton>
       <Link to={{ pathname: '/' }}>Cancel</Link>
       <h3>Connected:</h3>
       {users.map((name) => (
@@ -165,4 +168,14 @@ const HostRoomPage: React.FC = () => {
   );
 };
 
+const HostRoomPage: React.FC = () => (
+  <CommonRoom
+    PrepareComponent={HostRoomLobby}
+    ResultsComponent={({ results }) => (
+      <>
+        {results.map((r) => <p>{r}</p>)}
+      </>
+    )}
+  />
+);
 export default HostRoomPage;
