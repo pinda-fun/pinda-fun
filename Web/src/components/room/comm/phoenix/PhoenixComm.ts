@@ -6,6 +6,7 @@ import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import { HostMeta } from 'components/room/database/Meta';
+import Game from 'components/room/Games';
 import HostCommand, { HostMessage } from '../commands/HostCommand';
 import Comm, {
   Handlers, noOpHandlers, CommAttributes, PushErrorHandler, ResultMap,
@@ -80,7 +81,6 @@ export default class PhoenixComm implements Comm {
 
   _register(handlers: Handlers): void {
     this.handlers = handlers;
-    this.flush();
   }
 
   private getUsers(): string[] {
@@ -323,6 +323,21 @@ export default class PhoenixComm implements Comm {
     }
     this.pushHostCommand(
       { message: HostMessage.STATE, payload: { state: GameState.PREPARE } },
+      noOp,
+      onError || noOp,
+    );
+  }
+
+  changeGame(game: Game, onError?: PushErrorHandler): void {
+    if (this.database == null) return;
+    if (this.database.hostId !== getClientId()) return;
+    const maybeHostMeta = this.database.getHostMeta();
+    if (maybeHostMeta == null) return;
+    if (maybeHostMeta.state !== GameState.FINISHED) {
+      throw new Error(`Cannot invoke changeGame() when state is ${maybeHostMeta.state.toString()}`);
+    }
+    this.pushHostCommand(
+      { message: HostMessage.GAME, payload: { game } },
       noOp,
       onError || noOp,
     );
