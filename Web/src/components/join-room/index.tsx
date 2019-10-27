@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import useCommHooks from 'components/room/comm/useCommHooks';
 import CommContext from 'components/room/comm/CommContext';
 import JoinRoomPage from './JoinRoomPage';
-import WaitingRoom from './WaitingRoom';
+import ParticipantRoom from './ParticipantRoom';
 
 interface JoinRoomMatchParams {
   id?: string
@@ -27,7 +27,7 @@ const JoinRoom: React.FC<RouteComponentProps<JoinRoomMatchParams>> = ({
       {commHooks.room === null
         && <JoinRoomPage commHooks={commHooks} roomId={initialId} />}
       {commHooks.room !== null
-        && <WaitingRoom commHooks={commHooks} />}
+        && <ParticipantRoom commHooks={commHooks} />}
     </>
   );
 };

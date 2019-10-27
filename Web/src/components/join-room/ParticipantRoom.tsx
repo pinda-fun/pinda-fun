@@ -85,7 +85,7 @@ const HostLeft: React.FC = () => (
   </WaitingDiv>
 );
 
-const Waiting: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
+const ParticipantRoom: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
   <CommonRoom
     commHooks={commHooks}
     NoHostComponent={HostLeft}
@@ -93,4 +93,4 @@ const Waiting: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
   />
 );
 
-export default Waiting;
+export default ParticipantRoom;
