@@ -1,13 +1,18 @@
 import { CommError, PushError } from './Errors';
 import { HostMeta } from '../database/Meta';
 
+export interface ResultMap {
+  [name: string]: number[],
+}
 export interface CommAttributes {
   room: string | null,
   error: CommError | null,
   errorDescription: string | null,
   users: string[],
   hostMeta: HostMeta | null,
+  results: ResultMap | null,
 }
+
 
 export interface Handlers {
   setRoom: React.Dispatch<React.SetStateAction<string | null>>,
@@ -15,6 +20,7 @@ export interface Handlers {
   setErrorDescription: React.Dispatch<React.SetStateAction<string | null>>,
   setUsers: React.Dispatch<React.SetStateAction<string[]>>,
   setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
+  setResults: React.Dispatch<React.SetStateAction<ResultMap | null>>,
 }
 
 const noOp = () => { };
@@ -24,6 +30,7 @@ export const noOpHandlers = {
   setErrorDescription: noOp,
   setUsers: noOp,
   setHostMeta: noOp,
+  setResults: noOp,
 };
 
 export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;

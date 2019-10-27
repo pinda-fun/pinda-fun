@@ -8,7 +8,7 @@ import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import { HostMeta } from 'components/room/database/Meta';
 import HostCommand, { HostMessage } from '../commands/HostCommand';
 import Comm, {
-  Handlers, noOpHandlers, CommAttributes, PushErrorHandler,
+  Handlers, noOpHandlers, CommAttributes, PushErrorHandler, ResultMap,
 } from '../Comm';
 import { CommError, PushError } from '../Errors';
 import ClientCommand, { ClientMessage } from '../commands/ClientCommand';
@@ -84,12 +84,19 @@ export default class PhoenixComm implements Comm {
 
   private getUsers(): string[] {
     if (this.database == null) return [];
-    return Object.values(this.database.getMetas()).map((meta) => meta.name);
+    return Object.values(this.database.getMetas()).map(({ name }) => name);
   }
 
   private getHostMeta(): HostMeta | null {
     if (this.database == null) return null;
     return this.database.getHostMeta();
+  }
+
+  private getResults(): ResultMap | null {
+    if (this.database == null) return null;
+    return Object.fromEntries(
+      Object.values(this.database.getMetas()).map(({ name, result }) => [name, result || []]),
+    );
   }
 
   private flush(): void {
@@ -99,12 +106,14 @@ export default class PhoenixComm implements Comm {
       setRoom,
       setUsers,
       setHostMeta,
+      setResults,
     } = this.handlers;
     if (setError) setError(this.error);
     if (setErrorDescription) setErrorDescription(this.errorDescription);
     if (setRoom) setRoom(this.room);
     if (setUsers) setUsers(this.getUsers());
     if (setHostMeta) setHostMeta(this.getHostMeta());
+    if (setResults) setResults(this.getResults());
   }
 
   private cleanup(): void {
@@ -275,6 +284,7 @@ export default class PhoenixComm implements Comm {
     const { room, error, errorDescription } = this;
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
+    const results = this.getResults();
 
     return {
       room,
@@ -282,6 +292,7 @@ export default class PhoenixComm implements Comm {
       errorDescription,
       users,
       hostMeta,
+      results,
     };
   }
 
