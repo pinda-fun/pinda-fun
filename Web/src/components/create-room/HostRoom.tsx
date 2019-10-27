@@ -115,9 +115,6 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 }) => {
   const comm = useContext(CommContext);
 
-  // general hook to disconnect host from room when he leaves.
-  useEffect(() => () => comm.leaveRoom(), [comm]);
-
   const sharableLink = `${window.location.origin}/join/${room}`;
 
   // TODO: stylise error

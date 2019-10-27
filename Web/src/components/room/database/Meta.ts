@@ -1,4 +1,5 @@
 import GameState from '../comm/GameState';
+import Game from '../Games';
 
 interface MetaBase {
   isHost: boolean,
@@ -9,7 +10,7 @@ interface MetaBase {
 export interface HostMeta extends MetaBase {
   isHost: true,
   // HostMeta specific
-  game: string,
+  game: Game,
   state: GameState,
 }
 

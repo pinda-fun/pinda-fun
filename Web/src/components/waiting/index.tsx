@@ -1,10 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, Redirect } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
-import CommContext from 'components/room/comm/CommContext';
-import useCommHooks from 'components/room/comm/useCommHooks';
 import { mdMin } from '../../utils/media';
+import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 
 const WaitingDiv = styled.div`
   background-color: var(--pale-purple);
@@ -38,29 +37,14 @@ const ErrorHeading = styled(Heading)`
   color: var(--red);
 `;
 
-const Waiting: React.FC = () => {
-  const comm = useContext(CommContext);
+const WaitingLobby: React.FC<FinishedComponentProps> = ({
+  room, users, error, game
+}) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
-  const [selectedGame, selectGame] = useState('');
-  const [hostPresent, setHostPresent] = useState(true);
-
-  const {
-    room, error, hostMeta, users,
-  } = useCommHooks(comm);
-
-  // generic leave room cleanup hook.
-  useEffect(() => () => comm.leaveRoom(), [comm]);
 
   useEffect(() => {
-    if (hostMeta === null) {
-      setHostPresent(false);
-      return;
-    }
-    setHostPresent(true);
     setFunMessage(`${users.length} are now in the game!`);
-    const { game } = hostMeta;
-    selectGame(game);
-  }, [hostMeta, users]);
+  }, [users]);
 
   if (error) {
     return <Redirect to="/join" />;
@@ -72,32 +56,35 @@ const Waiting: React.FC = () => {
 
   return (
     <WaitingDiv>
-      {hostPresent
-        && (
-          <>
-            <Heading>
-              {funMessage}
-            </Heading>
-            <Heading>
-              We are going to play {selectedGame}
-            </Heading>
-          </>
-        )}
-      {!hostPresent
-        && (
-          <>
-            <ErrorHeading>
-              Oh no! <br />
-              Looks like host has left!
-            </ErrorHeading>
-            <Link to="/join">
-              Go Back
-            </Link>
-          </>
-        )}
+      <Heading>
+        {funMessage}
+      </Heading>
+      <Heading>
+        We are going to play {game}
+      </Heading>
       <PindaWaving />
     </WaitingDiv>
   );
 };
+
+const HostLeft: React.FC = () => (
+  <WaitingDiv>
+    <ErrorHeading>
+      Oh no! <br />
+      Looks like host has left!
+        </ErrorHeading>
+    <Link to="/join">
+      Go Back
+        </Link>
+    <PindaWaving />
+  </WaitingDiv>
+);
+
+const Waiting: React.FC = () => (
+  <CommonRoom
+    NoHostComponent={HostLeft}
+    FinishedComponent={WaitingLobby}
+  />
+);
 
 export default Waiting;
