@@ -41,6 +41,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   },
 }) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
+  const [username, setUsername] = useState('');
 
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionDialog, setPermissionDialog] = useState(false);
@@ -81,12 +82,14 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
     }
   };
 
-  const onJoinRoomFormSubmit = (newGamePin: string) => {
+  const onJoinRoomFormSubmit = (newGamePin: string, newUsername: string) => {
     if (joinRequested && newGamePin === gamePin) return;
     if (newGamePin.length !== PIN_LENGTH) return;
+    if (newUsername === '') return;
 
     // Reset state
     setGamePin(newGamePin);
+    setUsername(newUsername);
     setJoinRequested(true);
   };
 
@@ -95,15 +98,9 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       getPermissionAvailability();
     }
     if (joinRequested && permission === MotionPermission.GRANTED) {
-      const name = prompt('What is your name?');
-      const filteredName = name || '';
-      if (!filteredName) {
-        alert('Name cannot be empty');
-        setJoinRequested(false);
-      }
-      comm.joinRoom(gamePin, filteredName);
+      comm.joinRoom(gamePin, username);
     }
-  }, [permission, joinRequested, gamePin, comm]);
+  }, [permission, joinRequested, gamePin, username, comm]);
 
   useEffect(() => {
     if (error !== null) setJoinRequested(false);
@@ -119,6 +116,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
       <JoinRoomForm
         submitJoinRoomForm={onJoinRoomFormSubmit}
         initialId={id}
+        pinLength={PIN_LENGTH}
         permission={permission}
       />
       <Modal
