@@ -113,14 +113,14 @@ const PindaHappy = styled(PindaHappySVG)`
 `;
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, results,
+  room, error, users, results, game,
 }) => {
   const comm = useContext(CommContext);
 
   const onStartButtonClick = () => {
-    const allGames = Object.values(Game) as Game[];
-    const game = allGames[Math.floor(Math.random() * allGames.length)];
-    comm.changeGame(game, () => comm.prepare());
+    const allGames = Object.values(Game).filter((value) => value !== game.toString()) as Game[];
+    const nextGame = allGames[Math.floor(Math.random() * allGames.length)];
+    comm.changeGame(nextGame, () => comm.prepare());
   };
 
   const sharableLink = `${window.location.origin}/join/${room}`;
