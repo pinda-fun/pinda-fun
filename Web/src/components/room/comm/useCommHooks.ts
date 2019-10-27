@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
-import Comm, {
-  Handlers, CommAttributes, noOpHandlers, ResultMap,
-} from './Comm';
-import { CommError } from './Errors';
-import { HostMeta } from '../database/Meta';
+import Comm, { CommAttributes } from './Comm';
 
 const noOp = () => { };
 
@@ -15,36 +11,15 @@ export default function useCommHooks(
   onGameStart: () => void = noOp,
   onGameEnd: () => void = noOp,
 ): CommAttributes {
-  const currentAttributes = comm._getAttributes();
-  const [room, setRoom] = useState<string | null>(currentAttributes.room);
-  const [error, setError] = useState<CommError | null>(currentAttributes.error);
-  const [errorDescription, setErrorDescription] = useState<string | null>(
-    currentAttributes.errorDescription,
-  );
-  const [users, setUsers] = useState<string[]>(currentAttributes.users);
-  const [hostMeta, setHostMeta] = useState<HostMeta | null>(
-    currentAttributes.hostMeta,
-  );
-  const [allMetas, setAllMetas] = useState<ResultMap | null>(currentAttributes.allMetas);
-  const [myMeta, setMyMeta] = useState(currentAttributes.myMeta);
-
-  const handlers: Handlers = {
-    setRoom,
-    setError,
-    setErrorDescription,
-    setUsers,
-    setHostMeta,
-    setAllMetas,
-    setMyMeta,
-  };
+  const [attributes, setAttributes] = useState(comm._getAttributes());
 
   useEffect(() => {
-    comm._register(handlers);
+    comm._register(setAttributes);
     comm._onGameStart(onGameStart);
     comm._onGameEnd(onGameEnd);
 
     return () => {
-      comm._register(noOpHandlers);
+      comm._register(noOp);
       comm._onGameStart(noOp);
       comm._onGameEnd(noOp);
     };
@@ -52,13 +27,5 @@ export default function useCommHooks(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
-    room,
-    error,
-    errorDescription,
-    users,
-    hostMeta,
-    allMetas,
-    myMeta,
-  };
+  return attributes;
 }

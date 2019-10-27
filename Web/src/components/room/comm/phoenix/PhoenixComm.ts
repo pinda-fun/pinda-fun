@@ -8,9 +8,7 @@ import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import Meta, { HostMeta } from 'components/room/database/Meta';
 import Game from 'components/room/Games';
 import HostCommand, { HostMessage } from '../commands/HostCommand';
-import Comm, {
-  Handlers, noOpHandlers, CommAttributes, PushErrorHandler, ResultMap,
-} from '../Comm';
+import Comm, { CommAttributes, PushErrorHandler, ResultMap } from '../Comm';
 import { CommError, PushError } from '../Errors';
 import ClientCommand, { ClientMessage } from '../commands/ClientCommand';
 import GameState from '../GameState';
@@ -54,7 +52,7 @@ export default class PhoenixComm implements Comm {
 
   private socket: Socket;
 
-  private handlers: Handlers;
+  private attributeHandler: (attributes: CommAttributes) => void;
 
   private gameStartHandler: () => void;
 
@@ -66,7 +64,7 @@ export default class PhoenixComm implements Comm {
     this.errorDescription = null;
     this.database = null;
     this.channel = null;
-    this.handlers = noOpHandlers;
+    this.attributeHandler = noOp;
     this.gameStartHandler = noOp;
     this.gameStopHandler = noOp;
 
@@ -79,8 +77,8 @@ export default class PhoenixComm implements Comm {
     if (process.env.NODE_ENV !== 'test') this.socket.connect();
   }
 
-  _register(handlers: Handlers): void {
-    this.handlers = handlers;
+  _register(handler: (attributes: CommAttributes) => void): void {
+    this.attributeHandler = handler;
     this.flush();
   }
 
@@ -105,26 +103,15 @@ export default class PhoenixComm implements Comm {
   }
 
   private flush(): void {
-    const currentHandlers = this.handlers;
-    const {
-      setError,
-      setErrorDescription,
-      setRoom,
-      setUsers,
-      setHostMeta,
-      setAllMetas,
-      setMyMeta,
-    } = currentHandlers;
-    // Always check whether the handlers has changed
-    if (currentHandlers === this.handlers && setError) setError(this.error);
-    if (currentHandlers === this.handlers && setErrorDescription) {
-      setErrorDescription(this.errorDescription);
-    }
-    if (currentHandlers === this.handlers && setRoom) setRoom(this.room);
-    if (currentHandlers === this.handlers && setUsers) setUsers(this.getUsers());
-    if (currentHandlers === this.handlers && setHostMeta) setHostMeta(this.getHostMeta());
-    if (currentHandlers === this.handlers && setAllMetas) setAllMetas(this.getAllMetas());
-    if (currentHandlers === this.handlers && setMyMeta) setMyMeta(this.getMyMeta());
+    this.attributeHandler({
+      error: this.error,
+      errorDescription: this.errorDescription,
+      room: this.room,
+      users: this.getUsers(),
+      hostMeta: this.getHostMeta(),
+      allMetas: this.getAllMetas(),
+      myMeta: this.getMyMeta(),
+    });
   }
 
   private cleanup(): void {

@@ -22,27 +22,6 @@ export interface CommAttributes {
   myMeta: Meta | null,
 }
 
-export interface Handlers {
-  setRoom: React.Dispatch<React.SetStateAction<string | null>>,
-  setError: React.Dispatch<React.SetStateAction<CommError | null>>,
-  setErrorDescription: React.Dispatch<React.SetStateAction<string | null>>,
-  setUsers: React.Dispatch<React.SetStateAction<string[]>>,
-  setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
-  setAllMetas: React.Dispatch<React.SetStateAction<ResultMap | null>>,
-  setMyMeta: React.Dispatch<React.SetStateAction<Meta | null>>,
-}
-
-const noOp = () => { };
-export const noOpHandlers: Handlers = {
-  setRoom: noOp,
-  setError: noOp,
-  setErrorDescription: noOp,
-  setUsers: noOp,
-  setHostMeta: noOp,
-  setAllMetas: noOp,
-  setMyMeta: noOp,
-};
-
 export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;
 
 /**
@@ -55,7 +34,7 @@ export default interface Comm {
   leaveRoom(): void
 
   // For useCommHooks use
-  _register(handlers: Handlers): void
+  _register(handler: (attributes: CommAttributes) => void): void
   _getAttributes(): CommAttributes
 
   /* RFC #108 */
