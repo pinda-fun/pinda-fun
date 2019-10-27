@@ -3,7 +3,7 @@ import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
-import Comm, { Handlers, noOpHandlers } from '../Comm';
+import Comm, { Handlers, noOpHandlers, CommAttributes } from '../Comm';
 import HostCommand from '../HostCommand';
 import { CommError, PushError } from '../Errors';
 
@@ -162,5 +162,14 @@ export default class PhoenixComm implements Comm {
         ({ reason }: ErrorPayload) => (onError || noOp)(PushError.Other, reason),
       )
       .receive(ChannelResponse.TIMEOUT, () => (onError || noOp)(PushError.Timeout, null));
+  }
+
+  getAttributes(): CommAttributes {
+    const {
+      room, error, errorDescription, database,
+    } = this;
+    return {
+      room, error, errorDescription, database,
+    };
   }
 }

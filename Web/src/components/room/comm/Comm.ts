@@ -26,6 +26,7 @@ export const noOpHandlers = {
  * if (error == CommError.Other) then (errorDescription != null)
  */
 export default interface Comm {
+  getAttributes(): CommAttributes
   register(handlers: Handlers): void
   createRoom(name: string, game: string): void
   joinRoom(pin: string, name: string, game?: string): void
