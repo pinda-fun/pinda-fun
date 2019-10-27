@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import styled, { ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { blinkRed, blinkGreen } from 'utils/animations';
+import { smMin } from 'utils/media';
 import { PandaSequenceMode, Feedback } from './Sequence';
 import { InputPandaPot, DisplayPandaPot } from './PandaPot';
-import { smMin } from 'utils/media';
 
 const NUM_POTS = 6;
 
