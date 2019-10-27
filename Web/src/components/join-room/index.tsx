@@ -27,7 +27,7 @@ const JoinRoom: React.FC<RouteComponentProps<JoinRoomMatchParams>> = ({
       {commHooks.room === null
         && <JoinRoomPage commHooks={commHooks} roomId={initialId} />}
       {commHooks.room !== null
-        && <WaitingRoom {...{ commHooks }} />}
+        && <WaitingRoom commHooks={commHooks} />}
     </>
   );
 };

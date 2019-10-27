@@ -59,8 +59,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.FINISHED
         && (
           <FinishedComponent
-            {...{ ...commHooks }}
-            game={game}
+            {...{ ...commHooks, game }}
           />
         )}
       {hostMeta.state === GameState.ONGOING
