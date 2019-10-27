@@ -93,11 +93,6 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
   };
 
   useEffect(() => {
-    if (channelName === null) return;
-    setChannel(channelName, { name });
-  }, [name, channelName, setChannel]);
-
-  useEffect(() => {
     if (joinRequested && permission === MotionPermission.NOT_SET) {
       getPermissionAvailability();
     }

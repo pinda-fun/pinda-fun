@@ -14,5 +14,9 @@ export interface NonHostMeta extends MetaBase {
   isHost: false,
 }
 
+export function metaIsHost(meta: MetaBase): meta is HostMeta {
+  return meta.isHost;
+}
+
 type Meta = HostMeta | NonHostMeta;
 export default Meta;
