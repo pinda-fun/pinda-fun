@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
+import BigButton from 'components/common/BigButton';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes } from './comm/Comm';
@@ -39,16 +40,31 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
 }) => {
   const comm = useContext(CommContext);
   const [game, setGame] = useState(Game.SHAKE);
+  const [isReady, setIsReady] = useState(false);
 
   // general hook to disconnect host from room when he leaves.
-  useEffect(() => () => comm.leaveRoom(), [comm]);
+  useEffect(() => () => {
+    comm.leaveRoom();
+  }, [comm]);
 
-  const { hostMeta } = commHooks;
+  const { hostMeta, myMeta, room } = commHooks;
+
+  const onReadyClick = () => {
+    comm.readyUp();
+    setIsReady(true);
+  };
 
   useEffect(() => {
-    if (hostMeta === null) return;
+    if (hostMeta === null) {
+      // If host left, leave the room
+      if (myMeta !== null && !myMeta.isHost && room !== null) comm.leaveRoom();
+      return;
+    }
     setGame(hostMeta.game);
-  }, [hostMeta]);
+    if (hostMeta.state === GameState.FINISHED) {
+      setIsReady(false);
+    }
+  }, [comm, hostMeta, myMeta, room]);
 
   if (hostMeta === null) {
     return <NoHostComponent />;
@@ -65,7 +81,12 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.ONGOING
         && <GameComponent game={game} />}
       {hostMeta.state === GameState.PREPARE
-        && <Loading />}
+        && (
+          <Loading>
+            {isReady && <p>You are ready!</p>}
+            {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
+          </Loading>
+        )}
     </>
   );
 };

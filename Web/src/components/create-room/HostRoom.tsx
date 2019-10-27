@@ -5,6 +5,7 @@ import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
+import Game from 'components/room/Games';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -112,9 +113,15 @@ const PindaHappy = styled(PindaHappySVG)`
 `;
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, results,
+  room, error, users, allMetas, game,
 }) => {
   const comm = useContext(CommContext);
+
+  const onStartButtonClick = () => {
+    const allGames = Object.values(Game).filter((value) => value !== game.toString()) as Game[];
+    const nextGame = allGames[Math.floor(Math.random() * allGames.length)];
+    comm.changeGame(nextGame, () => comm.prepare());
+  };
 
   const sharableLink = `${window.location.origin}/join/${room}`;
 
@@ -131,11 +138,11 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   return (
     <CreateRoomContainer>
-      {resultsExist(results) && (
+      {resultsExist(allMetas) && (
         <>
           <h1>Last Game:</h1>
-          {Object.entries(results).map(([name, score]) => (
-            <p>{name}: {score}</p>
+          {Object.entries(allMetas).map(([clientId, { name, result }]) => (
+            <p key={clientId}>{name}: {result}</p>
           ))}
         </>
       )}
@@ -157,7 +164,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
         </ShareSection>
       </TwoColumnDiv>
       <StartButton
-        onClick={() => comm.prepare()}
+        onClick={onStartButtonClick}
       >
         START!
       </StartButton>

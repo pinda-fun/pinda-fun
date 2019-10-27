@@ -5,12 +5,10 @@ import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
-import { HostMeta } from 'components/room/database/Meta';
+import Meta, { HostMeta } from 'components/room/database/Meta';
 import Game from 'components/room/Games';
 import HostCommand, { HostMessage } from '../commands/HostCommand';
-import Comm, {
-  Handlers, noOpHandlers, CommAttributes, PushErrorHandler, ResultMap,
-} from '../Comm';
+import Comm, { CommAttributes, PushErrorHandler, ResultMap } from '../Comm';
 import { CommError, PushError } from '../Errors';
 import ClientCommand, { ClientMessage } from '../commands/ClientCommand';
 import GameState from '../GameState';
@@ -54,7 +52,7 @@ export default class PhoenixComm implements Comm {
 
   private socket: Socket;
 
-  private handlers: Handlers;
+  private attributeHandler: (attributes: CommAttributes) => void;
 
   private gameStartHandler: () => void;
 
@@ -66,7 +64,7 @@ export default class PhoenixComm implements Comm {
     this.errorDescription = null;
     this.database = null;
     this.channel = null;
-    this.handlers = noOpHandlers;
+    this.attributeHandler = noOp;
     this.gameStartHandler = noOp;
     this.gameStopHandler = noOp;
 
@@ -79,8 +77,9 @@ export default class PhoenixComm implements Comm {
     if (process.env.NODE_ENV !== 'test') this.socket.connect();
   }
 
-  _register(handlers: Handlers): void {
-    this.handlers = handlers;
+  _register(handler: (attributes: CommAttributes) => void): void {
+    this.attributeHandler = handler;
+    this.flush();
   }
 
   private getUsers(): string[] {
@@ -93,28 +92,26 @@ export default class PhoenixComm implements Comm {
     return this.database.getHostMeta();
   }
 
-  private getResults(): ResultMap | null {
+  private getAllMetas(): ResultMap | null {
     if (this.database == null) return null;
-    return Object.fromEntries(
-      Object.values(this.database.getMetas()).map(({ name, result }) => [name, result || []]),
-    );
+    return this.database.getMetas();
+  }
+
+  private getMyMeta(): Meta | null {
+    if (this.database == null) return null;
+    return this.database.getMyMeta();
   }
 
   private flush(): void {
-    const {
-      setError,
-      setErrorDescription,
-      setRoom,
-      setUsers,
-      setHostMeta,
-      setResults,
-    } = this.handlers;
-    if (setError) setError(this.error);
-    if (setErrorDescription) setErrorDescription(this.errorDescription);
-    if (setRoom) setRoom(this.room);
-    if (setUsers) setUsers(this.getUsers());
-    if (setHostMeta) setHostMeta(this.getHostMeta());
-    if (setResults) setResults(this.getResults());
+    this.attributeHandler({
+      error: this.error,
+      errorDescription: this.errorDescription,
+      room: this.room,
+      users: this.getUsers(),
+      hostMeta: this.getHostMeta(),
+      allMetas: this.getAllMetas(),
+      myMeta: this.getMyMeta(),
+    });
   }
 
   private cleanup(): void {
@@ -133,11 +130,7 @@ export default class PhoenixComm implements Comm {
   private handleStateChange(oldState: GameState, newState: GameState): void {
     // State transition handler for client
     if (oldState === GameState.FINISHED && newState === GameState.PREPARE) {
-      this.pushClientCommand(
-        { message: ClientMessage.RESULT, payload: { result: null } },
-        noOp,
-        noOp,
-      );
+      // No automatic action on this state transition
     } else if (oldState === GameState.PREPARE && newState === GameState.ONGOING) {
       this.gameStartHandler();
     } else if (oldState === GameState.ONGOING && newState === GameState.FINISHED) {
@@ -285,7 +278,8 @@ export default class PhoenixComm implements Comm {
     const { room, error, errorDescription } = this;
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
-    const results = this.getResults();
+    const allMetas = this.getAllMetas();
+    const myMeta = this.getMyMeta();
 
     return {
       room,
@@ -293,14 +287,23 @@ export default class PhoenixComm implements Comm {
       errorDescription,
       users,
       hostMeta,
-      results,
+      allMetas,
+      myMeta,
     };
   }
 
-  sendResult(result: number[], onError?: PushErrorHandler): void {
+  sendResult(result: number[], onOk?: () => void, onError?: PushErrorHandler): void {
     this.pushClientCommand(
       { message: ClientMessage.RESULT, payload: { result } },
-      noOp,
+      onOk || noOp,
+      onError || noOp,
+    );
+  }
+
+  readyUp(onOk?: () => void, onError?: PushErrorHandler): void {
+    this.pushClientCommand(
+      { message: ClientMessage.RESULT, payload: { result: null } },
+      onOk || noOp,
       onError || noOp,
     );
   }
@@ -313,7 +316,7 @@ export default class PhoenixComm implements Comm {
     this.gameStopHandler = handler;
   }
 
-  prepare(onError?: PushErrorHandler): void {
+  prepare(onOk?: () => void, onError?: PushErrorHandler): void {
     if (this.database == null) return;
     if (this.database.hostId !== getClientId()) return;
     const maybeHostMeta = this.database.getHostMeta();
@@ -323,12 +326,12 @@ export default class PhoenixComm implements Comm {
     }
     this.pushHostCommand(
       { message: HostMessage.STATE, payload: { state: GameState.PREPARE } },
-      noOp,
+      onOk || noOp,
       onError || noOp,
     );
   }
 
-  changeGame(game: Game, onError?: PushErrorHandler): void {
+  changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void {
     if (this.database == null) return;
     if (this.database.hostId !== getClientId()) return;
     const maybeHostMeta = this.database.getHostMeta();
@@ -338,7 +341,7 @@ export default class PhoenixComm implements Comm {
     }
     this.pushHostCommand(
       { message: HostMessage.GAME, payload: { game } },
-      noOp,
+      onOk || noOp,
       onError || noOp,
     );
   }

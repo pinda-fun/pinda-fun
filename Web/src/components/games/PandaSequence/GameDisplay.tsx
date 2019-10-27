@@ -12,7 +12,7 @@ interface IProps {
   mode: PandaSequenceMode,
   secondsLeft: number,
   score: number,
-  processInput:(input:number) => boolean,
+  processInput: (input: number) => boolean,
   feedback: Feedback,
   timestep: number,
   displaying?: number,
@@ -27,7 +27,7 @@ const InputTheme = {
 };
 
 interface GameContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  feedbackState:Feedback;
+  feedbackState: Feedback;
 }
 
 /**
@@ -53,7 +53,7 @@ const GameContainer = styled(GameContainerElement)`
   font-size: 1.4rem;
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 
-  ${({ feedbackState }:GameContainerProps) => (feedbackState === Feedback.CORRECT && css`animation: ${blinkGreen} 0.5s ease-in-out 0s 1;`)
+  ${({ feedbackState }: GameContainerProps) => (feedbackState === Feedback.CORRECT && css`animation: ${blinkGreen} 0.5s ease-in-out 0s 1;`)
     || (feedbackState === Feedback.WRONG && css`animation: ${blinkRed} 0.5s ease-in-out 0s 1;`)
 }
 `;
@@ -118,20 +118,18 @@ const GameDisplay: React.FC<IProps> = ({
   let pots;
   if (mode === PandaSequenceMode.DISPLAY) {
     pots = Array(NUM_POTS).fill(null).map((_, index) => (
-      <FlowerPotDiv>
+      // eslint-disable-next-line react/no-array-index-key
+      <FlowerPotDiv key={index}>
         <DisplayPandaPot
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
           duration={displaying === index ? timestep : 0}
         />
       </FlowerPotDiv>
     ));
   } else {
     pots = Array(NUM_POTS).fill(null).map((_, index) => (
-      <FlowerPotDiv>
+      // eslint-disable-next-line react/no-array-index-key
+      <FlowerPotDiv key={index}>
         <InputPandaPot
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
           onTouch={(event: React.SyntheticEvent) => handleTouch(event, index)}
           onTouchEnd={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
           isSelected={selected[index]}

@@ -39,7 +39,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  users, game, results,
+  users, allMetas,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -47,11 +47,11 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
     setFunMessage(`${users.length} are now in the game!`);
   }, [users]);
 
-  if (resultsExist(results)) {
+  if (resultsExist(allMetas)) {
     return (
       <WaitingDiv>
-        {Object.entries(results).map(([name, score]) => (
-          <p>{name}: {score}</p>
+        {Object.entries(allMetas).map(([clientId, { name, result }]) => (
+          <p key={clientId}>{name}: {result}</p>
         ))}
         <Heading>
           Waiting for next game...
@@ -63,9 +63,6 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
     <WaitingDiv>
       <Heading>
         {funMessage}
-      </Heading>
-      <Heading>
-        We are going to play {game}
       </Heading>
       <PindaWaving />
     </WaitingDiv>
