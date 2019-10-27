@@ -9,8 +9,7 @@ import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
-import CommonRoom, { PrepareComponentProps } from 'components/room/CommonRoom';
-import { RoomState } from 'components/room/states';
+import CommonRoom from 'components/room/CommonRoom';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -170,12 +169,7 @@ const HostRoomLobby: React.FC = () => {
 
 const HostRoomPage: React.FC = () => (
   <CommonRoom
-    PrepareComponent={HostRoomLobby}
-    ResultsComponent={({ results }) => (
-      <>
-        {results.map((r) => <p>{r}</p>)}
-      </>
-    )}
+    FinishedComponent={HostRoomLobby}
   />
 );
 export default HostRoomPage;
