@@ -31,30 +31,24 @@ const PindaHead = styled(PindaHeadSVG)`
   height: 5.5rem;
 `;
 
-
-interface Payload {
-  name: string,
-}
-
 interface JoinRoomProps {
-  match: match<{ id?: string }>,
+  match: match<{ id?: string }>;
 }
 
-const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) => {
+const JoinRoomPage: React.FC<JoinRoomProps> = ({
+  match: {
+    params: { id },
+  },
+}) => {
   const [gamePin, setGamePin] = useState(id ? id.substring(0, PIN_LENGTH) : '');
-
-  const [names, setNames] = useState<[string, string][]>([]);
-
-  const [gameName, setGameName] = useState<string | null>(null);
 
   const [permission, setPermission] = useState(MotionPermission.NOT_SET);
   const [showPermissionDialog, setPermissionDialog] = useState(false);
   const [joinRequested, setJoinRequested] = useState(false);
-  const [numPlayers, setNumPlayers] = useState(0);
 
   const comm = useContext(CommContext);
   const {
-    room, error, errorDescription, database,
+    room, error, errorDescription, users, hostMeta,
   } = useCommHooks(comm);
 
   const getUserPermission = async function requestPermission() {
@@ -77,7 +71,9 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
       setPermission(MotionPermission.DENIED);
       return;
     }
-    if (typeof (window.DeviceMotionEvent as any).requestPermission === 'function') {
+    if (
+      typeof (window.DeviceMotionEvent as any).requestPermission === 'function'
+    ) {
       setPermissionDialog(true);
     } else {
       setPermission(MotionPermission.GRANTED);
@@ -87,10 +83,6 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
   const onJoinRoomFormSubmit = (newGamePin: string) => {
     if (joinRequested && newGamePin === gamePin) return;
     if (newGamePin.length !== PIN_LENGTH) return;
-
-    // Reset state
-    setGameName(null);
-    setNames([]);
 
     setJoinRequested(true);
 
@@ -115,24 +107,6 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
   }, [permission, joinRequested, gamePin, comm]);
 
   useEffect(() => {
-    if (database == null) return;
-    database.onSync(() => {
-      setNumPlayers(database.getNumPlayers());
-      const metas = database.getMetas();
-      setNames(Object.entries(metas).map(([clientId, meta]) => [clientId, meta.name]));
-
-      const maybeHostMeta = database.getHostMeta();
-      if (maybeHostMeta == null) {
-        // Handle the case when the host left
-        setGameName('Unknown, host left us :(');
-        return;
-      }
-      const { game } = maybeHostMeta;
-      setGameName(game);
-    });
-  }, [database, gameName]);
-
-  useEffect(() => {
     if (error != null) setJoinRequested(false);
   }, [error]);
 
@@ -144,10 +118,13 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({ match: { params: { id } } }) =>
         initialId={id}
         permission={permission}
       />
-      <p>{room != null && `Connected, numPlayers = ${numPlayers}`}</p>
-      <p>{error != null && `Error: ${error.toString()} -- ${errorDescription}`}</p>
-      <p>{gameName != null && `Game: ${gameName}`}</p>
-      <p>UserMetas: {JSON.stringify(names)}</p>
+      <p>{room != null && `Connected, numPlayers = ${users.length}`}</p>
+      <p>
+        {error != null && `Error: ${error.toString()} -- ${errorDescription}`}
+      </p>
+      <p>{room != null && hostMeta == null && 'Host left us :('}</p>
+      <p>{hostMeta != null && `Game: ${hostMeta.game}`}</p>
+      <p>Users: {JSON.stringify(users)}</p>
       <Modal
         isVisible={showPermissionDialog}
         title="Give Permissions?"

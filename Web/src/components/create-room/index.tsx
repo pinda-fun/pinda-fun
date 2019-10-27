@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
@@ -111,21 +111,9 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
-interface Payload {
-  name: string,
-  game: string
-}
-
-interface LobbyReturnPayload {
-  pin: string
-}
-
 const CreateRoomPage: React.FC = () => {
   const comm = useContext(CommContext);
-  const { room, error, database } = useCommHooks(comm);
-
-  const [numPlayers, setNumPlayers] = useState(0);
-  const [names, setNames] = useState<[string, string][]>([]);
+  const { room, error, users } = useCommHooks(comm);
 
   useEffect(() => {
     comm.createRoom('Julius', 'shake');
@@ -135,15 +123,6 @@ const CreateRoomPage: React.FC = () => {
     // Only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (database == null) return;
-    database.onSync(() => {
-      setNumPlayers(database.getNumPlayers());
-      const metas = database.getMetas();
-      setNames(Object.entries(metas).map(([clientId, meta]) => [clientId, meta.name]));
-    });
-  }, [database]);
 
   // TODO: stylise error
   if (error != null) {
@@ -164,7 +143,7 @@ const CreateRoomPage: React.FC = () => {
             <h2>Game PIN:</h2>
             <h1>{room}</h1>
           </GamePinSection>
-          <NumPlayers numPlayers={numPlayers} hideOnMedium />
+          <NumPlayers numPlayers={users.length} hideOnMedium />
         </div>
         <ShareSection>
           <h2>Share via</h2>
@@ -172,14 +151,14 @@ const CreateRoomPage: React.FC = () => {
             <QrCode sharableLink={sharableLink} />
             <SocialShare sharableLink={sharableLink} />
           </ShareContent>
-          <NumPlayers numPlayers={numPlayers} hideOnLarge />
+          <NumPlayers numPlayers={users.length} hideOnLarge />
         </ShareSection>
       </TwoColumnDiv>
       <Link to={{ pathname: '/room' }}>
         <StartButton>START!</StartButton>
       </Link>
       <Link to={{ pathname: '/' }}>Cancel</Link>
-      <p>{room != null && `UserMetas: ${JSON.stringify(names)}`}</p>
+      <p>{room != null && `UserMetas: ${JSON.stringify(users)}`}</p>
       <PindaHappy />
     </CreateRoomContainer>
   );

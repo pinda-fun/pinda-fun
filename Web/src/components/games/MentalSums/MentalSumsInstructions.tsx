@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as ShakePhoneSVG } from 'svg/shake-phone-badge.svg';
+import { ReactComponent as MentalSumsSVG } from 'svg/metal-sums-badge.svg';
 import GameInstructions from '../GameInstructions';
 
 type GameInstructionsProps = {
@@ -16,7 +16,7 @@ const BalloonShakeInstructions: React.FC<GameInstructionsProps> = ({
     seconds={seconds}
     onComplete={onComplete}
   >
-    <ShakePhoneSVG />
+    <MentalSumsSVG />
     <p>
         After the timer starts, you will be given 30 seconds to answer as many
         mental sums as possible.
