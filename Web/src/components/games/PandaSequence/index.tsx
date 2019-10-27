@@ -2,40 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { PandaSequenceMode } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
+import Countdown from '../Countdown';
 import GameResults from './GameResults';
 import GameDisplay from './GameDisplay';
+import PandaSequenceInstructions from './PandaSequenceInstructions';
 import { randomWithinBounds, generate } from './SequenceGenerator';
 
 const GAME_TIME = 30;
-const SEED = '100';
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
 
 const PandaSequence: React.FC = () => {
-  const [gameState, setGameState] = useState(GameState.WAITING_START);
+  const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [score, setScore] = useState(0);
   const [mode, setMode] = useState(PandaSequenceMode.DISPLAY);
 
-  const [generator] = useState(randomWithinBounds(0, 5, SEED));
+  const [generator] = useState(randomWithinBounds(0, 5));
   const [sequence, setSequence] = useState(INIT_SEQUENCE);
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
 
-  /** Setup game and trigger first sequence */
+  // setup game and trigger first sequence
   useEffect(() => {
+    if (gameState !== GameState.IN_PROGRESS) return () => {};
+
     const timer = createTimerObservable(GAME_TIME);
     const timerSub = timer.subscribe(
       (left) => setSecondsLeft(left),
       null,
       () => setGameState(GameState.WAITING_RESULTS),
     );
-    setGameState(GameState.IN_PROGRESS);
+    setSequence((oldSeq) => generate(oldSeq, generator));
     return () => timerSub.unsubscribe();
-  }, []);
+  }, [generator, gameState]);
 
-  /** Display new sequence */
+  // display new sequence
   useEffect(() => {
-    if (sequence.numbers.length === 0) return () => {};
+    if (sequence === INIT_SEQUENCE) return () => {};
 
     const { timestep, numbers } = sequence;
     const timer = createTimerObservable(numbers.length + 1, timestep);
@@ -47,47 +50,68 @@ const PandaSequence: React.FC = () => {
     return () => timerSub.unsubscribe();
   }, [sequence]);
 
-  /** Process user input */
-  const handleInputEvent = (input: number) => {
-    const { numbers } = sequence;
-    // validate input against sequence
-    if (numbers[inputIndex] === input) {
-      // handle end of sequence
-      if (inputIndex === numbers.length - 1) {
-        setScore((oldScore) => oldScore + numbers.length);
-        setMode(PandaSequenceMode.DISPLAY);
-      } else {
-        setInputIndex((oldIndex) => oldIndex + 1);
-      }
-    } else {
-      setMode(PandaSequenceMode.DISPLAY);
-    }
-  };
-
-  /** Handle mode change */
+  // handle mode change
   useEffect(() => {
     if (mode === PandaSequenceMode.INPUT) {
       setInputIndex(0);
     } else if (mode === PandaSequenceMode.DISPLAY) {
-      setSequence((oldSeq) => generate(oldSeq, generator));
       setIndex(-1);
     }
-  }, [mode, generator]);
+  }, [mode]);
+
+  const processCorrectInput = (numbers:number[]) => {
+    if (inputIndex === numbers.length - 1) {
+      // update score, mode and sequence if current sequence is done
+      setScore((oldScore) => oldScore + numbers.length);
+      setMode(PandaSequenceMode.DISPLAY);
+      setSequence((oldSeq) => generate(oldSeq, generator));
+    } else {
+      // update inputIndex
+      setInputIndex((oldIndex) => oldIndex + 1);
+    }
+  };
+
+  const processWrongInput = () => {
+    // update mode and reset current sequence
+    setMode(PandaSequenceMode.DISPLAY);
+    setSequence((oldSeq) => ({ ...oldSeq }));
+  };
+
+  /** Callback to process user input in game display */
+  const processInput = (input: number) => {
+    const { numbers } = sequence;
+
+    if (numbers[inputIndex] === input) {
+      processCorrectInput(numbers);
+    } else {
+      processWrongInput();
+    }
+  };
 
   return (
     <>
-      {gameState === GameState.IN_PROGRESS
+      {gameState === GameState.INSTRUCTIONS
         && (
-          <GameDisplay
-            mode={mode}
-            secondsLeft={secondsLeft}
-            score={score}
-            active={sequence.numbers[index]}
-            handleInputEvent={handleInputEvent}
+          <PandaSequenceInstructions
+            onComplete={() => setGameState(GameState.COUNTING_DOWN)}
+            seconds={5}
           />
         )}
+      {gameState === GameState.COUNTING_DOWN
+      && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />}
+      {gameState === GameState.IN_PROGRESS
+      && (
+        <GameDisplay
+          mode={mode}
+          secondsLeft={secondsLeft}
+          score={score}
+          processInput={processInput}
+          displaying={sequence.numbers[index]}
+          timestep={sequence.timestep}
+        />
+      )}
       {gameState === GameState.WAITING_RESULTS
-        && <GameResults finalCount={score} />}
+      && <GameResults finalCount={score} />}
     </>
   );
 };

@@ -8,8 +8,11 @@ const TIMESTEP_REDUCTION_FACTOR = 0.8;
  * Generator that yields a number between the lowerbound (inclusive) and upper
  * bound (exclusive) with a predefined seed.
  */
-export function* randomWithinBounds(lowerBound: number, upperBound: number, seed: string = '100')
-  : Generator<number, number, void> {
+export function* randomWithinBounds(
+  lowerBound: number,
+  upperBound: number,
+  seed: string = Date.now().toLocaleString(),
+): Generator<number, number, void> {
   const random = seedrandom(seed);
   while (true) yield Math.floor(random() * (upperBound - lowerBound) + lowerBound);
 }
