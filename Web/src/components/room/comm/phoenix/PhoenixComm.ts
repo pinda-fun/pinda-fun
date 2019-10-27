@@ -133,11 +133,11 @@ export default class PhoenixComm implements Comm {
   private handleStateChange(oldState: GameState, newState: GameState): void {
     // State transition handler for client
     if (oldState === GameState.FINISHED && newState === GameState.PREPARE) {
-      this.pushClientCommand(
-        { message: ClientMessage.RESULT, payload: { result: null } },
-        noOp,
-        noOp,
-      );
+      // this.pushClientCommand(
+      //   { message: ClientMessage.RESULT, payload: { result: null } },
+      //   noOp,
+      //   noOp,
+      // );
     } else if (oldState === GameState.PREPARE && newState === GameState.ONGOING) {
       this.gameStartHandler();
     } else if (oldState === GameState.ONGOING && newState === GameState.FINISHED) {
@@ -297,10 +297,18 @@ export default class PhoenixComm implements Comm {
     };
   }
 
-  sendResult(result: number[], onError?: PushErrorHandler): void {
+  sendResult(result: number[], onOk?: () => void, onError?: PushErrorHandler): void {
     this.pushClientCommand(
       { message: ClientMessage.RESULT, payload: { result } },
-      noOp,
+      onOk || noOp,
+      onError || noOp,
+    );
+  }
+
+  readyUp(onOk?: () => void, onError?: PushErrorHandler): void {
+    this.pushClientCommand(
+      { message: ClientMessage.RESULT, payload: { result: null } },
+      onOk || noOp,
       onError || noOp,
     );
   }

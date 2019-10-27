@@ -59,7 +59,8 @@ export default interface Comm {
   /**
    * Sends current result
    */
-  sendResult(result: number[], onError?: PushErrorHandler): void
+  readyUp(onOk?: () => void, onError?: PushErrorHandler): void
+  sendResult(result: number[], onOk?: () => void, onError?: PushErrorHandler): void
 
   // Host
   prepare(onOk?: () => void, onError?: PushErrorHandler): void
