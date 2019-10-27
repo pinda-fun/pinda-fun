@@ -61,6 +61,9 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   useEffect(() => {
     if (hostMeta === null) return;
     setGame(hostMeta.game);
+    if (hostMeta.state === GameState.FINISHED) {
+      setIsReady(false);
+    }
   }, [hostMeta]);
 
   if (hostMeta === null) {
@@ -81,10 +84,10 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
         && <GameComponent game={game} />}
       {hostMeta.state === GameState.PREPARE
         && (
-        <Loading>
-          {isReady && <p>You are ready!</p>}
-          {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
-        </Loading>
+          <Loading>
+            {isReady && <p>You are ready!</p>}
+            {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
+          </Loading>
         )}
     </>
   );
