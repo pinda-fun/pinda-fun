@@ -5,6 +5,9 @@ import { HostMeta } from '../database/Meta';
 
 const noOp = () => { };
 
+/**
+ * WARNING: Only one hook can be used at a time.
+ */
 export default function useCommHooks(
   comm: Comm,
   onGameStart: () => void = noOp,
