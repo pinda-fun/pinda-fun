@@ -104,12 +104,12 @@ const GameDisplay: React.FC<IProps> = ({
 }) => {
   const [selected, setSelected] = useState(Array(NUM_POTS).fill(false));
 
-  const handleTouch = (event: React.SyntheticEvent, index:number) => {
+  const handleTouch = (event: React.SyntheticEvent, index: number) => {
     event.preventDefault();
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: true }));
   };
 
-  const handleTouchEnd = (event: React.SyntheticEvent, index:number) => {
+  const handleTouchEnd = (event: React.SyntheticEvent, index: number) => {
     event.preventDefault();
     processInput(index);
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: false }));
@@ -132,10 +132,8 @@ const GameDisplay: React.FC<IProps> = ({
         <InputPandaPot
           // eslint-disable-next-line react/no-array-index-key
           key={index}
-          onTouchStart={(event: React.SyntheticEvent) => handleTouch(event, index)}
+          onTouch={(event: React.SyntheticEvent) => handleTouch(event, index)}
           onTouchEnd={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
-          onMouseDown={(event: React.SyntheticEvent) => handleTouch(event, index)}
-          onMouseUp={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
           isSelected={selected[index]}
         />
       </FlowerPotDiv>

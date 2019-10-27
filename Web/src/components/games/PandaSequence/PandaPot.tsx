@@ -56,7 +56,7 @@ const DisplayPandaHead = styled(PandaHead)`
 // preventing it from setting the event as passive by default, which would in turn stop us
 // from calling preventDefault() to curb propagation of touch events to mouse events
 const InputPandaPotContainer = styled.div`
-  width: ${({ isSelected }: InputProps) => (isSelected ? '50%' : '100%')}
+  opacity: ${({ isSelected }: InputProps) => (isSelected ? '0.5' : '1')}
   touch-action: none;
   transition: 0.1s;
   cursor: pointer;
@@ -69,9 +69,24 @@ const DisplayPandaPot: React.FC<DisplayProps> = ({ duration }) => (
   </PandaPotContainer>
 );
 
-const InputPandaPot: React.FC<InputProps> = ({ isSelected }) => (
+interface InputPandaPotProps extends PandaHeadProps {
+  isSelected: boolean,
+  onTouch: (event: React.SyntheticEvent) => void,
+  onTouchEnd: (event: React.SyntheticEvent) => void,
+}
+
+const InputPandaPot: React.FC<InputPandaPotProps> = ({
+  isSelected,
+  onTouch,
+  onTouchEnd,
+}) => (
   <InputPandaPotContainer isSelected={isSelected}>
-    <PandaPotContainer>
+    <PandaPotContainer
+      onTouchStart={(event: React.SyntheticEvent) => onTouch(event)}
+      onTouchEnd={(event: React.SyntheticEvent) => onTouchEnd(event)}
+      onMouseDown={(event: React.SyntheticEvent) => onTouch(event)}
+      onMouseUp={(event: React.SyntheticEvent) => onTouchEnd(event)}
+    >
       <PandaHead />
       <FlowerPot />
     </PandaPotContainer>
