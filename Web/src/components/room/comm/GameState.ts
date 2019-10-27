@@ -1,7 +1,7 @@
 enum GameState {
-  FINISHED,
-  PREPARE,
-  ONGOING,
+  FINISHED = 0,
+  PREPARE = 1,
+  ONGOING = 2,
 }
 
 export default GameState;

@@ -1,13 +1,16 @@
+import GameState from '../comm/GameState';
+
 interface MetaBase {
   isHost: boolean,
   name: string,
+  result: number[] | null,
 }
 
 export interface HostMeta extends MetaBase {
   isHost: true,
   // HostMeta specific
   game: string,
-  isStart: boolean,
+  state: GameState,
 }
 
 export interface NonHostMeta extends MetaBase {
