@@ -1,45 +1,33 @@
 import React, { useState } from 'react';
-import styled, { keyframes, ThemeProvider, css } from 'styled-components';
+import styled, { ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
-import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
-import { wobble } from 'react-animations';
-import { PandaSequenceMode } from './Sequence';
+import { blinkRed, blinkGreen } from 'utils/animations';
+import { smMin } from 'utils/media';
+import { PandaSequenceMode, Feedback } from './Sequence';
+import { InputPandaPot, DisplayPandaPot } from './PandaPot';
+
+const NUM_POTS = 6;
 
 interface IProps {
   mode: PandaSequenceMode,
   secondsLeft: number,
   score: number,
-  processInput:(input:number) => void,
+  processInput:(input:number) => boolean,
+  feedback: Feedback,
   timestep: number,
   displaying?: number,
 }
 
 const DisplayTheme = {
-  background: 'var(--pink)',
+  background: 'var(--yellow)',
 };
 
 const InputTheme = {
-  background: 'var(--pale-purple)',
+  background: 'var(--light-purple)',
 };
 
-const GameContainer = styled.div`
-  background: ${(props) => props.theme.background};
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-
-  color: black;
-  font-size: 1.4rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
-`;
-
-interface BalloonSVGElementProps extends React.ComponentProps<typeof BalloonSVG> {
-  duration?: number,
-  isSelected?: boolean,
+interface GameContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+  feedbackState:Feedback;
 }
 
 /**
@@ -47,51 +35,63 @@ interface BalloonSVGElementProps extends React.ComponentProps<typeof BalloonSVG>
  * See: https://www.styled-components.com/docs/faqs#why-am-i-getting-html-attribute-warnings
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const BalloonSVGElement = ({ duration, isSelected, ...props }: BalloonSVGElementProps) => (
-  <BalloonSVG {...props} />
+const GameContainerElement = ({ feedbackState, ...props }: GameContainerProps) => (
+  <div {...props} />
 );
 
-interface DisplayBalloonProps extends BalloonSVGElementProps {
-  duration: number,
-}
-
-interface InputBalloonProps extends BalloonSVGElementProps {
-  isSelected: boolean,
-}
-
-const DisplayBalloon = styled(BalloonSVGElement)`
-  width: 70px;
-  margin: 12px;
-  ${({ duration }:DisplayBalloonProps) => duration !== 0
-    && css`
-    animation: ${duration / 1000}s ${keyframes`${wobble}`} ease-in-out infinite;
-`};
-`;
-
-// touch-action set to none to inform chrome that no scrolling is performed on this element,
-// preventing it from setting the event as passive by default, which would in turn stop us
-// from calling preventDefault() to curb propagation of touch events to mouse events
-const InputBalloon = styled(BalloonSVGElement)`
-  width: ${({ isSelected }:InputBalloonProps) => (isSelected ? '100px' : '70px')}
-  margin: 12px;
-  touch-action: none;
-`;
-
-const BalloonContainer = styled.div`
+const GameContainer = styled(GameContainerElement)`
+  background: ${(props) => props.theme.background};
   overflow: hidden;
-  height: 100vh;
-  width: 100vw;
+  height: ${window.innerHeight}px;
+
   display: flex;
-  flex-direction: row;
-  justify-content:space-evenly;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  color: white;
+  font-size: 1.4rem;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+
+  ${({ feedbackState }:GameContainerProps) => (feedbackState === Feedback.CORRECT && css`animation: ${blinkGreen} 0.5s ease-in-out 0s 1;`)
+    || (feedbackState === Feedback.WRONG && css`animation: ${blinkRed} 0.5s ease-in-out 0s 1;`)
+}
 `;
 
-const Score = styled.h3`
-  font-size: 4rem;
-  color: var(--dark-purple);
-  margin: 1rem 0 0 0;
+const FlowerPotsContainer = styled.div`
+  display: flex;
+  flex-flow: row wrap;
   justify-content: center;
-  padding-top: 6px;
+  height: 55vh;
+  width: ${smMin};
+
+  @media (max-width: ${smMin}) {
+    width: 100%;
+  }
+`;
+
+const FlowerPotDiv = styled.div`
+  margin: 0.5em;
+  height: 20vh;
+  width: calc((100% / 3) - 1em);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`;
+
+const SeqCountSection = styled.section`
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+
+  & > * {
+    margin: 0 0.25rem;
+  }
+`;
+
+const BigText = styled.span`
+  font-size: 2.5rem;
 `;
 
 /**
@@ -100,58 +100,56 @@ const Score = styled.h3`
  * Input Mode: Element tapped is animated based on "selected" state
  */
 const GameDisplay: React.FC<IProps> = ({
-  mode, secondsLeft, score, processInput, timestep, displaying,
+  mode, secondsLeft, score, processInput, feedback, timestep, displaying,
 }) => {
-  const [selected, setSelected] = useState(Array(5).fill(false));
+  const [selected, setSelected] = useState(Array(NUM_POTS).fill(false));
 
-  const handleTouch = (event: React.SyntheticEvent, index:number) => {
+  const handleTouch = (event: React.SyntheticEvent, index: number) => {
     event.preventDefault();
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: true }));
   };
 
-  const handleTouchEnd = (event: React.SyntheticEvent, index:number) => {
+  const handleTouchEnd = (event: React.SyntheticEvent, index: number) => {
     event.preventDefault();
     processInput(index);
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: false }));
   };
 
-  let balloons;
+  let pots;
   if (mode === PandaSequenceMode.DISPLAY) {
-    balloons = Array(5).fill(null).map((_, index) => (
-      <DisplayBalloon
-        // eslint-disable-next-line react/no-array-index-key
-        key={index}
-        duration={displaying === index ? timestep : 0}
-      />
+    pots = Array(NUM_POTS).fill(null).map((_, index) => (
+      <FlowerPotDiv>
+        <DisplayPandaPot
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          duration={displaying === index ? timestep : 0}
+        />
+      </FlowerPotDiv>
     ));
   } else {
-    balloons = Array(5).fill(null).map((_, index) => (
-      <InputBalloon
-        // eslint-disable-next-line react/no-array-index-key
-        key={index}
-        onTouchStart={(event: React.SyntheticEvent) => handleTouch(event, index)}
-        onTouchEnd={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
-        onMouseDown={(event: React.SyntheticEvent) => handleTouch(event, index)}
-        onMouseUp={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
-        isSelected={selected[index]}
-      />
+    pots = Array(NUM_POTS).fill(null).map((_, index) => (
+      <FlowerPotDiv>
+        <InputPandaPot
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          onTouch={(event: React.SyntheticEvent) => handleTouch(event, index)}
+          onTouchEnd={(event: React.SyntheticEvent) => handleTouchEnd(event, index)}
+          isSelected={selected[index]}
+        />
+      </FlowerPotDiv>
     ));
   }
 
   return (
     <ThemeProvider theme={mode === PandaSequenceMode.INPUT ? InputTheme : DisplayTheme}>
-      <GameContainer>
+      <GameContainer feedbackState={feedback}>
         <TimerDisplay seconds={secondsLeft} />
-        <BalloonContainer>
-          {balloons.slice(0, 3)}
-        </BalloonContainer>
-        <BalloonContainer>
-          {balloons.slice(3, 5)}
-        </BalloonContainer>
-        <Score>
-          {score}
-        </Score>
-        <h2>Balloons &quot;popped&quot;</h2>
+        <FlowerPotsContainer>
+          {pots}
+        </FlowerPotsContainer>
+        <SeqCountSection>
+          <BigText>{score}</BigText> Sequences
+        </SeqCountSection>
       </GameContainer>
     </ThemeProvider>
   );

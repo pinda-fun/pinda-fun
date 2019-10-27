@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
-import Comm, { Handlers, CommAttributes, noOpHandlers } from './Comm';
+import Comm, {
+  Handlers, CommAttributes, noOpHandlers, ResultMap,
+} from './Comm';
 import { CommError } from './Errors';
 import { HostMeta } from '../database/Meta';
 
 const noOp = () => { };
 
+/**
+ * WARNING: Only one hook can be used at a time.
+ */
 export default function useCommHooks(
   comm: Comm,
   onGameStart: () => void = noOp,
@@ -20,6 +25,7 @@ export default function useCommHooks(
   const [hostMeta, setHostMeta] = useState<HostMeta | null>(
     currentAttributes.hostMeta,
   );
+  const [results, setResults] = useState<ResultMap | null>(currentAttributes.results);
 
   const handlers: Handlers = {
     setRoom,
@@ -27,6 +33,7 @@ export default function useCommHooks(
     setErrorDescription,
     setUsers,
     setHostMeta,
+    setResults,
   };
 
   useEffect(() => {
@@ -49,5 +56,6 @@ export default function useCommHooks(
     errorDescription,
     users,
     hostMeta,
+    results,
   };
 }

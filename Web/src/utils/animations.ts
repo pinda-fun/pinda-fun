@@ -23,3 +23,15 @@ export const blinkGreen = keyframes`
     background: rgba(var(--green-rgb), 0);
   }
 `;
+
+export const jump = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-30%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+`;

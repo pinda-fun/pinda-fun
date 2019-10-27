@@ -112,7 +112,7 @@ defmodule ApiWeb.RoomChannelTest do
           {:non_host, :result} -> nil
         end
 
-        assert_meta_change(@non_host_client_id, %{"result" => nil}, %{
+        assert_meta_change(@non_host_client_id, %{"result" => []}, %{
           "result" => @non_host_result
         })
 
@@ -196,7 +196,7 @@ defmodule ApiWeb.RoomChannelTest do
         send(tester_pid, {:non_host, :host, :result})
         send(tester_pid, {:non_host, :non_host2, :result})
 
-        assert_meta_change(@non_host_client_id, %{"result" => nil}, %{
+        assert_meta_change(@non_host_client_id, %{"result" => []}, %{
           "result" => @non_host_result
         })
 
@@ -249,7 +249,11 @@ defmodule ApiWeb.RoomChannelTest do
           {:non_host, :result} -> nil
         end
 
+<<<<<<< HEAD
         assert_meta_change(@non_host_client_id, %{"result" => nil}, %{
+=======
+        assert_meta_change(@non_host_client_id, %{"result" => []}, %{
+>>>>>>> 89afed9f41eabe766cfef4f4b3b7d27320c3fa84
           "result" => @non_host_result
         })
 
