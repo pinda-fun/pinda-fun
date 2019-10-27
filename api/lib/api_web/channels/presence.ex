@@ -108,7 +108,7 @@ defmodule ApiWeb.Presence do
     %{
       "isHost" => type == :host,
       "name" => name,
-      "result" => nil
+      "result" => []
     }
   end
 
