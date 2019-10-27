@@ -59,10 +59,20 @@ const PandaSequence: React.FC = () => {
     }
   }, [mode]);
 
-  const processCorrectInput = (numbers:number[]) => {
-    if (inputIndex === numbers.length - 1) {
+  /**
+   * Returns true if sequence is ending, i.e. it will be completed with
+   * one more input.
+   */
+  const isLastInSequence = () => {
+    const { numbers } = sequence;
+
+    return inputIndex === numbers.length - 1;
+  };
+
+  const processCorrectInput = () => {
+    if (isLastInSequence()) {
       // update score, mode and sequence if current sequence is done
-      setScore((oldScore) => oldScore + numbers.length);
+      setScore((oldScore) => oldScore + 1);
       setMode(PandaSequenceMode.DISPLAY);
       setSequence((oldSeq) => generate(oldSeq, generator));
     } else {
@@ -77,15 +87,19 @@ const PandaSequence: React.FC = () => {
     setSequence((oldSeq) => ({ ...oldSeq }));
   };
 
-  /** Callback to process user input in game display */
+  /**
+   * Callback to process user input in game display. Returns true if input
+   * is correct and false otherwise.
+   */
   const processInput = (input: number) => {
     const { numbers } = sequence;
 
     if (numbers[inputIndex] === input) {
-      processCorrectInput(numbers);
-    } else {
-      processWrongInput();
+      processCorrectInput();
+      return true;
     }
+    processWrongInput();
+    return false;
   };
 
   return (
@@ -105,6 +119,7 @@ const PandaSequence: React.FC = () => {
           mode={mode}
           secondsLeft={secondsLeft}
           score={score}
+          isLastInSequence={isLastInSequence}
           processInput={processInput}
           displaying={sequence.numbers[index]}
           timestep={sequence.timestep}
