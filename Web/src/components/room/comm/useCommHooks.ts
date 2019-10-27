@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react';
 import Comm, { Handlers, CommAttributes, noOpHandlers } from './Comm';
-import Database from '../database/Database';
 import { CommError } from './Errors';
+import { HostMeta } from '../database/Meta';
 
 export default function useCommHooks(comm: Comm): CommAttributes {
-  const [room, setRoom] = useState<string | null>(null);
-  const [error, setError] = useState<CommError | null>(null);
-  const [errorDescription, setErrorDescription] = useState<string | null>(null);
-  const [database, setDatabase] = useState<Database | null>(null);
+  const currentAttributes = comm.getAttributes();
+  const [room, setRoom] = useState<string | null>(currentAttributes.room);
+  const [error, setError] = useState<CommError | null>(currentAttributes.error);
+  const [errorDescription, setErrorDescription] = useState<string | null>(
+    currentAttributes.errorDescription,
+  );
+  const [users, setUsers] = useState<string[]>(currentAttributes.users);
+  const [hostMeta, setHostMeta] = useState<HostMeta | null>(
+    currentAttributes.hostMeta,
+  );
 
   const handlers: Handlers = {
-    setRoom, setError, setErrorDescription, setDatabase,
+    setRoom,
+    setError,
+    setErrorDescription,
+    setUsers,
+    setHostMeta,
   };
   useEffect(() => {
     comm.register(handlers);
@@ -20,6 +30,10 @@ export default function useCommHooks(comm: Comm): CommAttributes {
   }, []);
 
   return {
-    room, error, errorDescription, database,
+    room,
+    error,
+    errorDescription,
+    users,
+    hostMeta,
   };
 }

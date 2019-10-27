@@ -1,24 +1,30 @@
-import Database from 'components/room/database/Database';
 import HostCommand from './HostCommand';
 import { CommError, PushError } from './Errors';
+import { HostMeta } from '../database/Meta';
 
 export interface CommAttributes {
-  room: string | null;
-  error: CommError | null;
-  errorDescription: string | null;
-  database: Database | null;
+  room: string | null,
+  error: CommError | null,
+  errorDescription: string | null,
+  users: string[],
+  hostMeta: HostMeta | null,
 }
 
 export interface Handlers {
   setRoom: React.Dispatch<React.SetStateAction<string | null>>,
   setError: React.Dispatch<React.SetStateAction<CommError | null>>,
   setErrorDescription: React.Dispatch<React.SetStateAction<string | null>>,
-  setDatabase: React.Dispatch<React.SetStateAction<Database | null>>,
+  setUsers: React.Dispatch<React.SetStateAction<string[]>>,
+  setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
 }
 
 const noOp = () => { };
 export const noOpHandlers = {
-  setRoom: noOp, setError: noOp, setErrorDescription: noOp, setDatabase: noOp,
+  setRoom: noOp,
+  setError: noOp,
+  setErrorDescription: noOp,
+  setUsers: noOp,
+  setHostMeta: noOp,
 };
 
 /**
@@ -32,7 +38,8 @@ export default interface Comm {
   leaveRoom(): void
   pushHostCommand(
     hostCommand: HostCommand,
-    onOk?: (() => void),
-    onError?: ((error: PushError, errorDescription: string | null) => void)
+    onOk?: () => void,
+    onError?: (error: PushError, errorDescription: string | null) => void
   ): void
+  getAttributes(): CommAttributes
 }
