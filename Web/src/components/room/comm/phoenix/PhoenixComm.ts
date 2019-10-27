@@ -5,7 +5,7 @@ import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
-import { HostMeta } from 'components/room/database/Meta';
+import Meta, { HostMeta } from 'components/room/database/Meta';
 import Game from 'components/room/Games';
 import HostCommand, { HostMessage } from '../commands/HostCommand';
 import Comm, {
@@ -97,15 +97,14 @@ export default class PhoenixComm implements Comm {
   private getResults(): ResultMap | null {
     if (this.database == null) return null;
     return Object.fromEntries(
-      Object.values(this.database.getMetas()).map(({ name, result }) => [name, result || []]),
+      Object.entries(this.database.getMetas())
+        .map(([clientId, { name, result }]) => [clientId, { name, result: result || [] }]),
     );
   }
 
-  private getIsHost(): boolean {
-    if (this.database == null) return false;
-    const meta = this.database.getMyMeta();
-    if (meta == null) return false;
-    return meta.isHost;
+  private getMyMeta(): Meta | null {
+    if (this.database == null) return null;
+    return this.database.getMyMeta();
   }
 
   private flush(): void {
@@ -116,7 +115,7 @@ export default class PhoenixComm implements Comm {
       setUsers,
       setHostMeta,
       setResults,
-      setIsHost,
+      setMyMeta,
     } = this.handlers;
     if (setError) setError(this.error);
     if (setErrorDescription) setErrorDescription(this.errorDescription);
@@ -124,7 +123,7 @@ export default class PhoenixComm implements Comm {
     if (setUsers) setUsers(this.getUsers());
     if (setHostMeta) setHostMeta(this.getHostMeta());
     if (setResults) setResults(this.getResults());
-    if (setIsHost) setIsHost(this.getIsHost());
+    if (setMyMeta) setMyMeta(this.getMyMeta());
   }
 
   private cleanup(): void {
@@ -292,7 +291,7 @@ export default class PhoenixComm implements Comm {
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
     const results = this.getResults();
-    const isHost = this.getIsHost();
+    const myMeta = this.getMyMeta();
 
     return {
       room,
@@ -301,7 +300,7 @@ export default class PhoenixComm implements Comm {
       users,
       hostMeta,
       results,
-      isHost,
+      myMeta,
     };
   }
 

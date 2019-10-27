@@ -1,13 +1,13 @@
 import { CommError, PushError } from './Errors';
-import { HostMeta } from '../database/Meta';
+import Meta, { HostMeta } from '../database/Meta';
 import Game from '../Games';
 
 export interface ResultMap {
-  [name: string]: number[],
+  [clientId: string]: { result: number[], name: string },
 }
 
 export const resultsExist = (res: ResultMap | null): res is ResultMap => Boolean(
-  res && Object.values(res)[0] && Object.values(res)[0].length,
+  res && Object.values(res)[0] && Object.values(res)[0].result.length,
 );
 
 export interface CommAttributes {
@@ -17,7 +17,7 @@ export interface CommAttributes {
   users: string[],
   hostMeta: HostMeta | null,
   results: ResultMap | null,
-  isHost: boolean,
+  myMeta: Meta | null,
 }
 
 export interface Handlers {
@@ -27,7 +27,7 @@ export interface Handlers {
   setUsers: React.Dispatch<React.SetStateAction<string[]>>,
   setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
   setResults: React.Dispatch<React.SetStateAction<ResultMap | null>>,
-  setIsHost: React.Dispatch<React.SetStateAction<boolean>>,
+  setMyMeta: React.Dispatch<React.SetStateAction<Meta | null>>,
 }
 
 const noOp = () => { };
@@ -38,7 +38,7 @@ export const noOpHandlers = {
   setUsers: noOp,
   setHostMeta: noOp,
   setResults: noOp,
-  setIsHost: noOp,
+  setMyMeta: noOp,
 };
 
 export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;

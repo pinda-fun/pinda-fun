@@ -52,7 +52,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   }, [comm]);
 
   const {
-    hostMeta, room, error, users, results, isHost,
+    hostMeta, room, error, users, results, myMeta,
   } = useCommHooks(comm);
 
   const onReadyClick = () => {
@@ -62,14 +62,15 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
 
   useEffect(() => {
     if (hostMeta === null) {
-      if (isHost && room !== null) comm.leaveRoom();
+      // If host left, leave the room
+      if (myMeta !== null && !myMeta.isHost && room !== null) comm.leaveRoom();
       return;
     }
     setGame(hostMeta.game);
     if (hostMeta.state === GameState.FINISHED) {
       setIsReady(false);
     }
-  }, [comm, hostMeta, isHost, room]);
+  }, [comm, hostMeta, myMeta, room]);
 
   if (hostMeta === null) {
     return <NoHostComponent />;

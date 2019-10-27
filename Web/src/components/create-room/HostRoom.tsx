@@ -141,8 +141,8 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       {resultsExist(results) && (
         <>
           <h1>Last Game:</h1>
-          {Object.entries(results).map(([name, score]) => (
-            <p>{name}: {score}</p>
+          {Object.entries(results).map(([clientId, { name, result }]) => (
+            <p key={clientId}>{name}: {result}</p>
           ))}
         </>
       )}
