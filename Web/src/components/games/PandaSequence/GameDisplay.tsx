@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider, css } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { blinkRed, blinkGreen } from 'utils/animations';
 import { PandaSequenceMode, Feedback } from './Sequence';
