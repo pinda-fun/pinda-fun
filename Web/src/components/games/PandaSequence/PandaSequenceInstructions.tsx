@@ -12,13 +12,14 @@ const PandaSequenceInstructions: React.FC<GameInstructionsProps> = ({
   onComplete,
 }) => (
   <GameInstructions
-    title="Panda Sequence"
+    title="Peek-a-boo"
     seconds={seconds}
     onComplete={onComplete}
   >
     <MemoryGameSVG />
     <p>
-        After the timer starts, tap each balloon in the sequence they appear in!
+      Watch carefully as the pandas emerge from their flower pots. Repeat the sequence
+      when the background turns purple.
     </p>
   </GameInstructions>
 );

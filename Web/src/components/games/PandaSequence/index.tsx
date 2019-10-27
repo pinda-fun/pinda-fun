@@ -113,21 +113,21 @@ const PandaSequence: React.FC = () => {
           />
         )}
       {gameState === GameState.COUNTING_DOWN
-      && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />}
+        && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />}
       {gameState === GameState.IN_PROGRESS
-      && (
-        <GameDisplay
-          mode={mode}
-          secondsLeft={secondsLeft}
-          score={score}
-          processInput={processInput}
-          feedback={feedback}
-          timestep={sequence.timestep}
-          displaying={sequence.numbers[index]}
-        />
-      )}
+        && (
+          <GameDisplay
+            mode={mode}
+            secondsLeft={secondsLeft}
+            score={score}
+            processInput={processInput}
+            feedback={feedback}
+            timestep={sequence.timestep}
+            displaying={sequence.numbers[index]}
+          />
+        )}
       {gameState === GameState.WAITING_RESULTS
-      && <GameResults finalCount={score} />}
+        && <GameResults finalCount={score} />}
     </>
   );
 };
