@@ -4,22 +4,16 @@ import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as BalloonSVG } from 'svg/balloon.svg';
 import { blinkRed, blinkGreen } from 'utils/animations';
 import { wobble } from 'react-animations';
-import { PandaSequenceMode } from './Sequence';
+import { PandaSequenceMode, Feedback } from './Sequence';
 
 interface IProps {
   mode: PandaSequenceMode,
   secondsLeft: number,
   score: number,
-  isLastInSequence:() => boolean;
   processInput:(input:number) => boolean,
+  feedback: Feedback,
   timestep: number,
   displaying?: number,
-}
-
-enum Feedback {
-  NONE,
-  CORRECT,
-  WRONG,
 }
 
 const DisplayTheme = {
@@ -59,7 +53,7 @@ const GameContainer = styled(GameContainerElement)`
 
   ${({ feedbackState }:GameContainerProps) => (feedbackState === Feedback.CORRECT && css`animation: ${blinkGreen} 0.5s ease-in-out 0s 1;`)
     || (feedbackState === Feedback.WRONG && css`animation: ${blinkRed} 0.5s ease-in-out 0s 1;`)
-};
+}
 `;
 
 interface BalloonSVGElementProps extends React.ComponentProps<typeof BalloonSVG> {
@@ -125,10 +119,9 @@ const Score = styled.h3`
  * Input Mode: Element tapped is animated based on "selected" state
  */
 const GameDisplay: React.FC<IProps> = ({
-  mode, secondsLeft, score, isLastInSequence, processInput, timestep, displaying,
+  mode, secondsLeft, score, processInput, feedback, timestep, displaying,
 }) => {
   const [selected, setSelected] = useState(Array(5).fill(false));
-  const [feedback, setFeedback] = useState<Feedback>(Feedback.NONE);
 
   const handleTouch = (event: React.SyntheticEvent, index:number) => {
     event.preventDefault();
@@ -137,17 +130,7 @@ const GameDisplay: React.FC<IProps> = ({
 
   const handleTouchEnd = (event: React.SyntheticEvent, index:number) => {
     event.preventDefault();
-
-    // check if sequence has reached end before processing input
-    const isLast = isLastInSequence();
-    if (processInput(index)) {
-      if (isLast) {
-        setFeedback(Feedback.CORRECT);
-      }
-    } else {
-      setFeedback(Feedback.WRONG);
-    }
-
+    processInput(index);
     setSelected((oldSelected) => Object.assign([], oldSelected, { [index]: false }));
   };
 
@@ -176,10 +159,7 @@ const GameDisplay: React.FC<IProps> = ({
 
   return (
     <ThemeProvider theme={mode === PandaSequenceMode.INPUT ? InputTheme : DisplayTheme}>
-      <GameContainer
-        feedbackState={feedback}
-        onAnimationEnd={() => setFeedback(Feedback.NONE)}
-      >
+      <GameContainer feedbackState={feedback}>
         <TimerDisplay seconds={secondsLeft} />
         <BalloonContainer>
           {balloons.slice(0, 3)}

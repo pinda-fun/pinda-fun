@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PandaSequenceMode } from './Sequence';
+import { PandaSequenceMode, Feedback } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
 import Countdown from '../Countdown';
@@ -10,6 +10,7 @@ import { randomWithinBounds, generate } from './SequenceGenerator';
 
 const GAME_TIME = 30;
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
+const POST_FEEDBACK_DELAY = 200;
 
 const PandaSequence: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
@@ -21,10 +22,11 @@ const PandaSequence: React.FC = () => {
   const [sequence, setSequence] = useState(INIT_SEQUENCE);
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);
+  const [feedback, setFeedback] = useState(Feedback.NONE);
 
   // setup game and trigger first sequence
   useEffect(() => {
-    if (gameState !== GameState.IN_PROGRESS) return () => {};
+    if (gameState !== GameState.IN_PROGRESS) return undefined;
 
     const timer = createTimerObservable(GAME_TIME);
     const timerSub = timer.subscribe(
@@ -38,7 +40,7 @@ const PandaSequence: React.FC = () => {
 
   // display new sequence
   useEffect(() => {
-    if (sequence === INIT_SEQUENCE) return () => {};
+    if (sequence === INIT_SEQUENCE) return undefined;
 
     const { timestep, numbers } = sequence;
     const timer = createTimerObservable(numbers.length + 1, timestep);
@@ -59,22 +61,17 @@ const PandaSequence: React.FC = () => {
     }
   }, [mode]);
 
-  /**
-   * Returns true if sequence is ending, i.e. it will be completed with
-   * one more input.
-   */
-  const isLastInSequence = () => {
-    const { numbers } = sequence;
-
-    return inputIndex === numbers.length - 1;
-  };
-
-  const processCorrectInput = () => {
-    if (isLastInSequence()) {
+  const processCorrectInput = (numbers:number[]) => {
+    if (inputIndex === numbers.length - 1) {
       // update score, mode and sequence if current sequence is done
-      setScore((oldScore) => oldScore + 1);
+      setFeedback(Feedback.CORRECT);
       setMode(PandaSequenceMode.DISPLAY);
-      setSequence((oldSeq) => generate(oldSeq, generator));
+      setScore((oldScore) => oldScore + 1);
+      // wait for feedback animation completion before proceeding
+      setTimeout(() => {
+        setSequence((oldSeq) => generate(oldSeq, generator));
+        setFeedback(() => Feedback.NONE);
+      }, 500 + POST_FEEDBACK_DELAY);
     } else {
       // update inputIndex
       setInputIndex((oldIndex) => oldIndex + 1);
@@ -83,8 +80,12 @@ const PandaSequence: React.FC = () => {
 
   const processWrongInput = () => {
     // update mode and reset current sequence
+    setFeedback(Feedback.WRONG);
     setMode(PandaSequenceMode.DISPLAY);
-    setSequence((oldSeq) => ({ ...oldSeq }));
+    setTimeout(() => {
+      setSequence((oldSeq) => ({ ...oldSeq }));
+      setFeedback(() => Feedback.NONE);
+    }, 500 + POST_FEEDBACK_DELAY);
   };
 
   /**
@@ -95,7 +96,7 @@ const PandaSequence: React.FC = () => {
     const { numbers } = sequence;
 
     if (numbers[inputIndex] === input) {
-      processCorrectInput();
+      processCorrectInput(numbers);
       return true;
     }
     processWrongInput();
@@ -119,10 +120,10 @@ const PandaSequence: React.FC = () => {
           mode={mode}
           secondsLeft={secondsLeft}
           score={score}
-          isLastInSequence={isLastInSequence}
           processInput={processInput}
-          displaying={sequence.numbers[index]}
+          feedback={feedback}
           timestep={sequence.timestep}
+          displaying={sequence.numbers[index]}
         />
       )}
       {gameState === GameState.WAITING_RESULTS
