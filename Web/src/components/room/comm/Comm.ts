@@ -62,8 +62,8 @@ export default interface Comm {
   sendResult(result: number[], onError?: PushErrorHandler): void
 
   // Host
-  prepare(onError?: PushErrorHandler): void
-  changeGame(game: Game, onError?: PushErrorHandler): void
+  prepare(onOk?: () => void, onError?: PushErrorHandler): void
+  changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void
 
   // For useCommHooks use
   // Client callbacks

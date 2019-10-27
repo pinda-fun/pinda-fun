@@ -313,7 +313,7 @@ export default class PhoenixComm implements Comm {
     this.gameStopHandler = handler;
   }
 
-  prepare(onError?: PushErrorHandler): void {
+  prepare(onOk?: () => void, onError?: PushErrorHandler): void {
     if (this.database == null) return;
     if (this.database.hostId !== getClientId()) return;
     const maybeHostMeta = this.database.getHostMeta();
@@ -323,12 +323,12 @@ export default class PhoenixComm implements Comm {
     }
     this.pushHostCommand(
       { message: HostMessage.STATE, payload: { state: GameState.PREPARE } },
-      noOp,
+      onOk || noOp,
       onError || noOp,
     );
   }
 
-  changeGame(game: Game, onError?: PushErrorHandler): void {
+  changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void {
     if (this.database == null) return;
     if (this.database.hostId !== getClientId()) return;
     const maybeHostMeta = this.database.getHostMeta();
@@ -338,7 +338,7 @@ export default class PhoenixComm implements Comm {
     }
     this.pushHostCommand(
       { message: HostMessage.GAME, payload: { game } },
-      noOp,
+      onOk || noOp,
       onError || noOp,
     );
   }
