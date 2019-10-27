@@ -83,7 +83,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
   };
 
   const onJoinRoomFormSubmit = (newGamePin: string, newUsername: string) => {
-    if (joinRequested && newGamePin === gamePin) return;
+    if (joinRequested) return;
     if (newGamePin.length !== PIN_LENGTH) return;
     if (newUsername === '') return;
 
@@ -110,6 +110,7 @@ const JoinRoomPage: React.FC<JoinRoomProps> = ({
     if (room === null) return;
     history.push('/participant-room');
   }, [room, history]);
+
   return (
     <JoinRoomContainer>
       <PindaHead />

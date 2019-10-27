@@ -27,7 +27,7 @@ export default function useCommHooks(comm: Comm): CommAttributes {
     return () => comm.register(noOpHandlers);
     // Only run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [comm]);
 
   return {
     room,

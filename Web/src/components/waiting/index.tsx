@@ -48,11 +48,15 @@ const Waiting: React.FC = () => {
     room, error, hostMeta, users,
   } = useCommHooks(comm);
 
+  // generic leave room cleanup hook.
+  useEffect(() => () => comm.leaveRoom(), [comm]);
+
   useEffect(() => {
     if (hostMeta === null) {
       setHostPresent(false);
       return;
     }
+    setHostPresent(true);
     setFunMessage(`${users.length} are now in the game!`);
     const { game } = hostMeta;
     selectGame(game);
@@ -86,7 +90,7 @@ const Waiting: React.FC = () => {
               Oh no! <br />
               Looks like host has left!
             </ErrorHeading>
-            <Link to="/">
+            <Link to="/join">
               Go Back
             </Link>
           </>
