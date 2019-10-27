@@ -1,14 +1,14 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
+import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
-import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -111,7 +111,7 @@ const PindaHappy = styled(PindaHappySVG)`
 `;
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users
+  room, error, users,
 }) => {
   const comm = useContext(CommContext);
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, Redirect } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
-import { mdMin } from '../../utils/media';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
+import { mdMin } from '../../utils/media';
 
 const WaitingDiv = styled.div`
   background-color: var(--pale-purple);
@@ -38,7 +38,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  room, users, error, game
+  room, users, error, game,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -72,10 +72,10 @@ const HostLeft: React.FC = () => (
     <ErrorHeading>
       Oh no! <br />
       Looks like host has left!
-        </ErrorHeading>
+    </ErrorHeading>
     <Link to="/join">
       Go Back
-        </Link>
+    </Link>
     <PindaWaving />
   </WaitingDiv>
 );

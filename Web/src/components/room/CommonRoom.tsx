@@ -1,11 +1,12 @@
-import React, { useState, useContext, useEffect, lazy } from 'react';
+import React, {
+  useState, useContext, useEffect, lazy,
+} from 'react';
 import CommContext from 'components/room/comm/CommContext';
 import useCommHooks from 'components/room/comm/useCommHooks';
 import Loading from 'components/common/Loading';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommError } from './comm/Errors';
-import { HostMeta } from './database/Meta';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
@@ -46,7 +47,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   useEffect(() => () => comm.leaveRoom(), [comm]);
 
   const {
-    hostMeta, room, error, users
+    hostMeta, room, error, users,
   } = useCommHooks(comm);
 
   useEffect(() => {
