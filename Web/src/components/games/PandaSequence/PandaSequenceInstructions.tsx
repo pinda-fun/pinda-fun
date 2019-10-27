@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as ShakePhoneSVG } from 'svg/shake-phone-badge.svg';
+import { ReactComponent as MemoryGameSVG } from 'svg/memory-game-badge.svg';
 import GameInstructions from '../GameInstructions';
 
 type GameInstructionsProps = {
@@ -16,7 +16,7 @@ const PandaSequenceInstructions: React.FC<GameInstructionsProps> = ({
     seconds={seconds}
     onComplete={onComplete}
   >
-    <ShakePhoneSVG />
+    <MemoryGameSVG />
     <p>
         After the timer starts, tap each balloon in the sequence they appear in!
     </p>

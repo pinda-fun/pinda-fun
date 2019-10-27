@@ -2,6 +2,7 @@ import seedrandom from 'seedrandom';
 import { Sequence } from './Sequence';
 
 const LENGTH_GROWTH_CONSTANT = 1;
+const LENGTH_LIMIT = 5;
 const TIMESTEP_REDUCTION_FACTOR = 0.8;
 
 /**
@@ -26,7 +27,8 @@ export const generate = (prevSequence: Sequence, generator: Generator):Sequence 
   const lastLength = prevSequence.numbers.length;
 
   const nums = [];
-  for (let i = 0; i < Math.floor(lastLength + LENGTH_GROWTH_CONSTANT); i += 1) {
+  const length = Math.min(LENGTH_LIMIT, Math.floor(lastLength + LENGTH_GROWTH_CONSTANT));
+  for (let i = 0; i < length; i += 1) {
     nums.push(generator.next().value);
   }
 

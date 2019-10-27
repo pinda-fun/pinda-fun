@@ -24,7 +24,6 @@ const GameResults: React.FC<{ finalCount: number }> = ({ finalCount }) => (
   <Container>
     <h2>Your Score:</h2>
     <Result>{finalCount}</Result>
-    <h2>balloons &quot;popped!&quot;</h2>
   </Container>
 );
 
