@@ -81,6 +81,7 @@ export default class PhoenixComm implements Comm {
 
   _register(handlers: Handlers): void {
     this.handlers = handlers;
+    this.flush();
   }
 
   private getUsers(): string[] {
@@ -100,6 +101,13 @@ export default class PhoenixComm implements Comm {
     );
   }
 
+  private getIsHost(): boolean {
+    if (this.database == null) return false;
+    const meta = this.database.getMyMeta();
+    if (meta == null) return false;
+    return meta.isHost;
+  }
+
   private flush(): void {
     const {
       setError,
@@ -108,6 +116,7 @@ export default class PhoenixComm implements Comm {
       setUsers,
       setHostMeta,
       setResults,
+      setIsHost,
     } = this.handlers;
     if (setError) setError(this.error);
     if (setErrorDescription) setErrorDescription(this.errorDescription);
@@ -115,6 +124,7 @@ export default class PhoenixComm implements Comm {
     if (setUsers) setUsers(this.getUsers());
     if (setHostMeta) setHostMeta(this.getHostMeta());
     if (setResults) setResults(this.getResults());
+    if (setIsHost) setIsHost(this.getIsHost());
   }
 
   private cleanup(): void {
@@ -286,6 +296,7 @@ export default class PhoenixComm implements Comm {
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
     const results = this.getResults();
+    const isHost = this.getIsHost();
 
     return {
       room,
@@ -294,6 +305,7 @@ export default class PhoenixComm implements Comm {
       users,
       hostMeta,
       results,
+      isHost,
     };
   }
 

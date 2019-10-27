@@ -26,6 +26,7 @@ export default function useCommHooks(
     currentAttributes.hostMeta,
   );
   const [results, setResults] = useState<ResultMap | null>(currentAttributes.results);
+  const [isHost, setIsHost] = useState(currentAttributes.isHost);
 
   const handlers: Handlers = {
     setRoom,
@@ -34,6 +35,7 @@ export default function useCommHooks(
     setUsers,
     setHostMeta,
     setResults,
+    setIsHost,
   };
 
   useEffect(() => {
@@ -57,5 +59,6 @@ export default function useCommHooks(
     users,
     hostMeta,
     results,
+    isHost,
   };
 }

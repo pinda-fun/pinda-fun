@@ -17,6 +17,7 @@ export interface CommAttributes {
   users: string[],
   hostMeta: HostMeta | null,
   results: ResultMap | null,
+  isHost: boolean,
 }
 
 export interface Handlers {
@@ -26,6 +27,7 @@ export interface Handlers {
   setUsers: React.Dispatch<React.SetStateAction<string[]>>,
   setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
   setResults: React.Dispatch<React.SetStateAction<ResultMap | null>>,
+  setIsHost: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 const noOp = () => { };
@@ -36,6 +38,7 @@ export const noOpHandlers = {
   setUsers: noOp,
   setHostMeta: noOp,
   setResults: noOp,
+  setIsHost: noOp,
 };
 
 export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;

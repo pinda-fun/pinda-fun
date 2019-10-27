@@ -47,10 +47,12 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   const [isReady, setIsReady] = useState(false);
 
   // general hook to disconnect host from room when he leaves.
-  useEffect(() => () => comm.leaveRoom(), [comm]);
+  useEffect(() => () => {
+    comm.leaveRoom();
+  }, [comm]);
 
   const {
-    hostMeta, room, error, users, results,
+    hostMeta, room, error, users, results, isHost,
   } = useCommHooks(comm);
 
   const onReadyClick = () => {
@@ -59,12 +61,15 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   };
 
   useEffect(() => {
-    if (hostMeta === null) return;
+    if (hostMeta === null) {
+      if (isHost && room !== null) comm.leaveRoom();
+      return;
+    }
     setGame(hostMeta.game);
     if (hostMeta.state === GameState.FINISHED) {
       setIsReady(false);
     }
-  }, [hostMeta]);
+  }, [comm, hostMeta, isHost, room]);
 
   if (hostMeta === null) {
     return <NoHostComponent />;
