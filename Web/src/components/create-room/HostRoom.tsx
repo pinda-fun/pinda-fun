@@ -90,6 +90,10 @@ const ShareSection = styled.section`
   text-align: center;
 `;
 
+const MembersSection = styled.section`
+  margin: 1rem 0;
+`;
+
 const ShareContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -179,7 +183,9 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
         </StartButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
       </RoomDetailsSection>
-      <RoomMembers users={users} />
+      <MembersSection>
+        <RoomMembers users={users} />
+      </MembersSection>
       <PindaHappy />
     </CreateRoomContainer>
   );
