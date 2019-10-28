@@ -12,12 +12,15 @@ export default class PhoenixDatabase implements Database {
 
   hostId: string | null;
 
-  private onSyncHandler: () => void;
+  private oldHostMeta: HostMeta | null;
+
+  private onSyncHandler: (oldHostMeta: HostMeta | null) => void;
 
   constructor(channel: Channel) {
     this.presence = new Presence(channel);
     this.onSyncHandler = () => { };
     this.hostId = null;
+    this.oldHostMeta = null;
 
     this.presence.onSync(() => {
       const { state } = this.presence;
@@ -25,7 +28,8 @@ export default class PhoenixDatabase implements Database {
         const maybeHostId = Object.keys(state).find((clientId) => state[clientId].metas[0].isHost);
         this.hostId = maybeHostId == null ? null : maybeHostId;
       }
-      this.onSyncHandler();
+      this.onSyncHandler(this.oldHostMeta);
+      this.oldHostMeta = this.getHostMeta();
     });
   }
 
@@ -55,7 +59,7 @@ export default class PhoenixDatabase implements Database {
     return state[clientId].metas[0];
   }
 
-  onSync(callback: () => void): void {
+  onSync(callback: (oldHostMeta: HostMeta | null) => void): void {
     this.onSyncHandler = callback;
   }
 }

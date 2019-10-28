@@ -1,6 +1,16 @@
-import HostCommand from './HostCommand';
 import { CommError, PushError } from './Errors';
-import { HostMeta } from '../database/Meta';
+import Meta, { HostMeta } from '../database/Meta';
+import Game from '../Games';
+
+export interface ResultMap {
+  [clientId: string]: Meta,
+}
+
+export const resultsExist = (res: ResultMap | null): res is ResultMap => {
+  if (res == null) return false;
+  const firstResult = Object.values(res)[0].result;
+  return Boolean(firstResult !== null && firstResult.length);
+};
 
 export interface CommAttributes {
   room: string | null,
@@ -8,38 +18,51 @@ export interface CommAttributes {
   errorDescription: string | null,
   users: string[],
   hostMeta: HostMeta | null,
+  allMetas: ResultMap | null,
+  myMeta: Meta | null,
 }
 
-export interface Handlers {
-  setRoom: React.Dispatch<React.SetStateAction<string | null>>,
-  setError: React.Dispatch<React.SetStateAction<CommError | null>>,
-  setErrorDescription: React.Dispatch<React.SetStateAction<string | null>>,
-  setUsers: React.Dispatch<React.SetStateAction<string[]>>,
-  setHostMeta: React.Dispatch<React.SetStateAction<HostMeta | null>>,
-}
-
-const noOp = () => { };
-export const noOpHandlers = {
-  setRoom: noOp,
-  setError: noOp,
-  setErrorDescription: noOp,
-  setUsers: noOp,
-  setHostMeta: noOp,
-};
+export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;
 
 /**
  * if successful then (room != null && database != null && error == null)
  * if (error == CommError.Other) then (errorDescription != null)
  */
 export default interface Comm {
-  register(handlers: Handlers): void
   createRoom(name: string, game: string): void
   joinRoom(pin: string, name: string, game?: string): void
   leaveRoom(): void
-  pushHostCommand(
-    hostCommand: HostCommand,
-    onOk?: () => void,
-    onError?: (error: PushError, errorDescription: string | null) => void
-  ): void
-  getAttributes(): CommAttributes
+
+  // For useCommHooks use
+  _register(handler: (attributes: CommAttributes) => void): void
+  _getAttributes(): CommAttributes
+
+  /* RFC #108 */
+
+  // For Client
+  /**
+   * Sends current result
+   */
+  readyUp(onOk?: () => void, onError?: PushErrorHandler): void
+  sendResult(result: number[], onOk?: () => void, onError?: PushErrorHandler): void
+
+  // Host
+  prepare(onOk?: () => void, onError?: PushErrorHandler): void
+  changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void
+
+  // For useCommHooks use
+  // Client callbacks
+  /**
+   * `handler` is invoked whenever the game starts
+   * (GameState changed to ONGOING, when all clients are ready)
+   * Don't forget to add destructor `comm.onGameStart(() => { })`
+   */
+  _onGameStart(handler: () => void): void
+  /**
+   * `handler` is invoked whenver the game stops
+   * (GameState changed to FINISHED, when all clients updated their results)
+   * Don't forget to add destructor `comm.onGameStart(() => { })`
+   */
+  _onGameEnd(handler: () => void): void
+
 }

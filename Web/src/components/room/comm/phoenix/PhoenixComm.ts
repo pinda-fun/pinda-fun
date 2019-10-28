@@ -1,12 +1,17 @@
+/* eslint-disable class-methods-use-this, @typescript-eslint/no-unused-vars */
+
 import { Socket, Channel } from 'phoenix';
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
 import Database from 'components/room/database/Database';
 import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
-import { HostMeta } from 'components/room/database/Meta';
-import Comm, { Handlers, noOpHandlers, CommAttributes } from '../Comm';
-import HostCommand from '../HostCommand';
+import Meta, { HostMeta } from 'components/room/database/Meta';
+import Game from 'components/room/Games';
+import HostCommand, { HostMessage } from '../commands/HostCommand';
+import Comm, { CommAttributes, PushErrorHandler, ResultMap } from '../Comm';
 import { CommError, PushError } from '../Errors';
+import ClientCommand, { ClientMessage } from '../commands/ClientCommand';
+import GameState from '../GameState';
 
 const SOCKET_URL = isDeployPreview()
   ? process.env.REACT_APP_WEBSOCKET_STAGING_URL!
@@ -47,7 +52,11 @@ export default class PhoenixComm implements Comm {
 
   private socket: Socket;
 
-  private handlers: Handlers;
+  private attributeHandler: (attributes: CommAttributes) => void;
+
+  private gameStartHandler: () => void;
+
+  private gameStopHandler: () => void;
 
   constructor() {
     this.room = null;
@@ -55,7 +64,9 @@ export default class PhoenixComm implements Comm {
     this.errorDescription = null;
     this.database = null;
     this.channel = null;
-    this.handlers = noOpHandlers;
+    this.attributeHandler = noOp;
+    this.gameStartHandler = noOp;
+    this.gameStopHandler = noOp;
 
     this.socket = new Socket(SOCKET_URL, {
       params: { clientId: getClientId() },
@@ -66,13 +77,14 @@ export default class PhoenixComm implements Comm {
     if (process.env.NODE_ENV !== 'test') this.socket.connect();
   }
 
-  register(handlers: Handlers): void {
-    this.handlers = handlers;
+  _register(handler: (attributes: CommAttributes) => void): void {
+    this.attributeHandler = handler;
+    this.flush();
   }
 
   private getUsers(): string[] {
     if (this.database == null) return [];
-    return Object.values(this.database.getMetas()).map((meta) => meta.name);
+    return Object.values(this.database.getMetas()).map(({ name }) => name);
   }
 
   private getHostMeta(): HostMeta | null {
@@ -80,19 +92,26 @@ export default class PhoenixComm implements Comm {
     return this.database.getHostMeta();
   }
 
+  private getAllMetas(): ResultMap | null {
+    if (this.database == null) return null;
+    return this.database.getMetas();
+  }
+
+  private getMyMeta(): Meta | null {
+    if (this.database == null) return null;
+    return this.database.getMyMeta();
+  }
+
   private flush(): void {
-    const {
-      setError,
-      setErrorDescription,
-      setRoom,
-      setUsers,
-      setHostMeta,
-    } = this.handlers;
-    if (setError) setError(this.error);
-    if (setErrorDescription) setErrorDescription(this.errorDescription);
-    if (setRoom) setRoom(this.room);
-    if (setUsers) setUsers(this.getUsers());
-    if (setHostMeta) setHostMeta(this.getHostMeta());
+    this.attributeHandler({
+      error: this.error,
+      errorDescription: this.errorDescription,
+      room: this.room,
+      users: this.getUsers(),
+      hostMeta: this.getHostMeta(),
+      allMetas: this.getAllMetas(),
+      myMeta: this.getMyMeta(),
+    });
   }
 
   private cleanup(): void {
@@ -108,6 +127,49 @@ export default class PhoenixComm implements Comm {
     this.flush();
   }
 
+  private handleStateChange(oldState: GameState, newState: GameState): void {
+    // State transition handler for client
+    if (oldState === GameState.FINISHED && newState === GameState.PREPARE) {
+      // No automatic action on this state transition
+    } else if (oldState === GameState.PREPARE && newState === GameState.ONGOING) {
+      this.gameStartHandler();
+    } else if (oldState === GameState.ONGOING && newState === GameState.FINISHED) {
+      this.gameStopHandler();
+    }
+    if (this.database != null && this.database.hostId === getClientId()) this.hostWatcher(newState);
+  }
+
+  private hostWatcher(state: GameState): void {
+    if (this.database == null) return;
+    if (state === GameState.PREPARE) {
+      // `result` being null is indication that the client is ready
+      const allReady = (Object
+        .values(this.database.getMetas())
+        .filter((meta) => meta.result != null)
+        .length) === 0;
+      if (allReady) {
+        this.pushHostCommand(
+          { message: HostMessage.STATE, payload: { state: GameState.ONGOING } },
+          noOp,
+          noOp,
+        );
+      }
+    }
+    if (state === GameState.ONGOING) {
+      const allFinished = (Object
+        .values(this.database.getMetas())
+        .filter((meta) => meta.result == null)
+        .length) === 0;
+      if (allFinished) {
+        this.pushHostCommand(
+          { message: HostMessage.STATE, payload: { state: GameState.FINISHED } },
+          noOp,
+          noOp,
+        );
+      }
+    }
+  }
+
   private joinChannel<T>(
     topic: string,
     channelPayload: object,
@@ -115,7 +177,19 @@ export default class PhoenixComm implements Comm {
   ): void {
     const newChannel = this.socket.channel(topic, channelPayload);
     const newDatabase = new PhoenixDatabase(newChannel);
-    newDatabase.onSync(() => {
+    newDatabase.onSync((oldHostMeta) => {
+      const currentHostMeta = newDatabase.getHostMeta();
+      // Disconnect if we join when the state is not FINISHED
+      if (oldHostMeta == null && currentHostMeta != null
+        && currentHostMeta.state !== GameState.FINISHED) {
+        this.leaveRoom();
+        this.error = CommError.RoomNotAccepting;
+        this.flush();
+        return;
+      }
+      if (oldHostMeta != null && currentHostMeta != null) {
+        this.handleStateChange(oldHostMeta.state, currentHostMeta.state);
+      }
       this.flush();
     });
 
@@ -170,31 +244,42 @@ export default class PhoenixComm implements Comm {
     this.cleanup();
   }
 
-  pushHostCommand(
-    { message, payload }: HostCommand,
-    onOk?: (() => void) | undefined,
-    onError?:
-    | ((error: PushError, errorDescription: string | null) => void)
-    | undefined,
-  ): void {
+  private pushCommand(
+    { message, payload }: { message: string, payload: object },
+    onOk: () => void,
+    onError: PushErrorHandler,
+  ) {
     if (this.channel == null) {
-      if (onError) onError(PushError.NoChannel, null);
+      onError(PushError.NoChannel, null);
       return;
     }
     this.channel
       .push(message, payload)
-      .receive(ChannelResponse.OK, onOk || noOp)
-      .receive(
-        ChannelResponse.ERROR,
-        ({ reason }: ErrorPayload) => (onError || noOp)(PushError.Other, reason),
-      )
-      .receive(ChannelResponse.TIMEOUT, () => (onError || noOp)(PushError.Timeout, null));
+      .receive(ChannelResponse.OK, onOk)
+      .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
+        onError(PushError.Other, reason);
+      })
+      .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
   }
 
-  getAttributes(): CommAttributes {
+  private pushHostCommand(command: HostCommand, onOk: () => void, onError: PushErrorHandler): void {
+    this.pushCommand(command, onOk, onError);
+  }
+
+  private pushClientCommand(
+    command: ClientCommand,
+    onOk: () => void,
+    onError: PushErrorHandler,
+  ): void {
+    this.pushCommand(command, onOk, onError);
+  }
+
+  _getAttributes(): CommAttributes {
     const { room, error, errorDescription } = this;
     const users = this.getUsers();
     const hostMeta = this.getHostMeta();
+    const allMetas = this.getAllMetas();
+    const myMeta = this.getMyMeta();
 
     return {
       room,
@@ -202,6 +287,62 @@ export default class PhoenixComm implements Comm {
       errorDescription,
       users,
       hostMeta,
+      allMetas,
+      myMeta,
     };
+  }
+
+  sendResult(result: number[], onOk?: () => void, onError?: PushErrorHandler): void {
+    this.pushClientCommand(
+      { message: ClientMessage.RESULT, payload: { result } },
+      onOk || noOp,
+      onError || noOp,
+    );
+  }
+
+  readyUp(onOk?: () => void, onError?: PushErrorHandler): void {
+    this.pushClientCommand(
+      { message: ClientMessage.RESULT, payload: { result: null } },
+      onOk || noOp,
+      onError || noOp,
+    );
+  }
+
+  _onGameStart(handler: () => void): void {
+    this.gameStartHandler = handler;
+  }
+
+  _onGameEnd(handler: () => void): void {
+    this.gameStopHandler = handler;
+  }
+
+  prepare(onOk?: () => void, onError?: PushErrorHandler): void {
+    if (this.database == null) return;
+    if (this.database.hostId !== getClientId()) return;
+    const maybeHostMeta = this.database.getHostMeta();
+    if (maybeHostMeta == null) return;
+    if (maybeHostMeta.state !== GameState.FINISHED) {
+      throw new Error(`Cannot invoke prepare() when state is ${maybeHostMeta.state.toString()}`);
+    }
+    this.pushHostCommand(
+      { message: HostMessage.STATE, payload: { state: GameState.PREPARE } },
+      onOk || noOp,
+      onError || noOp,
+    );
+  }
+
+  changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void {
+    if (this.database == null) return;
+    if (this.database.hostId !== getClientId()) return;
+    const maybeHostMeta = this.database.getHostMeta();
+    if (maybeHostMeta == null) return;
+    if (maybeHostMeta.state !== GameState.FINISHED) {
+      throw new Error(`Cannot invoke changeGame() when state is ${maybeHostMeta.state.toString()}`);
+    }
+    this.pushHostCommand(
+      { message: HostMessage.GAME, payload: { game } },
+      onOk || noOp,
+      onError || noOp,
+    );
   }
 }
