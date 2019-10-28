@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
-import { resultsExist } from 'components/room/comm/Comm';
+import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import Game from 'components/room/Games';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
@@ -178,8 +178,9 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   );
 };
 
-const HostRoomPage: React.FC = () => (
+const HostRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
   <CommonRoom
+    commHooks={commHooks}
     FinishedComponent={HostRoomLobby}
   />
 );

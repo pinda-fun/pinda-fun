@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import LinkButton from 'components/common/LinkButton';
 import { MotionPermission } from 'components/games/GameStates';
-import GamePinForm from './GamePinForm';
-import UsernameForm from './UsernameForm';
+import GamePinForm from 'components/common/forms/GamePinForm';
+import UsernameForm from 'components/common/forms/UsernameForm';
 
 const ErrorText = styled.p`
   color: red;
@@ -43,8 +43,8 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
             <GamePinForm
               onSubmitPin={handleSubmitGamePin}
               pinLength={pinLength}
-              initialPin={initialId || ''}
-              permission={permission}
+              initialPin={initialId}
+              disabled={permission === MotionPermission.DENIED}
             />
             <Link to={{ pathname: '/' }}>Cancel</Link>
           </>
@@ -54,7 +54,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
           <>
             <UsernameForm
               onSubmitName={handleSubmitUsername}
-              permission={permission}
+              disabled={permission === MotionPermission.DENIED}
             />
             <LinkButton
               underline
