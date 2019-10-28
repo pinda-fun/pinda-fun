@@ -110,7 +110,7 @@ const StartButton = styled(BigButton)`
 `;
 
 const PindaHappy = styled(PindaHappySVG)`
-  position: absolute;
+  position: fixed;
   height: 270px;
   bottom: -30px;
   right: -80px;
