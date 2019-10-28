@@ -7,6 +7,7 @@ import BigButton from 'components/common/BigButton';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes } from './comm/Comm';
+import ResultsLeaderboard from 'components/results-leaderboard';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
