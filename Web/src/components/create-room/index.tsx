@@ -12,7 +12,7 @@ const CreateRoom = () => {
       {commHooks.room === null
         && <CreateRoomPage commHooks={commHooks} />}
       {commHooks.room !== null
-        && <HostRoom {...{ commHooks }} />}
+        && <HostRoom commHooks={commHooks} />}
     </>
   );
 };
