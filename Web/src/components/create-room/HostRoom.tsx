@@ -11,6 +11,7 @@ import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
+import ResultsLeaderboard from '../results-leaderboard/index';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -136,45 +137,58 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
     return <Redirect to="/join" />;
   }
 
+  let results;
+  if (resultsExist(allMetas)) {
+    results = (
+      <ResultsLeaderboard
+        allMetas={allMetas}
+        gameText="shakes/sequences/sums!"
+      />
+    );
+  }
+
   return (
-    <CreateRoomContainer>
-      {resultsExist(allMetas) && (
-        <>
-          <h1>Last Game:</h1>
-          {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-            <p key={clientId}>{name}: {result}</p>
-          ))}
-        </>
-      )}
-      <TwoColumnDiv>
-        <div>
-          <GamePinSection>
-            <h2>Game PIN:</h2>
-            <h1>{room}</h1>
-          </GamePinSection>
-          <NumPlayers numPlayers={users.length} hideOnMedium />
-        </div>
-        <ShareSection>
-          <h2>Share via</h2>
-          <ShareContent>
-            <QrCode sharableLink={sharableLink} />
-            <SocialShare sharableLink={sharableLink} />
-          </ShareContent>
-          <NumPlayers numPlayers={users.length} hideOnLarge />
-        </ShareSection>
-      </TwoColumnDiv>
-      <StartButton
-        onClick={onStartButtonClick}
-      >
-        START!
-      </StartButton>
-      <Link to={{ pathname: '/' }}>Cancel</Link>
-      <h3>Connected:</h3>
-      {users.map((name) => (
-        <p key={name}>{name}</p>
-      ))}
-      <PindaHappy />
-    </CreateRoomContainer>
+    <>
+      {results}
+      <CreateRoomContainer>
+        {resultsExist(allMetas) && (
+          <>
+            <h1>Last Game:</h1>
+            {Object.entries(allMetas).map(([clientId, { name, result }]) => (
+              <p key={clientId}>{name}: {result}</p>
+            ))}
+          </>
+        )}
+        <TwoColumnDiv>
+          <div>
+            <GamePinSection>
+              <h2>Game PIN:</h2>
+              <h1>{room}</h1>
+            </GamePinSection>
+            <NumPlayers numPlayers={users.length} hideOnMedium />
+          </div>
+          <ShareSection>
+            <h2>Share via</h2>
+            <ShareContent>
+              <QrCode sharableLink={sharableLink} />
+              <SocialShare sharableLink={sharableLink} />
+            </ShareContent>
+            <NumPlayers numPlayers={users.length} hideOnLarge />
+          </ShareSection>
+        </TwoColumnDiv>
+        <StartButton
+          onClick={onStartButtonClick}
+        >
+          START!
+        </StartButton>
+        <Link to={{ pathname: '/' }}>Cancel</Link>
+        <h3>Connected:</h3>
+        {users.map((name) => (
+          <p key={name}>{name}</p>
+        ))}
+        <PindaHappy />
+      </CreateRoomContainer>
+    </>
   );
 };
 

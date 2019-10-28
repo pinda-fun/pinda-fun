@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const VerticalContainer = styled.div`
+export const Container = styled.div`
   background: var(--green);
   position: relative;
   overflow: hidden;
@@ -16,7 +16,7 @@ export const VerticalContainer = styled.div`
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 `;
 
-export const HorizontalContainer = styled.span`
+export const Group = styled.span`
   overflow: hidden;
   height: 100%;
   width: 100vw;

@@ -5,6 +5,7 @@ import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import { mdMin } from '../../utils/media';
+import ResultsLeaderboard from '../results-leaderboard/index';
 
 const WaitingDiv = styled.div`
   background-color: var(--pale-purple);
@@ -49,14 +50,10 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
 
   if (resultsExist(allMetas)) {
     return (
-      <WaitingDiv>
-        {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-          <p key={clientId}>{name}: {result}</p>
-        ))}
-        <Heading>
-          Waiting for next game...
-        </Heading>
-      </WaitingDiv>
+      <ResultsLeaderboard
+        allMetas={allMetas}
+        gameText="shakes/sequences/sums!"
+      />
     );
   }
   return (

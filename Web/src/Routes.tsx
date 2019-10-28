@@ -10,7 +10,6 @@ const JoinRoomPage = lazy(() => import('components/join-room'));
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
-const ResultsPage = lazy(() => import('components/results-leaderboard'));
 
 const comm = new PhoenixComm();
 
@@ -23,7 +22,6 @@ const RoutesWithCommContext: React.FC = () => (
       <Route exact path="/balloon-game" component={BalloonShake} />
       <Route exact path="/panda-sequence" component={PandaSequence} />
       <Route exact path="/sums-game" component={MentalSums} />
-      <Route exact path='/results' component={ResultsPage}/>
     </Switch>
   </CommContext.Provider>
 );

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ChevronDown } from 'react-feather';
-import { VerticalContainer, HorizontalContainer } from './Containers';
+import { ChevronDown, Icon } from 'react-feather';
+import { Container, Group } from './Containers';
 
 interface ResultsProps {
   score:number,
@@ -11,6 +11,7 @@ interface ResultsProps {
 }
 
 const BigNumber = styled.span`
+  height: auto;
   font-size: 10rem;
   font-family: var(--secondary-font);
   text-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
@@ -28,7 +29,7 @@ const Footer = styled.div`
   font-size: 1rem;
 `;
 
-const DownArrowIcon = styled(ChevronDown)`
+const DownArrowIcon = styled(ChevronDown as React.FC<React.ComponentProps<Icon>>)`
   width: 42px;
   height: 42px;
   viewBox: 0 0 10 10;
@@ -39,21 +40,21 @@ const Results: React.FC<ResultsProps> = (
     score, gameText, rank, numPlayers,
   },
 ) => (
-  <VerticalContainer>
-    <HorizontalContainer>
+  <Container>
+    <Group>
       <BigNumber>{score}</BigNumber>
       <span>{gameText}</span>
-    </HorizontalContainer>
-    <HorizontalContainer>
+    </Group>
+    <Group>
       <span>That&apos;s</span>
       <BigNumber>{rank}</BigNumber>
       <span>out of {numPlayers} of your friends!</span>
-    </HorizontalContainer>
+    </Group>
     <Footer>
       <span>Leaderboard</span>
       <DownArrowIcon />
     </Footer>
-  </VerticalContainer>
+  </Container>
 );
 
 export default Results;

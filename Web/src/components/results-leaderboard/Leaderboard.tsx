@@ -1,12 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ChevronUp } from 'react-feather';
-import { VerticalContainer, HorizontalContainer } from './Containers';
-import { PlayerScore } from './PlayerScore';
+import { ChevronUp, Icon } from 'react-feather';
+import getClientId from 'utils/getClientId';
+import { Container, Group } from './Containers';
 
 interface LeaderboardProps {
-  clientID: string,
-  sortedScores: PlayerScore[];
+  playerScores: PlayerScore[];
+}
+
+export interface PlayerScore {
+  clientId:string,
+  name: string,
+  score: number,
 }
 
 const BigText = styled.span`
@@ -24,11 +29,10 @@ const Header = styled.div`
   text-align: center;
   width: 100vw;
   padding: 12px;
-
   font-size: 1rem;
 `;
 
-const UpArrowIcon = styled(ChevronUp)`
+const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
   width: 42px;
   height: 42px;
   viewBox: 0 0 10 10;
@@ -75,38 +79,37 @@ const SelectedListItem = styled.div`
   color: var(--red);
 `;
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ clientID, sortedScores: playerScores }) => {
-  const listItems = playerScores.map((player, index) => {
-    if (player.ID === clientID) {
+const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
+  const listItems = playerScores.map((playerScore, index) => {
+    if (playerScore.clientId === getClientId()) {
       return (
-        <SelectedListItem>
-          <div>{index}</div>
-          <div>{player.ID}</div>
-          <div>{player.score}</div>
+        <SelectedListItem key={playerScore.clientId}>
+          <div>{index + 1}</div>
+          <div>{playerScore.name}</div>
+          <div>{playerScore.score}</div>
         </SelectedListItem>
       );
     }
     return (
-      <ListItem>
-        <div>{index}</div>
-        <div>{player.ID}</div>
-        <div>{player.score}</div>
+      <ListItem key={playerScore.clientId}>
+        <div>{index + 1}</div>
+        <div>{playerScore.name}</div>
+        <div>{playerScore.score}</div>
       </ListItem>
     );
   });
 
-
   return (
-    <VerticalContainer>
+    <Container>
       <Header>
         <UpArrowIcon />
         Back
       </Header>
-      <HorizontalContainer>
+      <Group>
         <BigText>Leaderboard</BigText>
         <List>{listItems}</List>
-      </HorizontalContainer>
-    </VerticalContainer>
+      </Group>
+    </Container>
   );
 };
 
