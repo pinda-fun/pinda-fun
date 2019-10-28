@@ -11,6 +11,7 @@ import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
+import RoomMembers from './RoomMembers';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -169,10 +170,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
         START!
       </StartButton>
       <Link to={{ pathname: '/' }}>Cancel</Link>
-      <h3>Connected:</h3>
-      {users.map((name) => (
-        <p key={name}>{name}</p>
-      ))}
+      <RoomMembers users={users} />
       <PindaHappy />
     </CreateRoomContainer>
   );
