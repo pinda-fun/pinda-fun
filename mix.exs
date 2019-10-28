@@ -54,6 +54,7 @@ defmodule Api.MixProject do
       {:sentry, "~> 7.0"},
       {:credo, "~> 1.1.0", only: :test, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
+      {:faker, "~> 0.13", only: :test},
       {:dialyxir, "~> 1.0.0-rc.7", only: :test, runtime: false}
     ]
   end
