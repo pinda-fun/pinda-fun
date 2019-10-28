@@ -12,10 +12,10 @@ type VirtualizedListProps = {
   noRowsRenderer?: () => JSX.Element;
   rowCount: number;
   rowHeight:
-    | number
-    | (number & ((info: Index) => number))
-    | (((params: Index) => number) & number)
-    | (((params: Index) => number) & ((info: Index) => number));
+  | number
+  | (number & ((info: Index) => number))
+  | (((params: Index) => number) & number)
+  | (((params: Index) => number) & ((info: Index) => number));
   rowRenderer: ListRowRenderer;
   scrollToIndex?: number;
 };
@@ -27,7 +27,9 @@ const WindowScrollVirtualizedList: React.FC<VirtualizedListProps> = ({
   scrollToIndex,
 }) => (
   <WindowScroller>
-    {({ height, isScrolling, onChildScroll, scrollTop }) => (
+    {({
+      height, isScrolling, onChildScroll, scrollTop,
+    }) => (
       <AutoSizer disableHeight>
         {({ width }) => (
           <List
