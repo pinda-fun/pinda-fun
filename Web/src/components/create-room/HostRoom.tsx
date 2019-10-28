@@ -15,9 +15,12 @@ import RoomMembers from './RoomMembers';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
-  min-height: 100vh;
   position: relative;
   overflow: hidden;
+`;
+
+const RoomDetailsSection = styled.section`
+  min-height: ${window.innerHeight}px;
 
   display: flex;
   flex-direction: column;
@@ -139,37 +142,39 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   return (
     <CreateRoomContainer>
-      {resultsExist(allMetas) && (
-        <>
-          <h1>Last Game:</h1>
-          {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-            <p key={clientId}>{name}: {result}</p>
-          ))}
-        </>
-      )}
-      <TwoColumnDiv>
-        <div>
-          <GamePinSection>
-            <h2>Game PIN:</h2>
-            <h1>{room}</h1>
-          </GamePinSection>
-          <NumPlayers numPlayers={users.length} hideOnMedium />
-        </div>
-        <ShareSection>
-          <h2>Share via</h2>
-          <ShareContent>
-            <QrCode sharableLink={sharableLink} />
-            <SocialShare sharableLink={sharableLink} />
-          </ShareContent>
-          <NumPlayers numPlayers={users.length} hideOnLarge />
-        </ShareSection>
-      </TwoColumnDiv>
-      <StartButton
-        onClick={onStartButtonClick}
-      >
-        START!
-      </StartButton>
-      <Link to={{ pathname: '/' }}>Cancel</Link>
+      <RoomDetailsSection>
+        {resultsExist(allMetas) && (
+          <>
+            <h1>Last Game:</h1>
+            {Object.entries(allMetas).map(([clientId, { name, result }]) => (
+              <p key={clientId}>{name}: {result}</p>
+            ))}
+          </>
+        )}
+        <TwoColumnDiv>
+          <div>
+            <GamePinSection>
+              <h2>Game PIN:</h2>
+              <h1>{room}</h1>
+            </GamePinSection>
+            <NumPlayers numPlayers={users.length} hideOnMedium />
+          </div>
+          <ShareSection>
+            <h2>Share via</h2>
+            <ShareContent>
+              <QrCode sharableLink={sharableLink} />
+              <SocialShare sharableLink={sharableLink} />
+            </ShareContent>
+            <NumPlayers numPlayers={users.length} hideOnLarge />
+          </ShareSection>
+        </TwoColumnDiv>
+        <StartButton
+          onClick={onStartButtonClick}
+        >
+          START!
+        </StartButton>
+        <Link to={{ pathname: '/' }}>Cancel</Link>
+      </RoomDetailsSection>
       <RoomMembers users={users} />
       <PindaHappy />
     </CreateRoomContainer>
