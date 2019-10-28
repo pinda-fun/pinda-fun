@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { MotionPermission } from 'components/games/GameStates';
 import { Form, SubmitButton } from './FormElements';
 
 const StyledNameInput = styled.input`
@@ -14,25 +13,56 @@ const StyledNameInput = styled.input`
   margin-bottom: 1.5rem;
 `;
 
+const ErrorText = styled.p`
+  color: red;
+`;
+
 type UsernameFormProps = {
+  /** Callback for when permission is called. */
   onSubmitName: (name: string) => void;
-  permission: MotionPermission;
+  /** Additional condition to invalidate the form by. */
+  disabled?: boolean;
 };
 
 const UsernameForm: React.FC<UsernameFormProps> = ({
   onSubmitName,
-  permission,
+  disabled = false,
 }) => {
   const [name, setName] = useState('');
+  const [inputErrors, setInputErrors] = useState<string[]>([]);
+
+  // Simple validation against whitespace names
+  const validated = (inputName: string) => {
+    const trimmedName = inputName.trim();
+    if (inputName.trim().length === 0) {
+      return {
+        name: inputName,
+        errors: ['Your name cannot be empty'],
+      };
+    }
+    return {
+      name: trimmedName,
+      errors: [] as string[],
+    };
+  };
+
+  const attemptSubmit = () => {
+    const { name: validatedName, errors } = validated(name);
+    if (errors.length) {
+      setInputErrors(errors);
+      return;
+    }
+    onSubmitName(validatedName);
+  };
 
   return (
     <Form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmitName(name);
+        attemptSubmit();
       }}
     >
-      <h1>Enter Name</h1>
+      <h1>Enter Your Name</h1>
       <StyledNameInput
         name="username"
         type="text"
@@ -43,10 +73,14 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
         )}
         autoFocus
       />
+      {inputErrors.map((inputError) => (
+        <ErrorText>
+          {inputError}
+        </ErrorText>
+      ))}
       <SubmitButton
         type="submit"
-        disabled={name === ''
-          || permission === MotionPermission.DENIED}
+        disabled={name === '' || disabled}
       >
         Let&apos;s Go!
       </SubmitButton>
