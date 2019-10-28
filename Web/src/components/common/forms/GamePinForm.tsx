@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { MotionPermission } from 'components/games/GameStates';
 import { Form, SubmitButton } from './FormElements';
 
 const StyledPinInput = styled.input`
@@ -17,17 +16,21 @@ const StyledPinInput = styled.input`
 `;
 
 interface GamePinFormProps {
+  /** Callback when submit button is pressed. */
   onSubmitPin: (gamePin: string) => void;
+  /** Length of pin - form would be invalid if not this length. */
   pinLength: number;
-  initialPin: string;
-  permission: MotionPermission;
+  /** Default value (optional). */
+  initialPin?: string;
+  /** Additional conditions to disable the form by. */
+  disabled: boolean;
 }
 
 const GamePinForm: React.FC<GamePinFormProps> = ({
   onSubmitPin,
   pinLength,
-  initialPin,
-  permission,
+  initialPin = '',
+  disabled,
 }) => {
   const [gamePin, setGamePin] = useState(initialPin);
 
@@ -54,8 +57,7 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
       />
       <SubmitButton
         type="submit"
-        disabled={gamePin.length < pinLength
-          || permission === MotionPermission.DENIED}
+        disabled={gamePin.length !== pinLength || disabled}
       >
         Next
       </SubmitButton>

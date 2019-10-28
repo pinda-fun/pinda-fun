@@ -2,27 +2,22 @@ import React, {
   useState, useContext, useEffect, lazy,
 } from 'react';
 import CommContext from 'components/room/comm/CommContext';
-import useCommHooks from 'components/room/comm/useCommHooks';
 import Loading from 'components/common/Loading';
 import BigButton from 'components/common/BigButton';
 import GameState from './comm/GameState';
 import Game from './Games';
-import { CommError } from './comm/Errors';
-import { ResultMap } from './comm/Comm';
+import { CommAttributes } from './comm/Comm';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
-export interface FinishedComponentProps {
-  allMetas: ResultMap | null;
-  room: string | null;
-  error: CommError | null;
-  users: string[];
+export interface FinishedComponentProps extends CommAttributes {
   game: Game;
 }
 
 interface CommonRoomProps {
+  commHooks: CommAttributes;
   FinishedComponent: React.FC<FinishedComponentProps>;
   NoHostComponent?: React.FC;
 }
@@ -39,6 +34,7 @@ const GameComponent: React.FC<{ game: Game }> = ({ game }) => (
 );
 
 const CommonRoom: React.FC<CommonRoomProps> = ({
+  commHooks,
   FinishedComponent,
   NoHostComponent = () => <p>No Host :(</p>,
 }) => {
@@ -51,9 +47,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     comm.leaveRoom();
   }, [comm]);
 
-  const {
-    hostMeta, room, error, users, allMetas, myMeta,
-  } = useCommHooks(comm);
+  const { hostMeta, myMeta, room } = commHooks;
 
   const onReadyClick = () => {
     comm.readyUp();
@@ -81,9 +75,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.FINISHED
         && (
           <FinishedComponent
-            {... {
-              allMetas, room, users, error, game,
-            }}
+            {...{ ...commHooks, game }}
           />
         )}
       {hostMeta.state === GameState.ONGOING
