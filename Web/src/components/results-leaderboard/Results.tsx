@@ -10,10 +10,12 @@ interface ResultsProps {
   numPlayers:number,
 }
 
+// TODO: Use secondary font instead of primary font
+// Secondary font's height is too tall when rendering on mobile devices.
 const BigNumber = styled.span`
   height: auto;
-  font-size: 10rem;
-  font-family: var(--secondary-font);
+  font-size: 8rem;
+  font-family: var(--primary-font);
   text-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
 `;
 
