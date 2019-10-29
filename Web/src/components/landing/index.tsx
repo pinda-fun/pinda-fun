@@ -4,7 +4,7 @@ import HeaderContent from './HeaderContent';
 import IntroductionContent from './IntroductionContent';
 import DetailsContent from './DetailsContent';
 import NavBar from './NavBar';
-import { mdMin } from '../../utils/media';
+import { mdMin, lgMin } from '../../utils/media';
 import { ReactComponent as PindaHappyBadgeSVG } from '../../svg/pinda-happy-badge.svg';
 import { ReactComponent as PindaShockedBadgeSVG } from '../../svg/pinda-shocked-badge.svg';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
@@ -78,7 +78,7 @@ const DetailsSection = styled.section`
   align-items: center;
   background: var(--pale-purple);
 
-  @media (max-width: ${mdMin}) {
+  @media (max-width: ${lgMin}) {
     padding-bottom: 0;
   }
 `;
@@ -97,7 +97,7 @@ const PindaHappySide = styled(PindaHappySVG)`
   bottom: -30px;
   right: -50px;
 
-  @media (max-width: ${mdMin}) {
+  @media (max-width: ${lgMin}) {
     display: none;
   }
 `;
@@ -108,7 +108,7 @@ const PindaHappyMid = styled(PindaHappySVG)`
   display: none;
   transform: translateY(15px);
 
-  @media (max-width: ${mdMin}) {
+  @media (max-width: ${lgMin}) {
     display: block;
   }
 `;

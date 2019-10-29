@@ -18,7 +18,7 @@ type SocialShareProps = {
 const SocialShare: React.FC<SocialShareProps> = ({ sharableLink }) => {
   const encodedLink = encodeURIComponent(sharableLink);
   const shareWhatsApp = () => {
-    const url = `https://wa.me/?text=${defaultPromoText}%20${encodedLink}`;
+    const url = `https://api.whatsapp.com/send?text=${defaultPromoText}%20${encodedLink}`;
     window.open(url, '_blank');
   };
 

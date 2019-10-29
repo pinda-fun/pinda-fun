@@ -39,7 +39,7 @@ defmodule Api.PINGenerator do
     if Enum.empty?(available) do
       {:reply, nil, state}
     else
-      [pin] = Enum.take(available, 1)
+      pin = Enum.random(available)
       available = MapSet.delete(available, pin)
       taken = MapSet.put(taken, pin)
       {:reply, pin, %__MODULE__{available: available, taken: taken}}

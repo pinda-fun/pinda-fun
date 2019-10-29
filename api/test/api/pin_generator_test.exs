@@ -8,6 +8,13 @@ defmodule Api.PINGeneratorTest do
     %{pid: pid}
   end
 
+  test "Randomised PIN generation", %{pid: pid} do
+    first_pins = Enum.map(1..10, fn _ -> PINGenerator.generate_pin(pid) end)
+    Enum.each(first_pins, fn pin -> PINGenerator.mark_pin_as_available(pin, pid) end)
+    second_pins = Enum.map(1..10, fn _ -> PINGenerator.generate_pin(pid) end)
+    refute first_pins == second_pins
+  end
+
   test "Integration test", %{pid: pid} do
     pins =
       Enum.map(1..PINGenerator.max_num_pins(), fn _ ->
