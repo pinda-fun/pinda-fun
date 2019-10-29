@@ -99,7 +99,7 @@ const ScoreSection = styled.section`
 `;
 
 const BigText = styled.span`
-  font-size: 2.5rem;
+  font-size: 2.2rem;
 `;
 
 const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
