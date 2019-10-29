@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import seedrandom from 'seedrandom';
 import styled, { css } from 'styled-components';
 import { smMin } from 'utils/media';
@@ -16,7 +16,7 @@ interface MentalSumsGameProps {
 const GameContainer = styled.div`
   background: var(--purple);
   overflow: hidden;
-  height: ${window.innerHeight}px;
+  min-height: ${window.innerHeight}px;
 
   display: flex;
   justify-content: center;
@@ -24,7 +24,7 @@ const GameContainer = styled.div`
   align-items: center;
 
   color: white;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
 `;
 
@@ -34,11 +34,10 @@ const GameplayContainer = styled.div`
   justify-content: center;
   align-items: center;
 
-  height: 55vh;
   width: ${smMin};
 
   @media (max-width: ${smMin}) {
-    width: 75vw;
+    width: 90vw;
   }
 
   & > * {
@@ -62,7 +61,7 @@ const QuestionContainer = styled.div`
   transition: background-color 0.5s ease-out;
 
   & > * {
-    margin: 0.5rem;
+    margin: 0.5rem 1rem;
   }
 
   ${({ animateCorrect }: QuestionContainerProps) => animateCorrect
@@ -121,22 +120,26 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
     setTimeout(() => setAnimateWrong(false), 500);
   };
 
-  const checkAns = (newInput: string) => {
-    if (expectedAns === null) return;
-    if (newInput.length < expectedAns.toString().length) return;
-    if (parseInt(newInput, 10) === expectedAns) {
-      setCorrect();
-      incrementScore();
-    } else {
-      setWrong();
-    }
-    nextProblem();
-    setInput('');
-  };
+  useEffect(() => {
+    const checkAns = (newInput: string) => {
+      if (expectedAns === null) return;
+      if (newInput.length < expectedAns.toString().length) return;
+      if (parseInt(newInput, 10) === expectedAns) {
+        setCorrect();
+        incrementScore();
+      } else {
+        setWrong();
+      }
+      nextProblem();
+      setInput('');
+    };
+
+    checkAns(input);
+  }, [input, expectedAns, incrementScore, nextProblem]);
 
   return (
     <GameContainer>
-      <TimerDisplay seconds={timeLeft} />
+      <TimerDisplay seconds={timeLeft} small />
       <GameplayContainer>
         <QuestionContainer
           animateCorrect={animateCorrect}
@@ -151,7 +154,6 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
               onChange={(e) => {
                 const newInput = e.target.value.replace(/[^0-9-]/g, '');
                 setInput(newInput);
-                checkAns(newInput);
               }}
               value={input}
               name="answer-field"
@@ -165,7 +167,6 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
           onClickKey={(key) => {
             const newInput = input + key;
             setInput(newInput);
-            checkAns(newInput);
           }}
         />
       </GameplayContainer>
