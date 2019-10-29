@@ -19,9 +19,7 @@ const BigNumber = styled.span`
 
 const Footer = styled.div`
   width: 100vw;
-  display: flex;
   align-items: center;
-  flex-direction: column;
   position: sticky;
   bottom: 0px;
   text-align: center;
@@ -32,7 +30,6 @@ const Footer = styled.div`
 const DownArrowIcon = styled(ChevronDown as React.FC<React.ComponentProps<Icon>>)`
   width: 42px;
   height: 42px;
-  viewBox: 0 0 10 10;
 `;
 
 const Results: React.FC<ResultsProps> = (
@@ -51,7 +48,7 @@ const Results: React.FC<ResultsProps> = (
       <span>out of {numPlayers} of your friends!</span>
     </Group>
     <Footer>
-      <span>Leaderboard</span>
+      <div>Leaderboard</div>
       <DownArrowIcon />
     </Footer>
   </Container>

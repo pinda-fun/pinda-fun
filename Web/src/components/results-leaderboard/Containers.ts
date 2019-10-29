@@ -19,7 +19,7 @@ export const Container = styled.div`
 export const Group = styled.span`
   overflow: hidden;
   height: 100%;
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;

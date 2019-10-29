@@ -21,9 +21,7 @@ const BigText = styled.span`
 `;
 
 const Header = styled.div`
-  display: flex;
   align-items: center;
-  flex-direction: column;
   position: sticky;
   top: 0px;
   text-align: center;
@@ -35,7 +33,6 @@ const Header = styled.div`
 const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
   width: 42px;
   height: 42px;
-  viewBox: 0 0 10 10;
 `;
 
 const List = styled.div`
@@ -103,7 +100,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
     <Container>
       <Header>
         <UpArrowIcon />
-        Back
+        <div>Back</div>
       </Header>
       <Group>
         <BigText>Leaderboard</BigText>
