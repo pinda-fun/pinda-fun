@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import seedrandom from 'seedrandom';
 import styled, { css } from 'styled-components';
+import { smMin } from 'utils/media';
 import { useQuestionStream } from './ProblemGen';
 import TimerDisplay from '../TimerDisplay';
-import { smMin } from 'utils/media';
 import NumKeypad from './NumKeypad';
 
 interface MentalSumsGameProps {
