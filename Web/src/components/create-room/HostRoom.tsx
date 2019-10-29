@@ -151,14 +151,6 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
     <>
       {results}
       <CreateRoomContainer>
-        {resultsExist(allMetas) && (
-          <>
-            <h1>Last Game:</h1>
-            {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-              <p key={clientId}>{name}: {result}</p>
-            ))}
-          </>
-        )}
         <TwoColumnDiv>
           <div>
             <GamePinSection>
