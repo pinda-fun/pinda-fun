@@ -8,6 +8,7 @@ import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import Game from 'components/room/Games';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
+import { ChevronDown, Icon } from 'react-feather';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
@@ -25,6 +26,7 @@ const CreateRoomContainer = styled.div`
 
 const RoomDetailsSection = styled.section`
   min-height: ${window.innerHeight}px;
+  position: relative;
 
   display: flex;
   flex-direction: column;
@@ -113,6 +115,20 @@ const StartButton = styled(BigButton)`
   padding-right: 3rem;
 `;
 
+const ScrollDownPrompt = styled.div`
+  position: absolute;
+  bottom: 0px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-item: center;
+
+  & > svg {
+    width: 42px;
+  }
+`;
+
 const PindaHappy = styled(PindaHappySVG)`
   position: fixed;
   height: 270px;
@@ -182,6 +198,10 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
           START!
         </StartButton>
         <Link to={{ pathname: '/' }}>Cancel</Link>
+        <ScrollDownPrompt>
+          View Players
+          <ChevronDown />
+        </ScrollDownPrompt>
       </RoomDetailsSection>
       <MembersSection>
         <RoomMembers users={users} />
