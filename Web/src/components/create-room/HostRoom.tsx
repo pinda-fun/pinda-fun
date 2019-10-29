@@ -6,9 +6,9 @@ import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import Game from 'components/room/Games';
+import { ChevronDown } from 'react-feather';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
-import { ChevronDown, Icon } from 'react-feather';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
@@ -122,7 +122,7 @@ const ScrollDownPrompt = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-item: center;
+  align-items: center;
 
   & > svg {
     width: 42px;
