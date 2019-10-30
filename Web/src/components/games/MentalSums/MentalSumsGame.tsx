@@ -5,7 +5,7 @@ import { smMin } from 'utils/media';
 import { useQuestionStream } from './ProblemGen';
 import TimerDisplay from '../TimerDisplay';
 import NumKeypad from './NumKeypad';
-import { FeedbackState } from './DisplayState';
+import FeedbackState from './FeedbackState';
 
 interface MentalSumsGameProps {
   incrementScore: () => void;
