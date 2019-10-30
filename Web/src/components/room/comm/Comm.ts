@@ -66,10 +66,6 @@ export default interface Comm {
   _onGameEnd(handler: () => void): void
 
   /* RFC #147 */
-  /**
-   *
-   * @param game if not provided, will look at HostMeta
-   */
   submitFeedback(
     game: string,
     isGood: boolean,
