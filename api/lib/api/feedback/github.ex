@@ -1,4 +1,8 @@
 defmodule Api.Feedback.GitHub do
+  @moduledoc """
+  An implementation of `Api.Feedback` that uses GitHub-issue-as-a-service backend
+  """
+
   @config Application.get_env(:api, :github)
   @repo Keyword.get(@config, :repo)
   @username Keyword.get(@config, :username)

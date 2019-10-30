@@ -1,4 +1,9 @@
 defmodule Api.Feedback do
+  @moduledoc """
+  Specifies the struct for feedback in user testing and the behaviour for a module that submits
+  the feedback.
+  """
+
   @feedback_impl Application.get_env(:api, __MODULE__)
   @feedback_impl_module Module.safe_concat(__MODULE__, @feedback_impl)
 
