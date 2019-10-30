@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const TimerDiv = styled.div`
   display: flex;
@@ -12,6 +12,10 @@ const TimerDiv = styled.div`
   }
 `;
 
+type TextProps = {
+  small?: boolean;
+};
+
 const TimerText = styled.span`
   font-size: 6rem;
   font-family: var(--secondary-font);
@@ -21,23 +25,30 @@ const TimerText = styled.span`
 
   // Increase line-height to curb font rendering bug
   line-height: 1.2;
+
+  ${(props: TextProps) => props.small
+    && css`font-size: 3.5rem`};
 `;
 
 const UnitsText = styled.span`
   font-size: 2rem;
   font-family: var(--secondary-font);
+
+  ${(props: TextProps) => props.small
+    && css`font-size: 1.5rem`};
 `;
 
 type TimerProps = {
   seconds: number;
+  small?: boolean;
 };
 
-const TimerDisplay: React.FC<TimerProps> = ({ seconds }) => (
+const TimerDisplay: React.FC<TimerProps> = ({ seconds, small }) => (
   <TimerDiv>
     <span>Time left:</span>
     <div>
-      <TimerText>{seconds}</TimerText>
-      <UnitsText> sec</UnitsText>
+      <TimerText small={small}>{seconds}</TimerText>
+      <UnitsText small={small}> sec</UnitsText>
     </div>
   </TimerDiv>
 );
