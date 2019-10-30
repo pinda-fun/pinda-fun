@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import seedrandom from 'seedrandom';
 import styled, { css } from 'styled-components';
 import { smMin } from 'utils/media';
@@ -109,20 +109,20 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
   const [feedback, setFeedback] = useState(FeedbackState.NONE);
   const [input, setInput] = useState('');
 
-  useEffect(() => {
-    const setCorrect = () => {
-      setFeedback(FeedbackState.CORRECT);
-      setTimeout(() => setFeedback(FeedbackState.NONE), 500);
-    };
+  const setCorrect = useCallback(() => {
+    setFeedback(FeedbackState.CORRECT);
+    setTimeout(() => setFeedback(FeedbackState.NONE), 500);
+  }, []);
 
-    const setWrong = () => {
-      setFeedback(FeedbackState.WRONG);
-      setTimeout(() => setFeedback(FeedbackState.NONE), 500);
-    };
+  const setWrong = useCallback(() => {
+    setFeedback(FeedbackState.WRONG);
+    setTimeout(() => setFeedback(FeedbackState.NONE), 500);
+  }, []);
 
+  const checkAns = useCallback((newInput: string) => {
     if (expectedAns === null) return;
-    if (input.length < expectedAns.toString().length) return;
-    if (parseInt(input, 10) === expectedAns) {
+    if (newInput.length < expectedAns.toString().length) return;
+    if (parseInt(newInput, 10) === expectedAns) {
       setCorrect();
       incrementScore();
     } else {
@@ -130,7 +130,11 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
     }
     nextProblem();
     setInput('');
-  }, [input, expectedAns, incrementScore, nextProblem]);
+  }, [expectedAns, incrementScore, nextProblem, setCorrect, setWrong]);
+
+  useEffect(() => {
+    checkAns(input);
+  }, [input, checkAns]);
 
   return (
     <GameContainer>
