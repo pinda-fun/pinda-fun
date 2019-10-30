@@ -345,4 +345,35 @@ export default class PhoenixComm implements Comm {
       onError || noOp,
     );
   }
+
+  private getCurrentGame(): Game | null {
+    const hostMeta = this.getHostMeta();
+    if (hostMeta == null) return null;
+    return hostMeta.game;
+  }
+
+  submitFeedback(game: string, isGood: boolean, title: string, body: string = '', onOk: () => void = noOp, onError: PushErrorHandler = noOp): void {
+    const channel = this.socket.channel(`feedback:${getClientId()}`);
+    channel
+      .join()
+      .receive(ChannelResponse.OK, () => {
+        channel
+          .push('submitResult', {
+            isGood, title, body, game,
+          })
+          .receive(ChannelResponse.OK, () => {
+            channel.leave();
+            this.socket.remove(channel);
+            onOk();
+          })
+          .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
+            onError(PushError.Other, reason);
+          })
+          .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
+      })
+      .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
+        onError(PushError.Other, reason);
+      })
+      .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
+  }
 }
