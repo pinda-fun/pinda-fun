@@ -93,7 +93,7 @@ defmodule ApiWeb.FeedbackChannelTest do
 
     case Agent.get(counter, & &1) do
       n when n > 2 -> :ok
-      _ -> wait_until_retry(counter)
+      _ -> do_wait_until_retry(counter)
     end
   end
 end
