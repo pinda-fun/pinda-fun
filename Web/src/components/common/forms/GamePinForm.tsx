@@ -49,6 +49,7 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
         inputMode="numeric"
         maxLength={pinLength}
         placeholder="XXXX"
+        autoComplete="off"
         value={gamePin}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => (
           setGamePin(event.target.value.replace(/\D/g, ''))
