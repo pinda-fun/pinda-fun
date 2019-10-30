@@ -9,12 +9,17 @@ defmodule Api.Feedback.GitHubTest do
 
   @title "Very cute"
   @body "I like"
+  @client_id "dada"
+  @game "shake"
 
   describe "submit/1" do
     test "happy path" do
       post = fn "https://api.github.com/repos/#{@repo}/issues", issue_json, headers ->
-        assert %{"title" => @title, "body" => body, "labels" => ["good"]} =
+        assert %{"title" => @title, "body" => body, "labels" => labels} =
                  Jason.decode!(issue_json)
+
+        assert MapSet.new(labels) ==
+                 MapSet.new(["good", "client_id: #{@client_id}", "game: #{@game}"])
 
         content_type = find_header(headers, "content-type")
 
@@ -32,7 +37,13 @@ defmodule Api.Feedback.GitHubTest do
 
       with_mock HTTPoison, post: post do
         assert :ok =
-                 Api.Feedback.GitHub.submit(%Api.Feedback{title: @title, body: @body, good?: true})
+                 Api.Feedback.GitHub.submit(%Api.Feedback{
+                   title: @title,
+                   body: @body,
+                   good?: true,
+                   client_id: @client_id,
+                   game: @game
+                 })
       end
     end
   end
