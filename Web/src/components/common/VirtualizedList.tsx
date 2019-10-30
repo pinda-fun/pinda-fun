@@ -1,26 +1,14 @@
 import React from 'react';
 import {
   List,
-  Index,
   WindowScroller,
-  ListRowRenderer,
   AutoSizer,
+  ListProps,
 } from 'react-virtualized';
 
-type VirtualizedListProps = {
-  overscanRowCount?: number;
-  noRowsRenderer?: () => JSX.Element;
-  rowCount: number;
-  rowHeight:
-  | number
-  | (number & ((info: Index) => number))
-  | (((params: Index) => number) & number)
-  | (((params: Index) => number) & ((info: Index) => number));
-  rowRenderer: ListRowRenderer;
-  scrollToIndex?: number;
-};
+type WindowScrollVirtualizedListProps = Omit<ListProps, 'width' | 'height'>;
 
-const WindowScrollVirtualizedList: React.FC<VirtualizedListProps> = ({
+const WindowScrollVirtualizedList: React.FC<WindowScrollVirtualizedListProps> = ({
   rowCount,
   rowHeight,
   rowRenderer,

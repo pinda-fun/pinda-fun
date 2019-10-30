@@ -31,19 +31,22 @@ const Heading = styled.h1`
   font-weight: normal;
 `;
 
-const createMembersRowRenderer = (users: string[]) => ({ key, index, style }: ListRowProps) => (
-  <div
-    key={key}
-    style={{
-      ...style,
-      display: 'flex',
-    }}
-  >
-    <MemberRow>
-      {users[users.length - 1 - index]}
-    </MemberRow>
-  </div>
-);
+const createMembersRowRenderer = (users: string[]) => {
+  const reversedUsers = users.reverse();
+  return ({ key, index, style }: ListRowProps) => (
+    <div
+      key={key}
+      style={{
+        ...style,
+        display: 'flex',
+      }}
+    >
+      <MemberRow>
+        {reversedUsers[index]}
+      </MemberRow>
+    </div>
+  );
+};
 
 type RoomMembersProps = {
   users: string[];
