@@ -32,10 +32,9 @@ const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey }) => (
   <KeypadWrapper>
     <KeypadContainer>
       {
-        NUMPAD_KEYS.map((val, index) => (
+        NUMPAD_KEYS.map((val) => (
           <KeyButton
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
+            key={val}
             onClick={() => onClickKey(val)}
           >
             {val}

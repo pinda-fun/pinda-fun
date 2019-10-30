@@ -5,6 +5,7 @@ import { smMin } from 'utils/media';
 import { useQuestionStream } from './ProblemGen';
 import TimerDisplay from '../TimerDisplay';
 import NumKeypad from './NumKeypad';
+import { FeedbackState } from './DisplayState';
 
 interface MentalSumsGameProps {
   incrementScore: () => void;
@@ -47,8 +48,7 @@ const GameplayContainer = styled.div`
 `;
 
 type QuestionContainerProps = {
-  animateCorrect?: boolean;
-  animateWrong?: boolean;
+  feedbackState: FeedbackState;
 };
 
 const QuestionContainer = styled.div`
@@ -64,14 +64,14 @@ const QuestionContainer = styled.div`
     margin: 0.5rem 1rem;
   }
 
-  ${({ animateCorrect }: QuestionContainerProps) => animateCorrect
+  ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.CORRECT
     && css`background-color: var(--green)`};
 
-  ${({ animateWrong }: QuestionContainerProps) => animateWrong
+  ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.WRONG
     && css`background-color: var(--pink)`};
 `;
 
-const InputDiv = styled.div`
+const AnswerDiv = styled.div`
   display: flex;
   justify-content: space-between;
 `;
@@ -106,35 +106,30 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
   incrementScore, score, seed, timeLeft,
 }) => {
   const { problemText, expectedAns, nextProblem } = useQuestionStream(seedrandom(seed));
-  const [animateCorrect, setAnimateCorrect] = useState(false);
-  const [animateWrong, setAnimateWrong] = useState(false);
+  const [feedback, setFeedback] = useState(FeedbackState.NONE);
   const [input, setInput] = useState('');
 
-  const setCorrect = () => {
-    setAnimateCorrect(true);
-    setTimeout(() => setAnimateCorrect(false), 500);
-  };
-
-  const setWrong = () => {
-    setAnimateWrong(true);
-    setTimeout(() => setAnimateWrong(false), 500);
-  };
-
   useEffect(() => {
-    const checkAns = (newInput: string) => {
-      if (expectedAns === null) return;
-      if (newInput.length < expectedAns.toString().length) return;
-      if (parseInt(newInput, 10) === expectedAns) {
-        setCorrect();
-        incrementScore();
-      } else {
-        setWrong();
-      }
-      nextProblem();
-      setInput('');
+    const setCorrect = () => {
+      setFeedback(FeedbackState.CORRECT);
+      setTimeout(() => setFeedback(FeedbackState.NONE), 500);
     };
 
-    checkAns(input);
+    const setWrong = () => {
+      setFeedback(FeedbackState.WRONG);
+      setTimeout(() => setFeedback(FeedbackState.NONE), 500);
+    };
+
+    if (expectedAns === null) return;
+    if (input.length < expectedAns.toString().length) return;
+    if (parseInt(input, 10) === expectedAns) {
+      setCorrect();
+      incrementScore();
+    } else {
+      setWrong();
+    }
+    nextProblem();
+    setInput('');
   }, [input, expectedAns, incrementScore, nextProblem]);
 
   return (
@@ -142,13 +137,12 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
       <TimerDisplay seconds={timeLeft} small />
       <GameplayContainer>
         <QuestionContainer
-          animateCorrect={animateCorrect}
-          animateWrong={animateWrong}
+          feedbackState={feedback}
         >
           <QuestionDisplay>
             {problemText}
           </QuestionDisplay>
-          <InputDiv>
+          <AnswerDiv>
             <span>=</span>
             <StyledInput
               onChange={(e) => {
@@ -161,7 +155,7 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
               autoFocus
               readOnly
             />
-          </InputDiv>
+          </AnswerDiv>
         </QuestionContainer>
         <NumKeypad
           onClickKey={(key) => {
