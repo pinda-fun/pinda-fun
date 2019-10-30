@@ -80,7 +80,7 @@ const StyledInput = styled.input`
   background: none;
   text-align: end;
   font-size: 2rem;
-  width: 13rem;
+  min-width: 13rem;
 `;
 
 const QuestionDisplay = styled.span`
@@ -121,7 +121,9 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
 
   const checkAns = useCallback((newInput: string) => {
     if (expectedAns === null) return;
-    if (newInput.length < expectedAns.toString().length) return;
+    if (newInput === '') return;
+    if (newInput.length < expectedAns.toString().length
+      && newInput === expectedAns.toString().substring(0, newInput.length)) return;
     if (parseInt(newInput, 10) === expectedAns) {
       setCorrect();
       incrementScore();
