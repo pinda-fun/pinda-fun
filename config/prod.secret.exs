@@ -40,6 +40,29 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_path: File.cwd!()
 
+github_repo =
+  System.get_env("GITHUB_REPO") ||
+    raise """
+    environment variable GITHUB_REPO is missing.
+    """
+
+github_username =
+  System.get_env("GITHUB_USERNAME") ||
+    raise """
+    environment variable GITHUB_USERNAME is missing.
+    """
+
+github_personal_token =
+  System.get_env("GITHUB_PERSONAL_TOKEN") ||
+    raise """
+    environment variable GITHUB_PERSONAL_TOKEN is missing.
+    """
+
+config :api, :github,
+  repo: github_repo,
+  username: github_username,
+  token: github_personal_token
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix
