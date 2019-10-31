@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import ReactLoading from 'react-loading';
 import styled from 'styled-components';
 import { MotionPermission } from 'components/games/GameStates';
 import CommContext from 'components/room/comm/CommContext';
@@ -21,9 +22,9 @@ const JoinRoomContainer = styled.div`
   text-align: center;
 
   h1 {
-    font-family: var(--primary);
-    font-size: 1.4rem;
-    font-weight: normal;
+  font-family: var(--primary);
+  font-size: 1.4rem;
+  font-weight: normal;
   }
 `;
 
@@ -36,11 +37,16 @@ interface JoinRoomPageProps {
   commHooks: CommAttributes;
 }
 
+const ErrorText = styled.p`
+  color: var(--red);
+`;
+
 const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   roomId, commHooks,
 }) => {
   const [gamePin, setGamePin] = useState(roomId ? roomId.substring(0, PIN_LENGTH) : '');
   const [username, setUsername] = useState('');
+  const [waitingForResponse, setWaitForResponse] = useState(false);
 
   const {
     permission, awaitingPermission, getUserPermission, getPermissionAvailability,
@@ -48,7 +54,7 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
 
   const comm = useContext(CommContext);
-  const { error } = commHooks;
+  const { room, error, errorDescription } = commHooks;
 
   const onJoinRoomFormSubmit = (newGamePin: string, newUsername: string) => {
     if (joinRequested) return;
@@ -68,14 +74,22 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
       }
       if (joinRequested && permission === MotionPermission.GRANTED) {
         comm.joinRoom(gamePin, username);
+        setWaitForResponse(true);
       }
     },
     [permission, joinRequested, gamePin, username, comm, getPermissionAvailability],
   );
 
-  useEffect(() => {
-    if (error !== null) setJoinRequested(false);
-  }, [error]);
+  useEffect(
+    () => {
+      if (waitingForResponse && (error !== null || room !== null)) {
+        console.log({ error, room });
+        setWaitForResponse(false);
+        setJoinRequested(false);
+      }
+    },
+    [error, room, waitingForResponse],
+  );
 
   return (
     <JoinRoomContainer>
@@ -90,6 +104,20 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
         isVisible={awaitingPermission}
         onConfirm={getUserPermission}
       />
+      {waitingForResponse
+        && (
+          <ReactLoading
+            type={"bubbles"}
+            color="var(--green)"
+          />
+        )}
+      {!waitingForResponse && error !== null
+        && (
+          <ErrorText>
+            Error: {error.toString()}
+            {errorDescription}
+          </ErrorText>
+        )}
     </JoinRoomContainer>
   );
 };
