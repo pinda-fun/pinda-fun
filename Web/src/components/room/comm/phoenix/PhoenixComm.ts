@@ -8,7 +8,9 @@ import PhoenixDatabase from 'components/room/database/phoenix/PhoenixDatabase';
 import Meta, { HostMeta } from 'components/room/database/Meta';
 import Game from 'components/room/Games';
 import HostCommand, { HostMessage } from '../commands/HostCommand';
-import Comm, { CommAttributes, PushErrorHandler, ResultMap } from '../Comm';
+import Comm, {
+  CommAttributes, PushErrorHandler, ResultMap, Feedback,
+} from '../Comm';
 import { CommError, PushError } from '../Errors';
 import ClientCommand, { ClientMessage } from '../commands/ClientCommand';
 import GameState from '../GameState';
@@ -344,5 +346,32 @@ export default class PhoenixComm implements Comm {
       onOk || noOp,
       onError || noOp,
     );
+  }
+
+  submitFeedback({
+    isGood, title, body, game,
+  }: Feedback, onOk: () => void = noOp, onError: PushErrorHandler = noOp): void {
+    const channel = this.socket.channel(`feedback:${getClientId()}`);
+    channel
+      .join()
+      .receive(ChannelResponse.OK, () => {
+        channel
+          .push('submitResult', {
+            isGood, title, body, game: game.toString(),
+          })
+          .receive(ChannelResponse.OK, () => {
+            channel.leave();
+            this.socket.remove(channel);
+            onOk();
+          })
+          .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
+            onError(PushError.Other, reason);
+          })
+          .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
+      })
+      .receive(ChannelResponse.ERROR, ({ reason }: ErrorPayload) => {
+        onError(PushError.Other, reason);
+      })
+      .receive(ChannelResponse.TIMEOUT, () => onError(PushError.Timeout, null));
   }
 }

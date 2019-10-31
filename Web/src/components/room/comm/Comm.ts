@@ -22,6 +22,14 @@ export interface CommAttributes {
   myMeta: Meta | null,
 }
 
+/* RFC #147 */
+export interface Feedback {
+  game: Game,
+  title: string,
+  body: string,
+  isGood: boolean
+}
+
 export type PushErrorHandler = (error: PushError, errorDescription: string | null) => void;
 
 /**
@@ -65,4 +73,6 @@ export default interface Comm {
    */
   _onGameEnd(handler: () => void): void
 
+  /* RFC #147 */
+  submitFeedback(feedback: Feedback, onOk?: () => void, onError?: PushErrorHandler): void
 }
