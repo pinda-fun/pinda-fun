@@ -21,7 +21,6 @@ module.exports = {
     'no-undef': 'off',
 
     'no-alert': 'off',
-    'prefer-destructuring': 'off',
     'no-underscore-dangle': 'off',
 
     // TypeScript lints this for us
