@@ -25,6 +25,8 @@ const RoutesWithCommContext: React.FC = () => (
       <Route exact path="/sums-game" component={MentalSums} />
       {
         // Do not include /feedback route on real production website
+        // TODO: Remove once we implement feedback in te game itself
+        // TODO: Also remove Web/components/FeedbackPage/
         !window.location.origin.includes('pinda.fun') && <Route exact path="/feedback" component={FeedbackPage} />
       }
     </Switch>
