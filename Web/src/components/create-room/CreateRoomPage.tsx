@@ -21,10 +21,6 @@ const CreateRoomContainer = styled.div`
   justify-content: center;
   align-items: center;
 
-  & > * {
-    margin: 0.5rem 0;
-  }
-
   h1 {
     font-family: var(--primary);
     font-size: 1.4rem;
@@ -40,7 +36,7 @@ const CreateRoomContainer = styled.div`
 `;
 
 const ErrorText = styled.p`
-  color: red;
+  color: var(--red);
 `;
 
 const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => {
@@ -59,9 +55,6 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
     if (!name.trim().length) return;
     setHostName(name);
     setCreateRequested(true);
-    // No need for cleanup - if the room creation is successful, redirect to the
-    // HostRoom page. Cleanup/room leave to be executed on room cancellation.
-    // See `CreateRoom`.
   };
 
   useEffect(
@@ -71,6 +64,9 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
       }
       if (createRequested && permission === MotionPermission.GRANTED) {
         comm.createRoom(hostName, selectedGame);
+        // No need for cleanup - if the room creation is successful, redirect to the
+        // HostRoom page. Cleanup/room leave to be executed on room cancellation.
+        // See `CreateRoom`.
       }
     },
     [permission, createRequested, hostName, selectedGame, comm, getPermissionAvailability],

@@ -1,12 +1,12 @@
 import React from 'react';
 import Modal from 'components/common/Modal';
 
-interface PermissionsDialogType {
+interface PermissionsDialogProps {
   isVisible: boolean;
   onConfirm: () => Promise<void>;
 }
 
-const PermissionsDialog: React.FC<PermissionsDialogType> = ({
+const PermissionsDialog: React.FC<PermissionsDialogProps> = ({
   isVisible, onConfirm,
 }) => (
   <Modal

@@ -46,7 +46,7 @@ export default () => {
     awaitingPermission,
     /** Method to call to check/request for permissions on user's phone. */
     getUserPermission,
-    /** Method to check fro permissions on user's phone, and */
+    /** Method to check for permissions on user's phone, and updates permission if found. */
     getPermissionAvailability,
   };
 };
