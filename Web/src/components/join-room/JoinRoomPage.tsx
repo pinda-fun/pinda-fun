@@ -8,6 +8,7 @@ import JoinRoomForm from './JoinRoomForm';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import useMotionPermissionsAccess from '../room/hooks/permission';
 import PermissionsDialog from '../room/PermissionsDialog';
+import ErrorDisplay from '../room/ErrorDisplay';
 
 const PIN_LENGTH = 4;
 
@@ -36,10 +37,6 @@ interface JoinRoomPageProps {
   roomId?: string;
   commHooks: CommAttributes;
 }
-
-const ErrorText = styled.p`
-  color: var(--red);
-`;
 
 const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   roomId, commHooks,
@@ -83,7 +80,6 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   useEffect(
     () => {
       if (waitingForResponse && (error !== null || room !== null)) {
-        console.log({ error, room });
         setWaitForResponse(false);
         setJoinRequested(false);
       }
@@ -107,16 +103,16 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
       {waitingForResponse
         && (
           <ReactLoading
-            type={"bubbles"}
+            type="bubbles"
             color="var(--green)"
           />
         )}
-      {!waitingForResponse && error !== null
+      {!waitingForResponse
         && (
-          <ErrorText>
-            Error: {error.toString()}
-            {errorDescription}
-          </ErrorText>
+          <ErrorDisplay
+            error={error}
+            errorDescription={errorDescription}
+          />
         )}
     </JoinRoomContainer>
   );

@@ -9,6 +9,7 @@ import useMotionPermissionsAccess from 'components/room/hooks/permission/useMoti
 import { MotionPermission } from 'components/games/GameStates';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
 import PermissionsDialog from '../room/PermissionsDialog';
+import ErrorDisplay from '../room/ErrorDisplay';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -23,16 +24,16 @@ const CreateRoomContainer = styled.div`
   align-items: center;
 
   h1 {
-  font-family: var(--primary);
-  font-size: 1.4rem;
-  font-weight: normal;
+    font-family: var(--primary);
+    font-size: 1.4rem;
+    font-weight: normal;
   }
 
   h2 {
-  font-family: var(--primary-font);
-  margin: 0.5rem 0;
-  font-weight: normal;
-  font-size: 1.3rem;
+    font-family: var(--primary-font);
+    margin: 0.5rem 0;
+    font-weight: normal;
+    font-size: 1.3rem;
   }
 `;
 
@@ -106,16 +107,16 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
       {waitingForResponse
         && (
           <ReactLoading
-            type={"bubbles"}
+            type="bubbles"
             color="var(--green)"
           />
         )}
-      {!waitingForResponse && error !== null
+      {!waitingForResponse
         && (
-          <ErrorText>
-            Error: {error.toString()}
-            {errorDescription}
-          </ErrorText>
+          <ErrorDisplay
+            error={error}
+            errorDescription={errorDescription}
+          />
         )}
     </CreateRoomContainer>
   );
