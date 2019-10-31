@@ -31,6 +31,8 @@ module.exports = {
     'max-classes-per-file': 'warn',
 
     '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
+    '@typescript-eslint/type-annotation-spacing': 'error',
+
     'import/prefer-default-export': 'off',
 
     "react-hooks/rules-of-hooks": "error",

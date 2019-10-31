@@ -22,7 +22,7 @@ export function* randomWithinBounds(
  * Generates a sequence of numbers using generator provided, scaled to be longer
  * and faster than the old sequence.
  */
-export const generate = (prevSequence: Sequence, generator: Generator):Sequence => {
+export const generate = (prevSequence: Sequence, generator: Generator): Sequence => {
   const lastTimestep = prevSequence.timestep;
   const lastLength = prevSequence.numbers.length;
 

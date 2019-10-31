@@ -61,7 +61,7 @@ const PandaSequence: React.FC = () => {
     }
   }, [mode]);
 
-  const processCorrectInput = (numbers:number[]) => {
+  const processCorrectInput = (numbers: number[]) => {
     if (inputIndex === numbers.length - 1) {
       // update score, mode and sequence if current sequence is done
       setFeedback(Feedback.CORRECT);
