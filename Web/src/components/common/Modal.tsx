@@ -14,9 +14,14 @@ const ModalBackground = styled.div`
   width:100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
 
   display: ${({ isVisible }: ModalBackgroundProps) => (isVisible ? 'block' : 'none')};
 `;
+
+type ModalCardProps = {
+  wider?: boolean;
+};
 
 const OverlayModalCard = styled.section`
   position:fixed;
@@ -34,6 +39,10 @@ const OverlayModalCard = styled.section`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  width: ${({ wider }: ModalCardProps) => (wider
+    ? `calc(${smMin} / 2)`
+    : `calc(${smMin} / 3)`)};
 
   @media (max-width: ${smMin}) {
     width: 75vw;
@@ -77,6 +86,7 @@ type ModalProps = {
   showConfirmation?: boolean;
   showCancel?: boolean;
   confirmationButtonText?: string;
+  wider?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
 };
@@ -88,6 +98,7 @@ const Modal: React.FC<ModalProps> = ({
   showConfirmation,
   showCancel,
   confirmationButtonText,
+  wider,
   onConfirm,
   onCancel,
 }) => {
@@ -99,7 +110,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <ModalBackground isVisible={isVisible}>
-      <OverlayModalCard>
+      <OverlayModalCard wider={wider}>
         {title && (
           <TitleText>{title}</TitleText>
         )}
@@ -120,6 +131,7 @@ const Modal: React.FC<ModalProps> = ({
 Modal.defaultProps = {
   showConfirmation: true,
   showCancel: true,
+  wider: false,
   confirmationButtonText: 'Confirm',
 };
 
