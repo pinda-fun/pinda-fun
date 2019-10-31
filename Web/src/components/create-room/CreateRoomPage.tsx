@@ -12,6 +12,7 @@ import PermissionsDialog from '../room/PermissionsDialog';
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
   min-height: 100vh;
+  width: 100vw;
   position: relative;
   overflow: hidden;
 
