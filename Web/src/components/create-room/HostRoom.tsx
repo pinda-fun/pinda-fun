@@ -6,17 +6,27 @@ import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import Game from 'components/room/Games';
+import { ChevronDown } from 'react-feather';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
+import RoomMembers from './RoomMembers';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
-  min-height: 100vh;
   position: relative;
   overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const RoomDetailsSection = styled.section`
+  min-height: ${window.innerHeight}px;
+  position: relative;
 
   display: flex;
   flex-direction: column;
@@ -82,6 +92,10 @@ const ShareSection = styled.section`
   text-align: center;
 `;
 
+const MembersSection = styled.section`
+  margin: 1rem 0;
+`;
+
 const ShareContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -101,8 +115,22 @@ const StartButton = styled(BigButton)`
   padding-right: 3rem;
 `;
 
-const PindaHappy = styled(PindaHappySVG)`
+const ScrollDownPrompt = styled.div`
   position: absolute;
+  bottom: 0px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  & > svg {
+    width: 42px;
+  }
+`;
+
+const PindaHappy = styled(PindaHappySVG)`
+  position: fixed;
   height: 270px;
   bottom: -30px;
   right: -80px;
@@ -138,41 +166,46 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   return (
     <CreateRoomContainer>
-      {resultsExist(allMetas) && (
-        <>
-          <h1>Last Game:</h1>
-          {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-            <p key={clientId}>{name}: {result}</p>
-          ))}
-        </>
-      )}
-      <TwoColumnDiv>
-        <div>
-          <GamePinSection>
-            <h2>Game PIN:</h2>
-            <h1>{room}</h1>
-          </GamePinSection>
-          <NumPlayers numPlayers={users.length} hideOnMedium />
-        </div>
-        <ShareSection>
-          <h2>Share via</h2>
-          <ShareContent>
-            <QrCode sharableLink={sharableLink} />
-            <SocialShare sharableLink={sharableLink} />
-          </ShareContent>
-          <NumPlayers numPlayers={users.length} hideOnLarge />
-        </ShareSection>
-      </TwoColumnDiv>
-      <StartButton
-        onClick={onStartButtonClick}
-      >
-        START!
-      </StartButton>
-      <Link to={{ pathname: '/' }}>Cancel</Link>
-      <h3>Connected:</h3>
-      {users.map((name) => (
-        <p key={name}>{name}</p>
-      ))}
+      <RoomDetailsSection>
+        {resultsExist(allMetas) && (
+          <>
+            <h1>Last Game:</h1>
+            {Object.entries(allMetas).map(([clientId, { name, result }]) => (
+              <p key={clientId}>{name}: {result}</p>
+            ))}
+          </>
+        )}
+        <TwoColumnDiv>
+          <div>
+            <GamePinSection>
+              <h2>Game PIN:</h2>
+              <h1>{room}</h1>
+            </GamePinSection>
+            <NumPlayers numPlayers={users.length} hideOnMedium />
+          </div>
+          <ShareSection>
+            <h2>Share via</h2>
+            <ShareContent>
+              <QrCode sharableLink={sharableLink} />
+              <SocialShare sharableLink={sharableLink} />
+            </ShareContent>
+            <NumPlayers numPlayers={users.length} hideOnLarge />
+          </ShareSection>
+        </TwoColumnDiv>
+        <StartButton
+          onClick={onStartButtonClick}
+        >
+          START!
+        </StartButton>
+        <Link to={{ pathname: '/' }}>Cancel</Link>
+        <ScrollDownPrompt>
+          View Players
+          <ChevronDown />
+        </ScrollDownPrompt>
+      </RoomDetailsSection>
+      <MembersSection>
+        <RoomMembers users={users} />
+      </MembersSection>
       <PindaHappy />
     </CreateRoomContainer>
   );
