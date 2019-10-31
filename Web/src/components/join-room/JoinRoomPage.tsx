@@ -43,7 +43,7 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   const [username, setUsername] = useState('');
 
   const {
-    permission, awaitingPermission, getUserPermission, getPermissionAvailability
+    permission, awaitingPermission, getUserPermission, getPermissionAvailability,
   } = useMotionPermissionsAccess();
   const [joinRequested, setJoinRequested] = useState(false);
 
@@ -53,7 +53,7 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   const onJoinRoomFormSubmit = (newGamePin: string, newUsername: string) => {
     if (joinRequested) return;
     if (newGamePin.length !== PIN_LENGTH) return;
-    if (newUsername === '') return;
+    if (!newUsername.trim().length) return;
 
     // Reset state
     setGamePin(newGamePin);
@@ -61,14 +61,17 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
     setJoinRequested(true);
   };
 
-  useEffect(() => {
-    if (joinRequested && permission === MotionPermission.NOT_SET) {
-      getPermissionAvailability();
-    }
-    if (joinRequested && permission === MotionPermission.GRANTED) {
-      comm.joinRoom(gamePin, username);
-    }
-  }, [permission, joinRequested, gamePin, username, comm, getPermissionAvailability]);
+  useEffect(
+    () => {
+      if (joinRequested && permission === MotionPermission.NOT_SET) {
+        getPermissionAvailability();
+      }
+      if (joinRequested && permission === MotionPermission.GRANTED) {
+        comm.joinRoom(gamePin, username);
+      }
+    },
+    [permission, joinRequested, gamePin, username, comm, getPermissionAvailability],
+  );
 
   useEffect(() => {
     if (error !== null) setJoinRequested(false);

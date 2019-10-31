@@ -7,16 +7,16 @@ interface PermissionsDialogType {
 }
 
 const PermissionsDialog: React.FC<PermissionsDialogType> = ({
-  isVisible, onConfirm
+  isVisible, onConfirm,
 }) => (
-    <Modal
-      isVisible={isVisible}
-      title="Give Permissions?"
-      onConfirm={onConfirm}
-      confirmationButtonText="Sure!"
-    >
+  <Modal
+    isVisible={isVisible}
+    title="Give Permissions?"
+    onConfirm={onConfirm}
+    confirmationButtonText="Sure!"
+  >
       Pinda requires some device permissions in order to play some games.
-    </Modal>
-  );
+  </Modal>
+);
 
 export default PermissionsDialog;
