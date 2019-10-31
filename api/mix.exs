@@ -45,6 +45,7 @@ defmodule Api.MixProject do
     [
       {:ecto_sql, "~> 3.1"},
       {:gettext, "~> 0.11"},
+      {:httpoison, "~> 1.6"},
       {:jason, "~> 1.0"},
       {:phoenix, "~> 1.4.10"},
       {:phoenix_ecto, "~> 4.0"},
@@ -55,6 +56,7 @@ defmodule Api.MixProject do
       {:credo, "~> 1.1.0", only: :test, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.13", only: :test},
+      {:mock, "~> 0.3.0", only: :test},
       {:dialyxir, "~> 1.0.0-rc.7", only: :test, runtime: false}
     ]
   end

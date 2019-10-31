@@ -5,7 +5,7 @@
   "dependencies": {
     "@reactivex/rxjs": "^6.5.3",
     "@types/jest": "24.0.21",
-    "@types/node": "12.12.0",
+    "@types/node": "12.12.3",
     "@types/phoenix": "^1.4.3",
     "@types/qrcode.react": "^0.9.0",
     "@types/react": "^16.9.11",
@@ -15,7 +15,7 @@
     "@types/react-virtualized": "^9.21.5",
     "@types/seedrandom": "^2.4.28",
     "@types/styled-components": "^4.1.20",
-    "@types/uuid": "^3.4.5",
+    "@types/uuid": "^3.4.6",
     "phoenix": "^1.4.10",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.2",
