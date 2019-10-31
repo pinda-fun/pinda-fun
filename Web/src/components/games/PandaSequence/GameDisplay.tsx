@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import styled, { ThemeProvider, css } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import TimerDisplay from 'components/games/TimerDisplay';
-import { blinkRed, blinkGreen } from 'utils/animations';
 import { smMin } from 'utils/media';
+import FeedbackModal from './FeedbackModal';
 import { PandaSequenceMode, Feedback } from './Sequence';
 import { InputPandaPot, DisplayPandaPot } from './PandaPot';
 
@@ -43,6 +43,7 @@ const GameContainer = styled(GameContainerElement)`
   background: ${(props) => props.theme.background};
   overflow: hidden;
   height: ${window.innerHeight}px;
+  width: 100vw;
 
   display: flex;
   justify-content: center;
@@ -52,10 +53,6 @@ const GameContainer = styled(GameContainerElement)`
   color: white;
   font-size: 1.4rem;
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
-
-  ${({ feedbackState }: GameContainerProps) => (feedbackState === Feedback.CORRECT && css`animation: ${blinkGreen} 0.5s ease-in-out 0s 1;`)
-    || (feedbackState === Feedback.WRONG && css`animation: ${blinkRed} 0.5s ease-in-out 0s 1;`)
-}
 `;
 
 const FlowerPotsContainer = styled.div`
@@ -148,6 +145,10 @@ const GameDisplay: React.FC<IProps> = ({
         <SeqCountSection>
           <BigText>{score}</BigText> Sequences
         </SeqCountSection>
+        <FeedbackModal
+          isVisible={feedback !== Feedback.NONE}
+          isCorrect={feedback === Feedback.CORRECT}
+        />
       </GameContainer>
     </ThemeProvider>
   );
