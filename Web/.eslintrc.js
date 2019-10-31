@@ -21,7 +21,6 @@ module.exports = {
     'no-undef': 'off',
 
     'no-alert': 'off',
-    'prefer-destructuring': 'off',
     'no-underscore-dangle': 'off',
 
     // TypeScript lints this for us
@@ -31,6 +30,8 @@ module.exports = {
     'max-classes-per-file': 'warn',
 
     '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
+    '@typescript-eslint/type-annotation-spacing': 'error',
+
     'import/prefer-default-export': 'off',
 
     "react-hooks/rules-of-hooks": "error",
