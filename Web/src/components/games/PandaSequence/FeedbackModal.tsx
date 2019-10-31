@@ -44,7 +44,7 @@ type FeedbackModalProps = {
 
 const FeedbackModal: React.FC<FeedbackModalProps> = ({
   isVisible,
-  isCorrect = true,
+  isCorrect,
 }) => (
   <Modal
     isVisible={isVisible}
