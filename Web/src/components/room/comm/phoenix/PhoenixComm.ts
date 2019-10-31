@@ -346,12 +346,6 @@ export default class PhoenixComm implements Comm {
     );
   }
 
-  private getCurrentGame(): Game | null {
-    const hostMeta = this.getHostMeta();
-    if (hostMeta == null) return null;
-    return hostMeta.game;
-  }
-
   submitFeedback(game: string, isGood: boolean, title: string, body: string = '', onOk: () => void = noOp, onError: PushErrorHandler = noOp): void {
     const channel = this.socket.channel(`feedback:${getClientId()}`);
     channel
