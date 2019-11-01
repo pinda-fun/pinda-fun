@@ -11,7 +11,7 @@ const ModalBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width:100%;
+  width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
   z-index: 999;
@@ -24,11 +24,11 @@ type ModalCardProps = {
 };
 
 const OverlayModalCard = styled.section`
-  position:fixed;
+  position: fixed;
   height: auto;
-  top:50%;
-  left:50%;
-  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
   background: var(--pale-yellow);
   box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
@@ -114,9 +114,7 @@ const Modal: React.FC<ModalProps> = ({
         {title && (
           <TitleText>{title}</TitleText>
         )}
-        {children && (
-          <p>{children}</p>
-        )}
+        {children}
         <ButtonRow>
           {showCancel && onCancel
             && (<Button onClick={onCancel}>Cancel</Button>)}
