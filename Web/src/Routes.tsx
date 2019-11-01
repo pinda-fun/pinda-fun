@@ -4,6 +4,7 @@ import PhoenixComm from 'components/room/comm/phoenix/PhoenixComm';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
 import FeedbackPage from 'components/feedback';
+import ResultsPage from 'components/results-leaderboard';
 
 const LandingPage = lazy(() => import('components/landing'));
 const CreateRoomPage = lazy(() => import('components/create-room'));
@@ -23,6 +24,7 @@ const RoutesWithCommContext: React.FC = () => (
       <Route exact path="/balloon-game" component={BalloonShake} />
       <Route exact path="/panda-sequence" component={PandaSequence} />
       <Route exact path="/sums-game" component={MentalSums} />
+      <Route exact path="/results" component={ResultsPage} />
       {
         // Do not include /feedback route on real production website
         // TODO: Remove once we implement feedback in te game itself

@@ -5,7 +5,7 @@ import ResultsPage from './Results';
 import Leaderboard, { PlayerScore } from './Leaderboard';
 
 interface ResultsLeaderboardProps {
-  allMetas:ResultMap | null,
+  allMetas: ResultMap | null,
   gameText: string,
 }
 
@@ -17,7 +17,7 @@ const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, gameT
   useEffect(() => {
     if (!allMetas) return;
 
-    const sorted:PlayerScore[] = Object
+    const sorted: PlayerScore[] = Object
       .entries(allMetas)
       // TODO: is it fair to use the first number as the result to sort and display?
       .map(([clientId, { name, result }]) => (

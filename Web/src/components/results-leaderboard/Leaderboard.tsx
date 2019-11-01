@@ -9,7 +9,7 @@ interface LeaderboardProps {
 }
 
 export interface PlayerScore {
-  clientId:string,
+  clientId: string,
   name: string,
   score: number,
 }
@@ -36,7 +36,7 @@ const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
 `;
 
 const List = styled.div`
-  background: var(--white);
+  background: white;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -50,48 +50,52 @@ const List = styled.div`
 `;
 
 const ListItem = styled.div`
-  width: 100%;
+  width: auto;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  padding:18px 0 18px 0;
-  border-width: 1px;
-  border-color: var(--light-grey);
-  border-style: solid;
+  padding:18px 18px;
+  border-top: 1px solid var(--light-grey);
+
+  :first-child {
+    border: none;
+  }
 `;
 
 // separate component so we can have a more divergent styling in future
 const SelectedListItem = styled.div`
   background: var(--pale-yellow);
-  width: 100%;
+  width: auto;
   display: flex;
-  justify-content: space-around;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  padding:18px 0 18px 0;
-  border-width: 1px;
-  border-color: var(--light-grey);
-  border-style: solid;
+  padding:18px 18px;
+  border-top: 1px solid var(--light-grey);
   color: var(--red);
+
+  :first-child {
+    border: none;
+  }
 `;
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
-  const listItems = playerScores.map((playerScore, index) => {
-    if (playerScore.clientId === getClientId()) {
+  const listItems = playerScores.map(({ clientId, name, score }, index) => {
+    if (clientId === getClientId()) {
       return (
-        <SelectedListItem key={playerScore.clientId}>
+        <SelectedListItem key={clientId}>
           <div>{index + 1}</div>
-          <div>{playerScore.name}</div>
-          <div>{playerScore.score}</div>
+          <div>{name}</div>
+          <div>{score}</div>
         </SelectedListItem>
       );
     }
     return (
-      <ListItem key={playerScore.clientId}>
+      <ListItem key={clientId}>
         <div>{index + 1}</div>
-        <div>{playerScore.name}</div>
-        <div>{playerScore.score}</div>
+        <div>{name}</div>
+        <div>{score}</div>
       </ListItem>
     );
   });
