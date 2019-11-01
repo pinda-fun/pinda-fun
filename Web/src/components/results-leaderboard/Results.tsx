@@ -6,7 +6,7 @@ import { Container, Group } from './Containers';
 interface ResultsProps {
   score: number,
   gameText: string,
-  rank: number,
+  rank: number | string,
   numPlayers: number,
 }
 

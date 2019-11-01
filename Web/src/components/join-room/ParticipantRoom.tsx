@@ -40,7 +40,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  users, allMetas,
+  users, allMetas, resultMeta,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -51,7 +51,7 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
   if (resultsExist(allMetas)) {
     return (
       <ResultsLeaderboard
-        allMetas={allMetas}
+        allMetas={resultMeta}
         gameText="shakes/sequences/sums!"
       />
     );
