@@ -142,7 +142,7 @@ const PindaHappy = styled(PindaHappySVG)`
 `;
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, allMetas, game,
+  room, error, users, allMetas, game, resultMeta,
 }) => {
   const comm = useContext(CommContext);
 
@@ -169,7 +169,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
     <>
       {resultsExist(allMetas) && (
         <ResultsLeaderboard
-          allMetas={allMetas}
+          allMetas={resultMeta}
           gameText="shakes/sequences/sums!"
         />
       )}

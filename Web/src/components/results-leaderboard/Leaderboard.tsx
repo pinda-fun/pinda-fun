@@ -82,7 +82,6 @@ const SelectedListItem = styled.div`
 `;
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
-
   const listItems = playerScores.map(({ clientId, name, score }, index) => {
     if (clientId === getClientId()) {
       return (
