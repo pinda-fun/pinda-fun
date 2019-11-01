@@ -30,6 +30,8 @@ jobs:
         - yarn typecheck
         - yarn lint
         - yarn test
+        - yarn build
+        - yarn run bundlewatch --max-size 100kb ./build/**/*.js
 
 branches:
   only:
