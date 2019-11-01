@@ -10,7 +10,7 @@ import { randomWithinBounds, generate } from './SequenceGenerator';
 
 const GAME_TIME = 30;
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
-const POST_FEEDBACK_DELAY = 200;
+const POST_FEEDBACK_DELAY = 700;
 
 const PandaSequence: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
@@ -43,7 +43,7 @@ const PandaSequence: React.FC = () => {
     if (sequence === INIT_SEQUENCE) return undefined;
 
     const { timestep, numbers } = sequence;
-    const timer = createTimerObservable(numbers.length + 1, timestep);
+    const timer = createTimerObservable(numbers.length, timestep);
     const timerSub = timer.subscribe(
       () => setIndex((oldIndex) => oldIndex + 1),
       null,
@@ -61,7 +61,7 @@ const PandaSequence: React.FC = () => {
     }
   }, [mode]);
 
-  const processCorrectInput = (numbers:number[]) => {
+  const processCorrectInput = (numbers: number[]) => {
     if (inputIndex === numbers.length - 1) {
       // update score, mode and sequence if current sequence is done
       setFeedback(Feedback.CORRECT);
@@ -71,7 +71,7 @@ const PandaSequence: React.FC = () => {
       setTimeout(() => {
         setSequence((oldSeq) => generate(oldSeq, generator));
         setFeedback(() => Feedback.NONE);
-      }, 500 + POST_FEEDBACK_DELAY);
+      }, POST_FEEDBACK_DELAY);
     } else {
       // update inputIndex
       setInputIndex((oldIndex) => oldIndex + 1);
@@ -85,7 +85,7 @@ const PandaSequence: React.FC = () => {
     setTimeout(() => {
       setSequence((oldSeq) => ({ ...oldSeq }));
       setFeedback(() => Feedback.NONE);
-    }, 500 + POST_FEEDBACK_DELAY);
+    }, POST_FEEDBACK_DELAY);
   };
 
   /**
