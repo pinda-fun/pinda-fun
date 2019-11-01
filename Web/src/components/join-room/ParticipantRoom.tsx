@@ -18,7 +18,7 @@ const WaitingDiv = styled.div`
 `;
 
 const Heading = styled.h1`
-  width: 300px;
+  width: 300;
 
   font-family: var(--primary-font);
   color: var(--dark-purple);
@@ -27,7 +27,7 @@ const Heading = styled.h1`
 `;
 
 const PindaWaving = styled(PindaWavingSVG)`
-  height: 220px;
+  height: 220;
 
   @media (max-width: ${mdMin}) {
     height: 185px;

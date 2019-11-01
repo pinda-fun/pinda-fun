@@ -73,12 +73,12 @@ const GamePinSection = styled.section`
   h1 {
     margin: 2rem 0 0 0;
     color: var(--red);
-    text-shadow: 6px 6px 0px var(--pink);
+    text-shadow: 6px 6px 0 var(--pink);
     font-size: 9rem;
     letter-spacing: 0.8rem;
 
     @media (max-width: ${mdMin}) {
-      text-shadow: 3px 3px 0px var(--pink);
+      text-shadow: 3px 3px 0 var(--pink);
       font-size: 4rem;
       margin-left: 0.5rem;
     }
@@ -117,7 +117,7 @@ const StartButton = styled(BigButton)`
 
 const ScrollDownPrompt = styled.div`
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
 
   display: flex;
   flex-direction: column;
@@ -131,9 +131,9 @@ const ScrollDownPrompt = styled.div`
 
 const PindaHappy = styled(PindaHappySVG)`
   position: fixed;
-  height: 270px;
-  bottom: -30px;
-  right: -80px;
+  height: 270;
+  bottom: -30;
+  right: -80;
 
   @media (max-width: ${mdMin}) {
     display: none;

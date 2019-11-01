@@ -4,7 +4,7 @@ const BigButton = styled.button`
   border: none;
   border-radius: 1rem;
   background: var(--purple);
-  box-shadow: 0px 6px 0px var(--dark-purple);
+  box-shadow: 0 6px 0 var(--dark-purple);
   color: white;
   font-size: 1.3rem;
 
@@ -17,13 +17,13 @@ const BigButton = styled.button`
   :disabled {
     cursor: not-allowed;
     background: darkgrey;
-    box-shadow: 0px 6px 0px grey;
+    box-shadow: 0 6px 0 grey;
   }
 
   :hover:enabled,
   :active:enabled {
     transform: translateY(6px);
-    box-shadow: 0px 0px 0px var(--dark-purple);
+    box-shadow: 0 0 0 var(--dark-purple);
   }
 `;
 

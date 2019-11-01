@@ -24,7 +24,7 @@ const SectionStyle = css`
 `;
 
 const BadgeStyle = css`
-  height: 270px;
+  height: 270;
 
   @media (max-width: ${mdMin}) {
     height: 185px;
@@ -94,8 +94,8 @@ const PindaShockedBadge = styled(PindaShockedBadgeSVG)`
 const PindaHappySide = styled(PindaHappySVG)`
   ${BadgeStyle}
   position: absolute;
-  bottom: -30px;
-  right: -50px;
+  bottom: -30;
+  right: -50;
 
   @media (max-width: ${lgMin}) {
     display: none;

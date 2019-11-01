@@ -13,7 +13,7 @@ const PandaPotContainer = styled.div`
 
   & > * {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     width: 100%;
   }
 `;
@@ -80,18 +80,18 @@ const InputPandaPot: React.FC<InputPandaPotProps> = ({
   onTouch,
   onTouchEnd,
 }) => (
-  <InputPandaPotContainer isSelected={isSelected}>
-    <PandaPotContainer
-      onTouchStart={(event: React.SyntheticEvent) => onTouch(event)}
-      onTouchEnd={(event: React.SyntheticEvent) => onTouchEnd(event)}
-      onMouseDown={(event: React.SyntheticEvent) => onTouch(event)}
-      onMouseUp={(event: React.SyntheticEvent) => onTouchEnd(event)}
-    >
-      <PandaHead />
-      <FlowerPot />
-    </PandaPotContainer>
-  </InputPandaPotContainer>
-);
+    <InputPandaPotContainer isSelected={isSelected}>
+      <PandaPotContainer
+        onTouchStart={(event: React.SyntheticEvent) => onTouch(event)}
+        onTouchEnd={(event: React.SyntheticEvent) => onTouchEnd(event)}
+        onMouseDown={(event: React.SyntheticEvent) => onTouch(event)}
+        onMouseUp={(event: React.SyntheticEvent) => onTouchEnd(event)}
+      >
+        <PandaHead />
+        <FlowerPot />
+      </PandaPotContainer>
+    </InputPandaPotContainer>
+  );
 
 export {
   DisplayPandaPot,

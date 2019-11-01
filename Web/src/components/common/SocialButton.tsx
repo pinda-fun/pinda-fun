@@ -10,13 +10,13 @@ type ButtonProps = {
 const TelegramIcon = styled(TelegramIconSVG)`
   background: #0173ab;
   border-radius: 50%;
-  box-shadow: 0px 3px 0px #0173ab;
+  box-shadow: 0 3px 0 #0173ab;
 `;
 
 const WhatsappIcon = styled(WhatsappIconSVG)`
   background: #17b351;
   border-radius: 50%;
-  box-shadow: 0px 3px 0px #17b351;
+  box-shadow: 0 3px 0 #17b351;
 `;
 
 export const WhatsappButton: React.FC<ButtonProps> = (props) => (

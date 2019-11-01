@@ -31,7 +31,7 @@ const OverlayModalCard = styled.section`
   transform: translate(-50%, -50%);
 
   background: var(--pale-yellow);
-  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
   border-radius: 1em;
   padding: 1em;
 
