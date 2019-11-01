@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ChevronDown, Icon } from 'react-feather';
-import { Container, Group } from './Containers';
 
 interface ResultsProps {
   score: number,
@@ -10,8 +9,33 @@ interface ResultsProps {
   numPlayers: number,
 }
 
-// TODO: Use secondary font instead of primary font
-// Secondary font's height is too tall when rendering on mobile devices.
+const Container = styled.div`
+  background: var(--green);
+  position: relative;
+  overflow: hidden;
+  height: ${window.innerHeight}px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  color: white;
+  font-size: 1.4rem;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+`;
+
+const Group = styled.span`
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
 const BigNumber = styled.span`
   height: auto;
   font-size: 8rem;

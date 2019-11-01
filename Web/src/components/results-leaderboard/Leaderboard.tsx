@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { ChevronUp, Icon } from 'react-feather';
 import getClientId from 'utils/getClientId';
 import { smMin } from 'utils/media';
-import { Container, Group } from './Containers';
 
 interface LeaderboardProps {
   playerScores: PlayerScore[];
@@ -14,6 +13,32 @@ export interface PlayerScore {
   name: string,
   score: number,
 }
+
+const Container = styled.div`
+  background: var(--green);
+  position: relative;
+  min-height: ${window.innerHeight}px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  color: white;
+  font-size: 1.4rem;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+`;
+
+const Group = styled.span`
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
 
 const BigText = styled.span`
   font-size: 2rem;
