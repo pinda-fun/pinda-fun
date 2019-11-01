@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListRowProps } from 'react-virtualized';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { WindowScrollVirtualizedList } from 'components/common/VirtualizedList';
 import { smMin } from 'utils/media';
 

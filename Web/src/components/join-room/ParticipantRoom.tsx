@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Link } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';

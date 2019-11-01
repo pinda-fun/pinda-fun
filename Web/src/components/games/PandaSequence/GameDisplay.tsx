@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components/macro';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { smMin } from 'utils/media';
 import FeedbackModal from './FeedbackModal';

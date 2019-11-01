@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { ReactComponent as Balloon } from 'svg/balloon.svg';
 

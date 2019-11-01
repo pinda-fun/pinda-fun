@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import seedrandom from 'seedrandom';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import { smMin } from 'utils/media';
 import { useQuestionStream } from './ProblemGen';
 import TimerDisplay from '../TimerDisplay';

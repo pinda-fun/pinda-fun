@@ -1,0 +1,8 @@
+{
+  "styledComponents": {
+    "ssr": false,
+    "pure": true,
+    "minify": true,
+    "transpileTemplateLiterals": true
+  }
+}

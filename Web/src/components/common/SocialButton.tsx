@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { ReactComponent as TelegramIconSVG } from '../../svg/social/telegram-icon.svg';
 import { ReactComponent as WhatsappIconSVG } from '../../svg/social/whatsapp-icon.svg';
 

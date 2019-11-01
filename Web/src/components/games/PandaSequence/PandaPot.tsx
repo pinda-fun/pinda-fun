@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import { jump } from 'utils/animations';
 import { ReactComponent as FlowerPotSVG } from 'svg/flower-pot.svg';
 import { ReactComponent as PandaHeadSVG } from 'svg/panda-head-flower.svg';
