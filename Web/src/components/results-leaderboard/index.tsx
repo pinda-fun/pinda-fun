@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ResultMap } from 'components/room/comm/Comm';
 import getClientId from 'utils/getClientId';
-import ResultsPage from './Results';
+import Results from './Results';
 import Leaderboard, { PlayerScore } from './Leaderboard';
 
 interface ResultsLeaderboardProps {
@@ -36,7 +36,7 @@ const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, gameT
 
   return (
     <>
-      <ResultsPage
+      <Results
         score={myScore}
         gameText={gameText}
         rank={myRank}

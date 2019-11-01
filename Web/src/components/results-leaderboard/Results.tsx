@@ -23,7 +23,7 @@ const BigNumber = styled.span`
 const Footer = styled.div`
   width: 100vw;
   align-items: center;
-  position: absolute;
+  position: sticky;
   bottom: 0px;
   text-align: center;
   padding: 12px;

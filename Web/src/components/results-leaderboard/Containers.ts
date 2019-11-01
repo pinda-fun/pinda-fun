@@ -23,5 +23,6 @@ export const Group = styled.span`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
   text-align: center;
 `;

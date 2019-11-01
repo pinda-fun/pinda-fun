@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ChevronUp, Icon } from 'react-feather';
 import getClientId from 'utils/getClientId';
+import { smMin } from 'utils/media';
 import { Container, Group } from './Containers';
 
 interface LeaderboardProps {
@@ -35,26 +36,26 @@ const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
   height: 42px;
 `;
 
-const List = styled.div`
-  background: white;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin: 24px;
+const ListItemContainer = styled.div`
+  width: ${smMin};
+  overflow: hidden;
+  margin: 1rem 0;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
-  color: black;
-  font-size: 1.4rem;
+
+  @media (max-width: ${smMin}) {
+    width: 75vw;
+  }
 `;
 
 const ListItem = styled.div`
-  width: auto;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background: white;
+  width: auto;
+  font-size: 1.1rem;
+  color: black;
   padding:18px 18px;
   border-top: 1px solid var(--light-grey);
 
@@ -108,7 +109,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
       </Header>
       <Group>
         <BigText>Leaderboard</BigText>
-        <List>{listItems}</List>
+        <ListItemContainer>{listItems}</ListItemContainer>
       </Group>
     </Container>
   );
