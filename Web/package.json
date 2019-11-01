@@ -16,7 +16,6 @@
     "@types/seedrandom": "^2.4.28",
     "@types/styled-components": "^4.1.20",
     "@types/uuid": "^3.4.6",
-    "lodash.shuffle": "^4.2.0",
     "phoenix": "^1.4.10",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.2",
@@ -29,13 +28,11 @@
     "react-virtualized": "^9.21.1",
     "rxjs": "^6.5.3",
     "seedrandom": "^3.0.5",
-    "source-map-explorer": "^2.1.0",
     "styled-components": "^4.4.1",
     "typescript": "3.6.4",
     "uuid": "^3.3.3"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "HTTPS=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
