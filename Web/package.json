@@ -55,6 +55,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.6.0",
     "@typescript-eslint/parser": "^2.6.0",
+    "bundlewatch": "^0.2.5",
     "eslint-config-airbnb-typescript": "^6.0.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-config-react": "^1.1.7",

@@ -38,7 +38,7 @@ const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
 
 const ListItemContainer = styled.div`
   width: ${smMin};
-  overflow: hidden;
+  overflow-x: hidden;
   margin: 1rem 0;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
@@ -82,6 +82,7 @@ const SelectedListItem = styled.div`
 `;
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
+
   const listItems = playerScores.map(({ clientId, name, score }, index) => {
     if (clientId === getClientId()) {
       return (
