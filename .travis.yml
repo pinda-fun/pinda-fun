@@ -32,6 +32,7 @@ jobs:
         - yarn test
         - yarn build
         - for i in build/static/*/*; do mv "$i" "$(echo "$i" | sed -E 's/(.*)\.[a-f0-9]{8}(.*)/\1\2/')"; done
+        - mv build/precache-manifest.*.js build/precache-manifest.js
         - yarn run bundlewatch --max-size 100kb ./build/**/*.js
 
 branches:
