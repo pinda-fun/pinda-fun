@@ -18,7 +18,7 @@ import GameSequenceGenerator from './GameSequenceGenerator';
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
   position: relative;
-  overflow-y: hidden;
+  overflow-x: hidden;
 
   display: flex;
   flex-direction: column;

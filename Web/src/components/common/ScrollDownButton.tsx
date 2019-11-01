@@ -6,7 +6,7 @@ import smoothscroll from 'smoothscroll-polyfill';
 type ScrollDownDisplayProps = {
   backgroundColor?: string;
   sticky: boolean;
-}
+};
 
 const ScrollDownPrompt = styled.button`
   position: absolute;
@@ -45,7 +45,7 @@ const ScrollDownButton: React.FC<ScrollDownButtonProps> = ({
   promptText,
   scrollToRef,
   backgroundColor,
-  sticky=false,
+  sticky = false,
 }) => {
   const scrollRefIntoView = () => {
     if (scrollToRef.current != null) {
