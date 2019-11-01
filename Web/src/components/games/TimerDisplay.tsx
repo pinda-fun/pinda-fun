@@ -23,7 +23,7 @@ const TimerText = styled.span`
   letter-spacing: 0.3rem;
   margin: 0;
 
-  // Increase line-height to curb font rendering bug
+  /* Increase line-height to curb font rendering bug */
   line-height: 1.2;
 
   ${(props: TextProps) => props.small
