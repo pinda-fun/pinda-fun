@@ -13,7 +13,7 @@ const Form = styled.form`
   width: 100%;
 
   & > * {
-    margin: 10 0;
+    margin: 10px 0;
   }
 `;
 

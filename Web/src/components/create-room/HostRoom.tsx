@@ -131,9 +131,9 @@ const ScrollDownPrompt = styled.div`
 
 const PindaHappy = styled(PindaHappySVG)`
   position: fixed;
-  height: 270;
-  bottom: -30;
-  right: -80;
+  height: 270px;
+  bottom: -30px;
+  right: -80px;
 
   @media (max-width: ${mdMin}) {
     display: none;
