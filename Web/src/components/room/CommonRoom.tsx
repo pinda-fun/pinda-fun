@@ -75,17 +75,14 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     if (hostMeta === null) {
       return;
     }
-    if (hostMeta.state !== GameState.FINISHED) {
-      setIsResultSet(false);
-    }
-  }, [hostMeta]);
 
-  useEffect(() => {
-    if (!isResultSet) {
+    if (hostMeta.state === GameState.FINISHED && !isResultSet) {
       setResultMeta(allMetas);
       setIsResultSet(true);
+    } else if (hostMeta.state !== GameState.FINISHED) {
+      setIsResultSet(false);
     }
-  }, [isResultSet, allMetas]);
+  }, [isResultSet, hostMeta, allMetas]);
 
   if (hostMeta === null) {
     return <NoHostComponent />;
