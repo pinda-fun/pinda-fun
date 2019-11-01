@@ -1,6 +1,8 @@
 {
   "styledComponents": {
     "ssr": false,
+    "displayName": false,
+    "fileName": false,
     "pure": true,
     "minify": true,
     "transpileTemplateLiterals": true
