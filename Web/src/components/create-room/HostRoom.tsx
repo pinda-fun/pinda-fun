@@ -18,7 +18,7 @@ import GameSequenceGenerator from './GameSequenceGenerator';
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
   position: relative;
-  overflow: hidden;
+  overflow-y: hidden;
 
   display: flex;
   flex-direction: column;
@@ -189,6 +189,8 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
           <ScrollDownButton
             promptText="View Players"
             scrollToRef={membersListRef}
+            backgroundColor="var(--pale-yellow)"
+            sticky
           />
         </RoomDetailsSection>
         <MembersSection>
