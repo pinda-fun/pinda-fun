@@ -16,6 +16,7 @@
     "@types/seedrandom": "^2.4.28",
     "@types/styled-components": "^4.1.20",
     "@types/uuid": "^3.4.6",
+    "lodash.shuffle": "^4.2.0",
     "phoenix": "^1.4.10",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.2",
