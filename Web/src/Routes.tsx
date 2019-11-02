@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import PhoenixComm from 'components/room/comm/phoenix/PhoenixComm';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
@@ -29,6 +29,7 @@ const RoutesWithCommContext: React.FC = () => (
         // TODO: Also remove Web/components/FeedbackPage/
         !window.location.origin.includes('pinda.fun') && <Route exact path="/feedback" component={FeedbackPage} />
       }
+      <Redirect to="/" />
     </Switch>
   </CommContext.Provider>
 );
