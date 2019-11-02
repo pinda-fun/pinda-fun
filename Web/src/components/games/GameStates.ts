@@ -4,6 +4,7 @@ export enum GameState {
   COUNTING_DOWN,
   IN_PROGRESS,
   TIMES_UP,
+  COMPLETED,
 }
 
 export enum MotionPermission {

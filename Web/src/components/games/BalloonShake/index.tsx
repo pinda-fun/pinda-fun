@@ -56,6 +56,7 @@ const BalloonShake: React.FC = () => {
 
   const sendGameResults = () => {
     comm.sendResult([count]);
+    setGameState(GameState.COMPLETED);
   };
 
   const getPermissionAvailability = () => {
@@ -137,6 +138,9 @@ const BalloonShake: React.FC = () => {
             onComplete={sendGameResults}
           />
         )}
+      {gameState === GameState.COMPLETED && (
+        <TimesUp onComplete={() => { }} />
+      )}
     </>
   );
 };

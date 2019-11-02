@@ -25,6 +25,7 @@ const MentalSums: React.FC<MentalSumsProps> = ({ seed }) => {
 
   const sendGameResults = () => {
     comm.sendResult([playerScore]);
+    setGameState(GameState.COMPLETED);
   };
 
   useEffect(() => {
@@ -64,6 +65,9 @@ const MentalSums: React.FC<MentalSumsProps> = ({ seed }) => {
             onComplete={sendGameResults}
           />
         )}
+      {gameState === GameState.COMPLETED && (
+        <TimesUp onComplete={() => { }} />
+      )}
     </>
   );
 };
