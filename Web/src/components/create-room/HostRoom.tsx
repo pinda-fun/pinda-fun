@@ -149,6 +149,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   const onStartButtonClick = () => {
     const allGames = Object.values(Game).filter((value) => value !== game.toString()) as Game[];
     const nextGame = allGames[Math.floor(Math.random() * allGames.length)];
+    comm.refreshSeed(Date.now().toLocaleString());
     comm.changeGame(nextGame, () => comm.prepare());
   };
 

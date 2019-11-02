@@ -12,6 +12,7 @@ export interface HostMeta extends MetaBase {
   // HostMeta specific
   game: Game,
   state: GameState,
+  seed: string,
 }
 
 export interface NonHostMeta extends MetaBase {

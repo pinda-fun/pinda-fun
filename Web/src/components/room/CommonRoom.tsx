@@ -23,14 +23,14 @@ interface CommonRoomProps {
   NoHostComponent?: React.FC;
 }
 
-const GameComponent: React.FC<{ game: Game }> = ({ game }) => (
+const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
   <>
     {game === Game.SHAKE
       && <BalloonShake />}
     {game === Game.SUMS
-      && <MentalSums />}
+      && <MentalSums seed={seed} />}
     {game === Game.SEQUENCE
-      && <PandaSequence />}
+      && <PandaSequence seed={seed} />}
   </>
 );
 
@@ -97,7 +97,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
           />
         )}
       {hostMeta.state === GameState.ONGOING
-        && <GameComponent game={game} />}
+        && <GameComponent game={game} seed={hostMeta.seed} />}
       {hostMeta.state === GameState.PREPARE
         && (
           <Loading>
