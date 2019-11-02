@@ -4,7 +4,7 @@ import { PandaSequenceMode, Feedback } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
 import Countdown from '../Countdown';
-import GameDisplay from './GameDisplay';
+import GameDisplay, { NUM_POTS } from './GameDisplay';
 import PandaSequenceInstructions from './PandaSequenceInstructions';
 import { randomWithinBounds, generate } from './SequenceGenerator';
 import TimesUp from '../TimesUp';
@@ -13,13 +13,18 @@ const GAME_TIME = 30;
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
 const POST_FEEDBACK_DELAY = 700;
 
-const PandaSequence: React.FC = () => {
+
+interface PandaSequenceProps {
+  seed: string,
+}
+
+const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
   const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [score, setScore] = useState(0);
   const [mode, setMode] = useState(PandaSequenceMode.DISPLAY);
 
-  const [generator] = useState(randomWithinBounds(0, 5));
+  const [generator] = useState(randomWithinBounds(0, NUM_POTS, seed));
   const [sequence, setSequence] = useState(INIT_SEQUENCE);
   const [index, setIndex] = useState(0);
   const [inputIndex, setInputIndex] = useState(0);

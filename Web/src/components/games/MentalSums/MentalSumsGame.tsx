@@ -11,7 +11,7 @@ interface MentalSumsGameProps {
   incrementScore: () => void;
   score: number;
   timeLeft: number;
-  seed: string;
+  seed?: string;
 }
 
 const GameContainer = styled.div`
@@ -103,7 +103,7 @@ const BigText = styled.span`
 `;
 
 const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
-  incrementScore, score, seed, timeLeft,
+  incrementScore, score, seed = Date.now().toLocaleString(), timeLeft,
 }) => {
   const { problemText, expectedAns, nextProblem } = useQuestionStream(seedrandom(seed));
   const [feedback, setFeedback] = useState(FeedbackState.NONE);

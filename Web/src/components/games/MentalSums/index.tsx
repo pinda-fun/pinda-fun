@@ -10,7 +10,11 @@ import TimesUp from '../TimesUp';
 
 const GAME_TIME = 20;
 
-const MentalSums: React.FC = () => {
+interface MentalSumsProps {
+  seed: string,
+}
+
+const MentalSums: React.FC<MentalSumsProps> = ({ seed }) => {
   const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [playerScore, setPlayerScore] = useState(0);
@@ -51,7 +55,7 @@ const MentalSums: React.FC = () => {
             score={playerScore}
             incrementScore={incrementScore}
             timeLeft={timeLeft}
-            seed="ben-leong"
+            seed={seed}
           />
         )}
       {gameState === GameState.TIMES_UP

@@ -6,7 +6,7 @@ import FeedbackModal from './FeedbackModal';
 import { PandaSequenceMode, Feedback } from './Sequence';
 import { InputPandaPot, DisplayPandaPot } from './PandaPot';
 
-const NUM_POTS = 6;
+export const NUM_POTS = 6;
 
 interface IProps {
   mode: PandaSequenceMode,

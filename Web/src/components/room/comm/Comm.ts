@@ -57,6 +57,7 @@ export default interface Comm {
   // Host
   prepare(onOk?: () => void, onError?: PushErrorHandler): void
   changeGame(game: Game, onOk?: () => void, onError?: PushErrorHandler): void
+  refreshSeed(seed: string, onOk?: () => void, onError?: PushErrorHandler): void
 
   // For useCommHooks use
   // Client callbacks

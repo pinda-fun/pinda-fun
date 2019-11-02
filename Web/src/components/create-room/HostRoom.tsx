@@ -144,7 +144,7 @@ const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
 };
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, allMetas, resultMeta,
+  room, error, users, allMetas, resultMeta, game,
 }) => {
   const comm = useContext(CommContext);
   const membersListRef = useRef<HTMLDivElement>(null);
@@ -152,6 +152,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   const onStartButtonClick = () => {
     const nextGame = gameSequenceGenerator.getNext();
+    comm.refreshSeed(Date.now().toLocaleString());
     comm.changeGame(nextGame, () => comm.prepare());
   };
 
@@ -173,7 +174,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       {resultsExist(allMetas) && (
         <ResultsLeaderboard
           allMetas={resultMeta}
-          gameText="shakes/sequences/sums!"
+          game={game}
         />
       )}
       <CreateRoomContainer>
