@@ -51,12 +51,12 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
     const { data } = event as unknown as InputEvent;
     if (data == null) return;
     const target = event.target as HTMLInputElement;
-    const idx = target.selectionStart;
-    if (idx == null) return;
+    const [start, end] = [target.selectionStart, target.selectionEnd].sort();
+    if (start == null || end == null) return;
     setGamePin(
-      (oldGamePin) => filterGamePin(oldGamePin.slice(0, idx) + data + oldGamePin.slice(idx)),
+      (oldGamePin) => filterGamePin(oldGamePin.slice(0, start) + data + oldGamePin.slice(end)),
     );
-    setSelectionRange([target, idx + 1]);
+    setSelectionRange([target, start + 1]);
   };
 
   useEffect(() => {
@@ -67,18 +67,28 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
+    const [start, end] = [target.selectionStart, target.selectionEnd].sort();
+    if (start == null || end == null) return;
     if (event.key === 'Backspace') {
       event.preventDefault();
-      const idx = target.selectionStart;
-      if (idx == null) return;
-      setGamePin((oldGamePin) => oldGamePin.slice(0, idx - 1) + oldGamePin.slice(idx));
-      setSelectionRange([target, idx - 1]);
+      setGamePin((oldGamePin) => {
+        if (end - start === 0) {
+          setSelectionRange([target, start - 1]);
+          return filterGamePin(oldGamePin.slice(0, start - 1) + oldGamePin.slice(start));
+        }
+        setSelectionRange([target, start]);
+        return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(end));
+      });
     } else if (event.key === 'Delete') {
       event.preventDefault();
-      const idx = target.selectionStart;
-      if (idx == null) return;
-      setGamePin((oldGamePin) => oldGamePin.slice(0, idx) + oldGamePin.slice(idx + 1));
-      setSelectionRange([target, idx]);
+      setGamePin((oldGamePin) => {
+        if (end - start === 0) {
+          setSelectionRange([target, start]);
+          return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(start + 1));
+        }
+        setSelectionRange([target, start]);
+        return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(end));
+      });
     }
   };
 

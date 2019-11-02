@@ -72,10 +72,10 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
     const { data } = event as unknown as InputEvent;
     if (data == null) return;
     const target = event.target as HTMLInputElement;
-    const idx = target.selectionStart;
-    if (idx == null) return;
-    setName((oldName) => filterName(oldName.slice(0, idx) + data + oldName.slice(idx)));
-    setSelectionRange([target, idx + 1]);
+    const [start, end] = [target.selectionStart, target.selectionEnd].sort();
+    if (start == null || end == null) return;
+    setName((oldName) => filterName(oldName.slice(0, start) + data + oldName.slice(end)));
+    setSelectionRange([target, start + 1]);
   };
 
   useEffect(() => {
@@ -86,18 +86,28 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
+    const [start, end] = [target.selectionStart, target.selectionEnd].sort();
+    if (start == null || end == null) return;
     if (event.key === 'Backspace') {
       event.preventDefault();
-      const idx = target.selectionStart;
-      if (idx == null) return;
-      setName((oldName) => oldName.slice(0, idx - 1) + oldName.slice(idx));
-      setSelectionRange([target, idx - 1]);
+      setName((oldName) => {
+        if (end - start === 0) {
+          setSelectionRange([target, start - 1]);
+          return filterName(oldName.slice(0, start - 1) + oldName.slice(start));
+        }
+        setSelectionRange([target, start]);
+        return filterName(oldName.slice(0, start) + oldName.slice(end));
+      });
     } else if (event.key === 'Delete') {
       event.preventDefault();
-      const idx = target.selectionStart;
-      if (idx == null) return;
-      setName((oldName) => oldName.slice(0, idx) + oldName.slice(idx + 1));
-      setSelectionRange([target, idx]);
+      setName((oldName) => {
+        if (end - start === 0) {
+          setSelectionRange([target, start]);
+          return filterName(oldName.slice(0, start) + oldName.slice(start + 1));
+        }
+        setSelectionRange([target, start]);
+        return filterName(oldName.slice(0, start) + oldName.slice(end));
+      });
     }
   };
 
