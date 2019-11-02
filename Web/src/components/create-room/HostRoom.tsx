@@ -12,7 +12,7 @@ import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
-import ResultsLeaderboard from '../results-leaderboard/index';
+import ResultsLeaderboard from '../results-leaderboard';
 import RoomMembers from './RoomMembers';
 
 const CreateRoomContainer = styled.div`

@@ -11,7 +11,7 @@ interface ResultsLeaderboardProps {
 
 const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, gameText }) => {
   if (!allMetas) {
-    return <></>;
+    return null;
   }
 
   const sortedScores: PlayerScore[] = Object

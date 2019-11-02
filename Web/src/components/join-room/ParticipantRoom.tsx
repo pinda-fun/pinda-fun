@@ -5,7 +5,7 @@ import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import { mdMin } from '../../utils/media';
-import ResultsLeaderboard from '../results-leaderboard/index';
+import ResultsLeaderboard from '../results-leaderboard';
 
 const WaitingDiv = styled.div`
   background-color: var(--pale-purple);
