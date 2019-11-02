@@ -31,7 +31,8 @@ const Container = styled.div`
 
 const Group = styled.span`
   overflow: hidden;
-  height: 100%;
+  position: relative;
+  height: auto;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -47,13 +48,16 @@ const BigText = styled.span`
 `;
 
 const Header = styled.div`
+  background: var(--green);
   align-items: center;
   position: sticky;
   top: 0px;
   text-align: center;
-  width: 100vw;
-  padding: 12px;
+  width: 100%;
+  margin: 12px;
+  padding: 0 0 12px 0;
   font-size: 1rem;
+  z-index: 999;
 `;
 
 const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
