@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, RefObject } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
@@ -18,17 +18,19 @@ import GameSequenceGenerator from './GameSequenceGenerator';
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
   position: relative;
-  overflow-x: hidden;
+  overflow: scroll;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-const RoomDetailsSection = styled.section`
-  min-height: ${window.innerHeight}px;
+const RoomDetailsContainer = styled.div`
+  height: ${window.innerHeight}px;
   position: relative;
+`;
 
+const RoomDetailsSection = styled.section`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -129,11 +131,20 @@ const PindaHappy = styled(PindaHappySVG)`
 
 const gameSequenceGenerator = new GameSequenceGenerator();
 
+const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
+  const spaceAroundContent = 100;
+  if (contentRef.current != null) {
+    return contentRef.current.clientHeight > (window.innerHeight - spaceAroundContent);
+  }
+  return false;
+};
+
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   room, error, users, allMetas, resultMeta,
 }) => {
   const comm = useContext(CommContext);
   const membersListRef = useRef<HTMLDivElement>(null);
+  const roomDetailsRef = useRef<HTMLDivElement>(null);
 
   const onStartButtonClick = () => {
     const nextGame = gameSequenceGenerator.getNext();
@@ -162,37 +173,39 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
         />
       )}
       <CreateRoomContainer>
-        <RoomDetailsSection>
-          <TwoColumnDiv>
-            <div>
-              <GamePinSection>
-                <h2>Game PIN:</h2>
-                <h1>{room}</h1>
-              </GamePinSection>
-              <NumPlayers numPlayers={users.length} hideOnMedium />
-            </div>
-            <ShareSection>
-              <h2>Share via</h2>
-              <ShareContent>
-                <QrCode sharableLink={sharableLink} />
-                <SocialShare sharableLink={sharableLink} />
-              </ShareContent>
-              <NumPlayers numPlayers={users.length} hideOnLarge />
-            </ShareSection>
-          </TwoColumnDiv>
-          <StartButton
-            onClick={onStartButtonClick}
-          >
-            START!
-          </StartButton>
-          <Link to={{ pathname: '/' }}>Cancel</Link>
+        <RoomDetailsContainer>
+          <RoomDetailsSection>
+            <TwoColumnDiv>
+              <div>
+                <GamePinSection>
+                  <h2>Game PIN:</h2>
+                  <h1>{room}</h1>
+                </GamePinSection>
+                <NumPlayers numPlayers={users.length} hideOnMedium />
+              </div>
+              <ShareSection>
+                <h2>Share via</h2>
+                <ShareContent>
+                  <QrCode sharableLink={sharableLink} />
+                  <SocialShare sharableLink={sharableLink} />
+                </ShareContent>
+                <NumPlayers numPlayers={users.length} hideOnLarge />
+              </ShareSection>
+            </TwoColumnDiv>
+            <StartButton
+              onClick={onStartButtonClick}
+            >
+              START!
+            </StartButton>
+            <Link to={{ pathname: '/' }}>Cancel</Link>
+            </RoomDetailsSection>
           <ScrollDownButton
             promptText="View Players"
             scrollToRef={membersListRef}
             backgroundColor="var(--pale-yellow)"
-            sticky
+            sticky={isStickyScrollPrompt(roomDetailsRef)}
           />
-        </RoomDetailsSection>
+        </RoomDetailsContainer>
         <MembersSection>
           <RoomMembers users={users} />
         </MembersSection>

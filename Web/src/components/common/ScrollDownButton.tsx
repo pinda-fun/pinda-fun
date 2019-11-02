@@ -5,26 +5,26 @@ import smoothscroll from 'smoothscroll-polyfill';
 
 type ScrollDownDisplayProps = {
   backgroundColor?: string;
-  sticky: boolean;
+  sticky?: boolean;
 };
 
 const ScrollDownPrompt = styled.button`
-  position: absolute;
-  bottom: 0px;
+  position: sticky;
+  bottom: 0;
+  font-size: 1rem;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  font-size: 1rem;
+  z-index: 999;
 
   background-color: ${({ backgroundColor }: ScrollDownDisplayProps) => backgroundColor || 'transparent'};
 
   ${({ sticky }: ScrollDownDisplayProps) => sticky
     && css`
       position: sticky;
-      bottom: 0;
       width: 100%;
     `};
 
