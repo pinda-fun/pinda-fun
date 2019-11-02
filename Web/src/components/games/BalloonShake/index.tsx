@@ -5,6 +5,7 @@ import {
 import {
   filter, map, pluck, debounceTime, startWith, takeUntil, share, last,
 } from 'rxjs/operators';
+import CommContext from 'components/room/comm/CommContext';
 import useCounter from '../hooks';
 import { unwrap, createTimerObservable } from '../rxhelpers';
 import { GameState, MotionPermission } from '../GameStates';
@@ -13,7 +14,6 @@ import BalloonShakeInstructions from './BalloonShakeInstructions';
 import GamePrep from './GamePrep';
 import Countdown from '../Countdown';
 import TimesUp from '../TimesUp';
-import CommContext from 'components/room/comm/CommContext';
 
 const GAME_TIME = 20; // Total shake time given
 const INSTRUCTIONS_TIME = 5; // Total time to read instructions

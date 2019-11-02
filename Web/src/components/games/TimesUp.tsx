@@ -30,7 +30,7 @@ const TimesUp: React.FC<TimesUpProps> = ({ onComplete }) => {
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
-    if (isCompleted && onComplete) {
+    if (isCompleted) {
       onComplete();
       return undefined;
     }
@@ -43,7 +43,7 @@ const TimesUp: React.FC<TimesUpProps> = ({ onComplete }) => {
 
   return (
     <TimesUpDiv>
-      <Text>TIME'S UP!</Text>
+      <Text>TIME&apos;S UP!</Text>
     </TimesUpDiv>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import CommContext from 'components/room/comm/CommContext';
 import { PandaSequenceMode, Feedback } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
@@ -7,7 +8,6 @@ import GameDisplay from './GameDisplay';
 import PandaSequenceInstructions from './PandaSequenceInstructions';
 import { randomWithinBounds, generate } from './SequenceGenerator';
 import TimesUp from '../TimesUp';
-import CommContext from 'components/room/comm/CommContext';
 
 const GAME_TIME = 30;
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };

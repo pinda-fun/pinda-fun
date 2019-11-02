@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { share } from 'rxjs/operators';
+import CommContext from 'components/room/comm/CommContext';
 import MentalSumsGame from './MentalSumsGame';
 import { GameState } from '../GameStates';
 import MentalSumsInstructions from './MentalSumsInstructions';
 import Countdown from '../Countdown';
 import { createTimerObservable } from '../rxhelpers';
 import TimesUp from '../TimesUp';
-import CommContext from 'components/room/comm/CommContext';
 
 const GAME_TIME = 20;
 
