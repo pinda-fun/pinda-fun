@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import LinkButton from 'components/common/LinkButton';
 import { MotionPermission } from 'components/games/GameStates';
 import GamePinForm from 'components/common/forms/GamePinForm';

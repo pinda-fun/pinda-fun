@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import BrandText from '../common/BrandText';
 import StartNewGameButton from './StartNewGameButton';
 import { mdMin } from '../../utils/media';

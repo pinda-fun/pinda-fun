@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import CommContext from 'components/room/comm/CommContext';
 
 const Container = styled.div`

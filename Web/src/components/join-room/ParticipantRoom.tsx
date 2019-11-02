@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Link } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
 import { mdMin } from '../../utils/media';
+import ResultsLeaderboard from '../results-leaderboard';
 
 const WaitingDiv = styled.div`
   background-color: var(--pale-purple);
@@ -39,7 +40,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  users, allMetas,
+  users, allMetas, resultMeta,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -49,14 +50,10 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
 
   if (resultsExist(allMetas)) {
     return (
-      <WaitingDiv>
-        {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-          <p key={clientId}>{name}: {result}</p>
-        ))}
-        <Heading>
-          Waiting for next game...
-        </Heading>
-      </WaitingDiv>
+      <ResultsLeaderboard
+        allMetas={resultMeta}
+        gameText="shakes/sequences/sums!"
+      />
     );
   }
   return (

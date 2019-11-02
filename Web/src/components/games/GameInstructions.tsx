@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { smMin } from 'utils/media';
 
 const InstructionsDiv = styled.div`
