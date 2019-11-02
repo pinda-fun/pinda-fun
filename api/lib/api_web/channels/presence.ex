@@ -116,6 +116,7 @@ defmodule ApiWeb.Presence do
     base_meta(type, payload)
     |> Map.put("game", game)
     |> Map.put("state", 0)
+    |> Map.put("seed", DateTime.utc_now() |> DateTime.to_unix() |> to_string())
   end
 
   def meta(type = :non_host, payload) do
