@@ -5,7 +5,6 @@ import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
-import Game from 'components/room/Games';
 import { ChevronDown } from 'react-feather';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
@@ -14,6 +13,7 @@ import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
 import ResultsLeaderboard from '../results-leaderboard';
 import RoomMembers from './RoomMembers';
+import GameSequenceGenerator from './GameSequenceGenerator';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -141,14 +141,15 @@ const PindaHappy = styled(PindaHappySVG)`
   }
 `;
 
+const gameSequenceGenerator = new GameSequenceGenerator();
+
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, allMetas, game, resultMeta,
+  room, error, users, allMetas, resultMeta,
 }) => {
   const comm = useContext(CommContext);
 
   const onStartButtonClick = () => {
-    const allGames = Object.values(Game).filter((value) => value !== game.toString()) as Game[];
-    const nextGame = allGames[Math.floor(Math.random() * allGames.length)];
+    const nextGame = gameSequenceGenerator.getNext();
     comm.changeGame(nextGame, () => comm.prepare());
   };
 
