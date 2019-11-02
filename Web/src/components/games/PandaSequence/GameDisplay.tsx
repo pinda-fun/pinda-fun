@@ -52,7 +52,7 @@ const GameContainer = styled(GameContainerElement)`
 
   color: white;
   font-size: 1.4rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const FlowerPotsContainer = styled.div`

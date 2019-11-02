@@ -26,7 +26,7 @@ const GameContainer = styled.div`
 
   color: white;
   font-size: 1.2rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const GameplayContainer = styled.div`
@@ -65,10 +65,10 @@ const QuestionContainer = styled.div`
   }
 
   ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.CORRECT
-    && css`background-color: var(--green)`};
+    && css`background-color: var(--green);`};
 
   ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.WRONG
-    && css`background-color: var(--pink)`};
+    && css`background-color: var(--pink);`};
 `;
 
 const AnswerDiv = styled.div`

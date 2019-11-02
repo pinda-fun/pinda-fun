@@ -19,15 +19,15 @@ type TextProps = {
 const TimerText = styled.span`
   font-size: 6rem;
   font-family: var(--secondary-font);
-  text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
   letter-spacing: 0.3rem;
   margin: 0;
 
-  // Increase line-height to curb font rendering bug
+  /* Increase line-height to curb font rendering bug */
   line-height: 1.2;
 
   ${(props: TextProps) => props.small
-    && css`font-size: 3.5rem`};
+    && css`font-size: 3.5rem;`};
 `;
 
 const UnitsText = styled.span`
@@ -35,7 +35,7 @@ const UnitsText = styled.span`
   font-family: var(--secondary-font);
 
   ${(props: TextProps) => props.small
-    && css`font-size: 1.5rem`};
+    && css`font-size: 1.5rem;`};
 `;
 
 type TimerProps = {
