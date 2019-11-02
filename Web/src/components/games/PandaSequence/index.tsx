@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import CommContext from 'components/room/comm/CommContext';
 import { PandaSequenceMode, Feedback } from './Sequence';
 import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
 import Countdown from '../Countdown';
-import GameResults from './GameResults';
 import GameDisplay, { NUM_POTS } from './GameDisplay';
 import PandaSequenceInstructions from './PandaSequenceInstructions';
 import { randomWithinBounds, generate } from './SequenceGenerator';
+import TimesUp from '../TimesUp';
 
 const GAME_TIME = 30;
 const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
@@ -29,6 +30,12 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
   const [inputIndex, setInputIndex] = useState(0);
   const [feedback, setFeedback] = useState(Feedback.NONE);
 
+  const comm = useContext(CommContext);
+
+  const sendGameResults = () => {
+    comm.sendResult([score]);
+  };
+
   // setup game and trigger first sequence
   useEffect(() => {
     if (gameState !== GameState.IN_PROGRESS) return undefined;
@@ -37,7 +44,7 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
     const timerSub = timer.subscribe(
       (left) => setSecondsLeft(left),
       null,
-      () => setGameState(GameState.WAITING_RESULTS),
+      () => setGameState(GameState.TIMES_UP),
     );
     setSequence((oldSeq) => generate(oldSeq, generator));
     return () => timerSub.unsubscribe();
@@ -131,8 +138,12 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
             displaying={sequence.numbers[index]}
           />
         )}
-      {gameState === GameState.WAITING_RESULTS
-        && <GameResults finalCount={score} />}
+      {gameState === GameState.TIMES_UP
+        && (
+          <TimesUp
+            onComplete={sendGameResults}
+          />
+        )}
     </>
   );
 };

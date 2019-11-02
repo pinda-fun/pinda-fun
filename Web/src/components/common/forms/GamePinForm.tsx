@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Form, SubmitButton } from './FormElements';
 
@@ -26,13 +26,72 @@ interface GamePinFormProps {
   disabled: boolean;
 }
 
+function filterGamePin(pin: string): string {
+  return pin.replace(/\D/g, '');
+}
+
 const GamePinForm: React.FC<GamePinFormProps> = ({
   onSubmitPin,
   pinLength,
   initialPin = '',
   disabled,
 }) => {
+  const [selectionRange, setSelectionRange] = useState<[HTMLInputElement, number] | null>(null);
   const [gamePin, setGamePin] = useState(initialPin);
+
+  /*
+  TRYING TO PREVENT SHAKE TO UNDO FROM HAPPENING
+  WHAT THE HECK APPLE. CAN YOU CHECK FOR INPUT ELEMENT EXISTENCE
+  INSTEAD OF JUST STUPIDLY SHOWING UP THE DIALOGUE EVEN WHEN THE FORM IS GONE?
+
+  I CAN'T UNDO WHAT I WROTE WRONGLY IN THE EXAMS THAT I'VE SUBMITTED, CAN I?
+  */
+  const handleBeforeInput = (event: React.FormEvent) => {
+    event.preventDefault();
+    const { data } = event as unknown as InputEvent;
+    if (data == null) return;
+    const target = event.target as HTMLInputElement;
+    const [start, end] = [target.selectionStart, target.selectionEnd].sort();
+    if (start == null || end == null) return;
+    setGamePin(
+      (oldGamePin) => filterGamePin(oldGamePin.slice(0, start) + data + oldGamePin.slice(end)),
+    );
+    setSelectionRange([target, start + 1]);
+  };
+
+  useEffect(() => {
+    if (selectionRange == null) return;
+    const [target, start] = selectionRange;
+    target.setSelectionRange(start, start);
+  }, [selectionRange]);
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    const target = event.target as HTMLInputElement;
+    const [start, end] = [target.selectionStart, target.selectionEnd].sort();
+    if (start == null || end == null) return;
+    if (event.key === 'Backspace') {
+      event.preventDefault();
+      setGamePin((oldGamePin) => {
+        if (end - start === 0) {
+          setSelectionRange([target, start - 1]);
+          return filterGamePin(oldGamePin.slice(0, start - 1) + oldGamePin.slice(start));
+        }
+        setSelectionRange([target, start]);
+        return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(end));
+      });
+    } else if (event.key === 'Delete') {
+      event.preventDefault();
+      setGamePin((oldGamePin) => {
+        if (end - start === 0) {
+          setSelectionRange([target, start]);
+          return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(start + 1));
+        }
+        setSelectionRange([target, start]);
+        return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(end));
+      });
+    }
+  };
+
 
   return (
     <Form
@@ -51,9 +110,9 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
         placeholder="XXXX"
         autoComplete="off"
         value={gamePin}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => (
-          setGamePin(event.target.value.replace(/\D/g, ''))
-        )}
+        onBeforeInput={handleBeforeInput}
+        onKeyDown={handleKeyDown}
+        onChange={(e) => e.preventDefault()}
         autoFocus
       />
       <SubmitButton
