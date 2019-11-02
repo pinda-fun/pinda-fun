@@ -15,7 +15,7 @@ const InstructionsDiv = styled.div`
   align-items: center;
 
   p {
-    text-shadow: 3px 3px 0px var(--dark-purple);
+    text-shadow: 3px 3px 0 var(--dark-purple);
     font-size: 1.2rem;
     width: ${smMin};
 
@@ -31,7 +31,7 @@ const InstructionsDiv = styled.div`
 
 const GameTitle = styled.h1`
   font-size: 2.8rem;
-  text-shadow: 4px 4px 0px var(--dark-purple);
+  text-shadow: 4px 4px 0 var(--dark-purple);
   margin-bottom: 0;
 `;
 
@@ -39,7 +39,7 @@ const InstructionsTitle = styled.h2`
   font-size: 1.4rem;
   font-family: var(--primary-font);
   font-weight: normal;
-  text-shadow: 3px 3px 0px var(--dark-purple);
+  text-shadow: 3px 3px 0 var(--dark-purple);
   margin-bottom: 0;
 `;
 
