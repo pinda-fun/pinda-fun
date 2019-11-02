@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import smoothscroll from 'smoothscroll-polyfill';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 // Polyfills
-import smoothscroll from 'smoothscroll-polyfill';
 
 smoothscroll.polyfill();
 
