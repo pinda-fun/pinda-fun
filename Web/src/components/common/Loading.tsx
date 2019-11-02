@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactLoading from 'react-loading';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 
 const LoadingDiv = styled.div`

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import { Users, Icon } from 'react-feather';
 import { mdMin } from '../../utils/media';
 
