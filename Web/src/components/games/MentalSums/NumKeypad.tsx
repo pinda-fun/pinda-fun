@@ -11,6 +11,8 @@ const KeypadWrapper = styled.div`
 const KeypadContainer = styled.div`
   display: flex;
   flex-flow: row wrap;
+
+  touch-action: none;
 `;
 
 const KeyButton = styled.button`
@@ -28,21 +30,30 @@ type NumKeypadProps = {
   onClickKey: (key: string) => void;
 };
 
-const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey }) => (
-  <KeypadWrapper>
-    <KeypadContainer>
-      {
-        NUMPAD_KEYS.map((val) => (
-          <KeyButton
-            key={val}
-            onClick={() => onClickKey(val)}
-          >
-            {val}
-          </KeyButton>
-        ))
-      }
-    </KeypadContainer>
-  </KeypadWrapper>
-);
+const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey }) => {
+  const actionHandler = (e: React.SyntheticEvent, val: string) => {
+    e.preventDefault();
+    onClickKey(val);
+  };
+  return (
+    <KeypadWrapper>
+      <KeypadContainer>
+        {
+          // See: https://github.com/facebook/react/issues/9809#issuecomment-395607117
+          NUMPAD_KEYS.map((val) => (
+            <KeyButton
+              key={val}
+              onMouseDown={(e) => actionHandler(e, val)}
+              onTouchStart={(e) => actionHandler(e, val)}
+              onTouchEnd={(e) => e.preventDefault()}
+            >
+              {val}
+            </KeyButton>
+          ))
+        }
+      </KeypadContainer>
+    </KeypadWrapper>
+  );
+};
 
 export default NumKeypad;
