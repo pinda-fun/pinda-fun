@@ -92,6 +92,12 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
       if (idx == null) return;
       setName((oldName) => oldName.slice(0, idx - 1) + oldName.slice(idx));
       setSelectionRange([target, idx - 1]);
+    } else if (event.key === 'Delete') {
+      event.preventDefault();
+      const idx = target.selectionStart;
+      if (idx == null) return;
+      setName((oldName) => oldName.slice(0, idx) + oldName.slice(idx + 1));
+      setSelectionRange([target, idx]);
     }
   };
 
