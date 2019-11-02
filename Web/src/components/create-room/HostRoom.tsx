@@ -26,7 +26,7 @@ const CreateRoomContainer = styled.div`
 `;
 
 const RoomDetailsContainer = styled.div`
-  height: ${window.innerHeight}px;
+  min-height: ${window.innerHeight}px;
   position: relative;
 
   display: flex;
@@ -135,7 +135,7 @@ const PindaHappy = styled(PindaHappySVG)`
 const gameSequenceGenerator = new GameSequenceGenerator();
 
 const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
-  const spaceAroundContent = 100;
+  const spaceAroundContent = 50;
   if (contentRef.current != null) {
     return contentRef.current.clientHeight > (window.innerHeight - spaceAroundContent);
   }
