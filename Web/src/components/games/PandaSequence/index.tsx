@@ -34,6 +34,7 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
 
   const sendGameResults = () => {
     comm.sendResult([score]);
+    setGameState(GameState.COMPLETED);
   };
 
   // setup game and trigger first sequence
@@ -144,6 +145,9 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
             onComplete={sendGameResults}
           />
         )}
+      {gameState === GameState.COMPLETED && (
+        <TimesUp onComplete={() => { }} />
+      )}
     </>
   );
 };
