@@ -40,7 +40,7 @@ const ErrorHeading = styled(Heading)`
 `;
 
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
-  users, allMetas, resultMeta, game
+  users, allMetas, resultMeta, game,
 }) => {
   const [funMessage, setFunMessage] = useState('Waiting for more people to join...');
 
@@ -52,7 +52,7 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
     return (
       <ResultsLeaderboard
         allMetas={resultMeta}
-        gameText={game.toString() + "!"}
+        gameText={`${game.toString()}!`}
       />
     );
   }
