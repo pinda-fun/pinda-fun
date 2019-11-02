@@ -3,8 +3,7 @@ export enum GameState {
   INSTRUCTIONS,
   COUNTING_DOWN,
   IN_PROGRESS,
-  WAITING_RESULTS,
-  RESULTS
+  TIMES_UP,
 }
 
 export enum MotionPermission {
