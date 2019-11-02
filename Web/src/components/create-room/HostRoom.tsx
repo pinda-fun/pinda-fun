@@ -28,6 +28,9 @@ const CreateRoomContainer = styled.div`
 const RoomDetailsContainer = styled.div`
   height: ${window.innerHeight}px;
   position: relative;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 const RoomDetailsSection = styled.section`
