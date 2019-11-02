@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, RefObject } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
+import ScrollDownButton from 'components/common/ScrollDownButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
-import { ChevronDown } from 'react-feather';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -18,17 +18,23 @@ import GameSequenceGenerator from './GameSequenceGenerator';
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-const RoomDetailsSection = styled.section`
+const RoomDetailsContainer = styled.div`
   min-height: ${window.innerHeight}px;
   position: relative;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const RoomDetailsSection = styled.section`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -116,20 +122,6 @@ const StartButton = styled(BigButton)`
   padding-right: 3rem;
 `;
 
-const ScrollDownPrompt = styled.div`
-  position: absolute;
-  bottom: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  & > svg {
-    width: 42px;
-  }
-`;
-
 const PindaHappy = styled(PindaHappySVG)`
   position: fixed;
   height: 270px;
@@ -143,10 +135,20 @@ const PindaHappy = styled(PindaHappySVG)`
 
 const gameSequenceGenerator = new GameSequenceGenerator();
 
+const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
+  const spaceAroundContent = 50;
+  if (contentRef.current != null) {
+    return contentRef.current.clientHeight > (window.innerHeight - spaceAroundContent);
+  }
+  return false;
+};
+
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   room, error, users, allMetas, resultMeta,
 }) => {
   const comm = useContext(CommContext);
+  const membersListRef = useRef<HTMLDivElement>(null);
+  const roomDetailsRef = useRef<HTMLDivElement>(null);
 
   const onStartButtonClick = () => {
     const nextGame = gameSequenceGenerator.getNext();
@@ -175,36 +177,40 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
         />
       )}
       <CreateRoomContainer>
-        <RoomDetailsSection>
-          <TwoColumnDiv>
-            <div>
-              <GamePinSection>
-                <h2>Game PIN:</h2>
-                <h1>{room}</h1>
-              </GamePinSection>
-              <NumPlayers numPlayers={users.length} hideOnMedium />
-            </div>
-            <ShareSection>
-              <h2>Share via</h2>
-              <ShareContent>
-                <QrCode sharableLink={sharableLink} />
-                <SocialShare sharableLink={sharableLink} />
-              </ShareContent>
-              <NumPlayers numPlayers={users.length} hideOnLarge />
-            </ShareSection>
-          </TwoColumnDiv>
-          <StartButton
-            onClick={onStartButtonClick}
-          >
-            START!
-          </StartButton>
-          <Link to={{ pathname: '/' }}>Cancel</Link>
-          <ScrollDownPrompt>
-            View Players
-            <ChevronDown />
-          </ScrollDownPrompt>
-        </RoomDetailsSection>
-        <MembersSection>
+        <RoomDetailsContainer>
+          <RoomDetailsSection ref={roomDetailsRef}>
+            <TwoColumnDiv>
+              <div>
+                <GamePinSection>
+                  <h2>Game PIN:</h2>
+                  <h1>{room}</h1>
+                </GamePinSection>
+                <NumPlayers numPlayers={users.length} hideOnMedium />
+              </div>
+              <ShareSection>
+                <h2>Share via</h2>
+                <ShareContent>
+                  <QrCode sharableLink={sharableLink} />
+                  <SocialShare sharableLink={sharableLink} />
+                </ShareContent>
+                <NumPlayers numPlayers={users.length} hideOnLarge />
+              </ShareSection>
+            </TwoColumnDiv>
+            <StartButton
+              onClick={onStartButtonClick}
+            >
+              START!
+            </StartButton>
+            <Link to={{ pathname: '/' }}>Cancel</Link>
+          </RoomDetailsSection>
+          <ScrollDownButton
+            promptText="View Players"
+            scrollToRef={membersListRef}
+            backgroundColor="var(--pale-yellow)"
+            sticky={isStickyScrollPrompt(roomDetailsRef)}
+          />
+        </RoomDetailsContainer>
+        <MembersSection ref={membersListRef}>
           <RoomMembers users={users} />
         </MembersSection>
         <PindaHappy />
