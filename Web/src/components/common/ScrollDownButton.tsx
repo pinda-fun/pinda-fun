@@ -9,7 +9,8 @@ type ScrollDownDisplayProps = {
 };
 
 const ScrollDownPrompt = styled.button`
-  position: sticky;
+  position: absolute;
+  width: 100%;
   bottom: 0;
   font-size: 1rem;
 
@@ -25,7 +26,6 @@ const ScrollDownPrompt = styled.button`
   ${({ sticky }: ScrollDownDisplayProps) => sticky
     && css`
       position: sticky;
-      width: 100%;
     `};
 
   & > svg {

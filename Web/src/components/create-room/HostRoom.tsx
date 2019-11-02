@@ -31,6 +31,7 @@ const RoomDetailsContainer = styled.div`
 
   display: flex;
   flex-direction: column;
+  justify-content: center;
 `;
 
 const RoomDetailsSection = styled.section`
