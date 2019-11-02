@@ -109,14 +109,18 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
   const [feedback, setFeedback] = useState(FeedbackState.NONE);
   const [input, setInput] = useState('');
 
+  useEffect(() => {
+    if (feedback === FeedbackState.NONE) return undefined;
+    const timeout = setTimeout(() => setFeedback(FeedbackState.NONE), 500);
+    return () => clearTimeout(timeout);
+  }, [feedback]);
+
   const setCorrect = useCallback(() => {
     setFeedback(FeedbackState.CORRECT);
-    setTimeout(() => setFeedback(FeedbackState.NONE), 500);
   }, []);
 
   const setWrong = useCallback(() => {
     setFeedback(FeedbackState.WRONG);
-    setTimeout(() => setFeedback(FeedbackState.NONE), 500);
   }, []);
 
   const checkAns = useCallback((newInput: string) => {
