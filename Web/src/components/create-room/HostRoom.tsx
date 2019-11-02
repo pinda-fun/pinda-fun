@@ -11,6 +11,7 @@ import SocialShare from './SocialShare';
 import QrCode from './QrCode';
 import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
+import ResultsLeaderboard from '../results-leaderboard';
 import RoomMembers from './RoomMembers';
 import GameSequenceGenerator from './GameSequenceGenerator';
 
@@ -143,7 +144,7 @@ const PindaHappy = styled(PindaHappySVG)`
 const gameSequenceGenerator = new GameSequenceGenerator();
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, allMetas,
+  room, error, users, allMetas, resultMeta,
 }) => {
   const comm = useContext(CommContext);
 
@@ -166,49 +167,49 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   }
 
   return (
-    <CreateRoomContainer>
-      <RoomDetailsSection>
-        {resultsExist(allMetas) && (
-          <>
-            <h1>Last Game:</h1>
-            {Object.entries(allMetas).map(([clientId, { name, result }]) => (
-              <p key={clientId}>{name}: {result}</p>
-            ))}
-          </>
-        )}
-        <TwoColumnDiv>
-          <div>
-            <GamePinSection>
-              <h2>Game PIN:</h2>
-              <h1>{room}</h1>
-            </GamePinSection>
-            <NumPlayers numPlayers={users.length} hideOnMedium />
-          </div>
-          <ShareSection>
-            <h2>Share via</h2>
-            <ShareContent>
-              <QrCode sharableLink={sharableLink} />
-              <SocialShare sharableLink={sharableLink} />
-            </ShareContent>
-            <NumPlayers numPlayers={users.length} hideOnLarge />
-          </ShareSection>
-        </TwoColumnDiv>
-        <StartButton
-          onClick={onStartButtonClick}
-        >
-          START!
-        </StartButton>
-        <Link to={{ pathname: '/' }}>Cancel</Link>
-        <ScrollDownPrompt>
-          View Players
-          <ChevronDown />
-        </ScrollDownPrompt>
-      </RoomDetailsSection>
-      <MembersSection>
-        <RoomMembers users={users} />
-      </MembersSection>
-      <PindaHappy />
-    </CreateRoomContainer>
+    <>
+      {resultsExist(allMetas) && (
+        <ResultsLeaderboard
+          allMetas={resultMeta}
+          gameText="shakes/sequences/sums!"
+        />
+      )}
+      <CreateRoomContainer>
+        <RoomDetailsSection>
+          <TwoColumnDiv>
+            <div>
+              <GamePinSection>
+                <h2>Game PIN:</h2>
+                <h1>{room}</h1>
+              </GamePinSection>
+              <NumPlayers numPlayers={users.length} hideOnMedium />
+            </div>
+            <ShareSection>
+              <h2>Share via</h2>
+              <ShareContent>
+                <QrCode sharableLink={sharableLink} />
+                <SocialShare sharableLink={sharableLink} />
+              </ShareContent>
+              <NumPlayers numPlayers={users.length} hideOnLarge />
+            </ShareSection>
+          </TwoColumnDiv>
+          <StartButton
+            onClick={onStartButtonClick}
+          >
+            START!
+          </StartButton>
+          <Link to={{ pathname: '/' }}>Cancel</Link>
+          <ScrollDownPrompt>
+            View Players
+            <ChevronDown />
+          </ScrollDownPrompt>
+        </RoomDetailsSection>
+        <MembersSection>
+          <RoomMembers users={users} />
+        </MembersSection>
+        <PindaHappy />
+      </CreateRoomContainer>
+    </>
   );
 };
 
