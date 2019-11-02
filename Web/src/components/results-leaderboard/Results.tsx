@@ -22,7 +22,7 @@ const Container = styled.div`
 
   color: white;
   font-size: 1.4rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const Group = styled.span`
@@ -41,14 +41,14 @@ const BigNumber = styled.span`
   font-size: 8rem;
   font-family: var(--secondary-font);
   margin: 1rem 0 -1rem 0;
-  text-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 10 10 0 rgba(0, 0, 0, 0.1);
 `;
 
 const Footer = styled.div`
   width: 100vw;
   align-items: center;
   position: sticky;
-  bottom: 0px;
+  bottom: 0;
   text-align: center;
   padding: 12px;
   font-size: 1rem;

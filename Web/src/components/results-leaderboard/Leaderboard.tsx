@@ -26,7 +26,7 @@ const Container = styled.div`
 
   color: white;
   font-size: 1.4rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const Group = styled.span`
@@ -44,14 +44,14 @@ const Group = styled.span`
 const BigText = styled.span`
   font-size: 2rem;
   font-family: var(--secondary-font);
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const Header = styled.div`
   background: var(--green);
   align-items: center;
   position: sticky;
-  top: 0px;
+  top: 0;
   text-align: center;
   width: 100%;
   margin: 12px;
@@ -69,7 +69,7 @@ const ListItemContainer = styled.div`
   width: ${smMin};
   overflow-x: hidden;
   margin: 1rem 0;
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
   border-radius: 15px;
 
   @media (max-width: ${smMin}) {
@@ -85,7 +85,7 @@ const ListItem = styled.div`
   width: auto;
   font-size: 1.1rem;
   color: black;
-  padding:18px 18px;
+  padding: 18px 18px;
   border-top: 1px solid var(--light-grey);
 
   :first-child {
@@ -101,7 +101,7 @@ const SelectedListItem = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding:18px 18px;
+  padding: 18px 18px;
   border-top: 1px solid var(--light-grey);
   color: var(--red);
 
