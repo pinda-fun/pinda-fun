@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components/macro';
 import { ChevronDown } from 'react-feather';
-import smoothscroll from 'smoothscroll-polyfill';
 
 type ScrollDownDisplayProps = {
   backgroundColor?: string;
@@ -49,7 +48,6 @@ const ScrollDownButton: React.FC<ScrollDownButtonProps> = ({
 }) => {
   const scrollRefIntoView = () => {
     if (scrollToRef.current != null) {
-      smoothscroll.polyfill();
       scrollToRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
