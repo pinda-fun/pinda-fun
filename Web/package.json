@@ -38,7 +38,8 @@
     "test": "react-scripts test",
     "typecheck": "tsc --noEmit",
     "eject": "react-scripts eject",
-    "lint": "eslint './src/**/*.{ts,tsx}'"
+    "lint": "eslint './src/**/*.{ts,tsx}'",
+    "lint:css": "stylelint './src/**/*.{ts,tsx}'"
   },
   "browserslist": {
     "production": [
@@ -65,11 +66,15 @@
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.1.2",
     "husky": "^3.0.9",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "stylelint": "^11.1.1",
+    "stylelint-config-standard": "^19.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.8.0"
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint"
+      "pre-push": "yarn lint && yarn lint:css"
     }
   }
 }

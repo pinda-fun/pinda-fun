@@ -13,13 +13,13 @@ const PandaPotContainer = styled.div`
 
   & > * {
     position: absolute;
-    bottom: 0px;
-    width: 100%:
+    bottom: 0;
+    width: 100%;
   }
 `;
 
 const FlowerPot = styled(FlowerPotSVG)`
-  // We want flower pot to be in front of panda head all the time
+  /* We want flower pot to be in front of panda head all the time */
   z-index: 1;
 `;
 
@@ -56,7 +56,7 @@ const DisplayPandaHead = styled(PandaHead)`
 // preventing it from setting the event as passive by default, which would in turn stop us
 // from calling preventDefault() to curb propagation of touch events to mouse events
 const InputPandaPotContainer = styled.div`
-  opacity: ${({ isSelected }: InputProps) => (isSelected ? '0.5' : '1')}
+  opacity: ${({ isSelected }: InputProps) => (isSelected ? '0.5' : '1')};
   touch-action: none;
   transition: 0.1s;
   cursor: pointer;
