@@ -1,5 +1,5 @@
 enum Game {
-  SHAKE = 'shake',
+  SHAKE = 'shakes',
   SUMS = 'sums',
   SEQUENCE = 'sequences',
 }

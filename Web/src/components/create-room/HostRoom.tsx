@@ -144,7 +144,7 @@ const PindaHappy = styled(PindaHappySVG)`
 const gameSequenceGenerator = new GameSequenceGenerator();
 
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
-  room, error, users, allMetas, resultMeta,
+  room, error, users, allMetas, resultMeta, game
 }) => {
   const comm = useContext(CommContext);
 
@@ -172,7 +172,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       {resultsExist(allMetas) && (
         <ResultsLeaderboard
           allMetas={resultMeta}
-          gameText="shakes/sequences/sums!"
+          gameText={game.toString() + "!"}
         />
       )}
       <CreateRoomContainer>
