@@ -174,7 +174,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       )}
       <CreateRoomContainer>
         <RoomDetailsContainer>
-          <RoomDetailsSection>
+          <RoomDetailsSection ref={roomDetailsRef}>
             <TwoColumnDiv>
               <div>
                 <GamePinSection>
@@ -198,7 +198,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
               START!
             </StartButton>
             <Link to={{ pathname: '/' }}>Cancel</Link>
-            </RoomDetailsSection>
+          </RoomDetailsSection>
           <ScrollDownButton
             promptText="View Players"
             scrollToRef={membersListRef}
@@ -206,7 +206,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
             sticky={isStickyScrollPrompt(roomDetailsRef)}
           />
         </RoomDetailsContainer>
-        <MembersSection>
+        <MembersSection ref={membersListRef}>
           <RoomMembers users={users} />
         </MembersSection>
         <PindaHappy />
