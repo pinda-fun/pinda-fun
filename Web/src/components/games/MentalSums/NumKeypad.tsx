@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 const NUMPAD_KEYS = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '-', '0'];
 

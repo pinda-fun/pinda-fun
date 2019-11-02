@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from 'components/common/Button';
 import BigButton from 'components/common/BigButton';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { ReactComponent as ShockedPindaSVG } from 'svg/pinda-shocked-badge.svg';
 import { MotionPermission } from '../GameStates';
 
@@ -29,36 +29,36 @@ const GamePrep: React.FC<IProps> = ({
 }) => (
   <Container>
     {permission === MotionPermission.NOT_SET && !showPermissionRequest
-      && (
-        <h3>
-          Checking if you can play the game...
-        </h3>
-      )}
+        && (
+          <h3>
+            Checking if you can play the game...
+          </h3>
+        )}
     {permission === MotionPermission.NOT_SET && showPermissionRequest
-      && (
-        <Button onClick={() => requestPermissionCallback()} type="button">
-          Set Permission
-        </Button>
-      )}
+        && (
+          <Button onClick={() => requestPermissionCallback()} type="button">
+            Set Permission
+          </Button>
+        )}
     {permission === MotionPermission.GRANTED
-      && (
-        <BigButton onClick={startGame} type="button">
-          Start Game!
-        </BigButton>
-      )}
+        && (
+          <BigButton onClick={startGame} type="button">
+            Start Game!
+          </BigButton>
+        )}
     {permission === MotionPermission.DENIED
-      && (
-        <>
-          <ShockedPindaSVG />
-          <h1>
-            Uh Oh!
-          </h1>
-          <p>
-            Permissions to your device&apos;s motion sensor was not granted, so
-            you can&apos;t play this game.
-          </p>
-        </>
-      )}
+        && (
+          <>
+            <ShockedPindaSVG />
+            <h1>
+              Uh Oh!
+            </h1>
+            <p>
+              Permissions to your device&apos;s motion sensor was not granted, so
+              you can&apos;t play this game.
+            </p>
+          </>
+        )}
   </Container>
 );
 
