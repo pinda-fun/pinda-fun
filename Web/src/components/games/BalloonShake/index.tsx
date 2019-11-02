@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   fromEvent, Observable, EMPTY,
 } from 'rxjs';
@@ -9,10 +9,11 @@ import useCounter from '../hooks';
 import { unwrap, createTimerObservable } from '../rxhelpers';
 import { GameState, MotionPermission } from '../GameStates';
 import GameDisplay from './GameDisplay';
-import GameResults from './GameResults';
 import BalloonShakeInstructions from './BalloonShakeInstructions';
 import GamePrep from './GamePrep';
 import Countdown from '../Countdown';
+import TimesUp from '../TimesUp';
+import CommContext from 'components/room/comm/CommContext';
 
 const GAME_TIME = 20; // Total shake time given
 const INSTRUCTIONS_TIME = 5; // Total time to read instructions
@@ -51,6 +52,12 @@ const BalloonShake: React.FC = () => {
   const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
   const { count } = useCounter(obs, -1);
 
+  const comm = useContext(CommContext);
+
+  const sendGameResults = () => {
+    comm.sendResult([count]);
+  };
+
   const getPermissionAvailability = () => {
     if (!window.DeviceMotionEvent) {
       setPermission(MotionPermission.DENIED);
@@ -74,7 +81,7 @@ const BalloonShake: React.FC = () => {
     const timerSub = timer.subscribe(
       (left) => setSecondsLeft(left),
       null,
-      () => setGameState(GameState.WAITING_RESULTS),
+      () => setGameState(GameState.TIMES_UP),
     );
     setObs(getShakeObservable(permission).pipe(
       takeUntil(timer.pipe(last())),
@@ -124,8 +131,12 @@ const BalloonShake: React.FC = () => {
         )}
       {gameState === GameState.IN_PROGRESS
         && <GameDisplay secondsLeft={secondsLeft} count={count} />}
-      {gameState === GameState.WAITING_RESULTS
-        && <GameResults finalCount={count} />}
+      {gameState === GameState.TIMES_UP
+        && (
+          <TimesUp
+            onComplete={sendGameResults}
+          />
+        )}
     </>
   );
 };

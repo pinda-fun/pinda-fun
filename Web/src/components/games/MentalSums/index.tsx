@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { share } from 'rxjs/operators';
 import MentalSumsGame from './MentalSumsGame';
 import { GameState } from '../GameStates';
 import MentalSumsInstructions from './MentalSumsInstructions';
 import Countdown from '../Countdown';
-import GameResults from './GameResults';
 import { createTimerObservable } from '../rxhelpers';
+import TimesUp from '../TimesUp';
+import CommContext from 'components/room/comm/CommContext';
 
 const GAME_TIME = 20;
 
@@ -14,7 +15,13 @@ const MentalSums: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [playerScore, setPlayerScore] = useState(0);
 
+  const comm = useContext(CommContext);
+
   const incrementScore = () => setPlayerScore((prev) => prev + 1);
+
+  const sendGameResults = () => {
+    comm.sendResult([playerScore]);
+  };
 
   useEffect(() => {
     if (gameState !== GameState.IN_PROGRESS) return undefined;
@@ -22,7 +29,7 @@ const MentalSums: React.FC = () => {
     const timerSub = timer.subscribe(
       (left) => setTimeLeft(left),
       null,
-      () => setGameState(GameState.WAITING_RESULTS),
+      () => setGameState(GameState.TIMES_UP),
     );
     return () => timerSub.unsubscribe();
   }, [gameState]);
@@ -47,8 +54,12 @@ const MentalSums: React.FC = () => {
             seed="ben-leong"
           />
         )}
-      {gameState === GameState.WAITING_RESULTS
-        && <GameResults finalCount={playerScore} />}
+      {gameState === GameState.TIMES_UP
+        && (
+          <TimesUp
+            onComplete={sendGameResults}
+          />
+        )}
     </>
   );
 };
