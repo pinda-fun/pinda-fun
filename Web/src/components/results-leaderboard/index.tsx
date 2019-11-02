@@ -1,15 +1,16 @@
 import React from 'react';
 import { ResultMap } from 'components/room/comm/Comm';
 import getClientId from 'utils/getClientId';
+import Game from 'components/room/Games';
 import Results from './Results';
 import Leaderboard, { PlayerScore } from './Leaderboard';
 
 interface ResultsLeaderboardProps {
   allMetas: ResultMap | null,
-  gameText: string,
+  game: Game,
 }
 
-const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, gameText }) => {
+const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, game }) => {
   if (!allMetas) {
     return null;
   }
@@ -30,7 +31,7 @@ const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, gameT
     <>
       <Results
         score={myScore}
-        gameText={gameText}
+        gameText={myScore === 1 ? game.toString() : `${game.toString()}s`}
         rank={myRank}
         numPlayers={sortedScores.length}
       />

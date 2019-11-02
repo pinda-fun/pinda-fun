@@ -52,7 +52,7 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
     return (
       <ResultsLeaderboard
         allMetas={resultMeta}
-        gameText={`${game.toString()}!`}
+        game={game}
       />
     );
   }

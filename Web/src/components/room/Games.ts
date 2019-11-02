@@ -1,7 +1,7 @@
 enum Game {
-  SHAKE = 'shakes',
-  SUMS = 'sums',
-  SEQUENCE = 'sequences',
+  SHAKE = 'shake',
+  SUMS = 'sum',
+  SEQUENCE = 'sequence',
 }
 
 export default Game;

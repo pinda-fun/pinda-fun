@@ -172,7 +172,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       {resultsExist(allMetas) && (
         <ResultsLeaderboard
           allMetas={resultMeta}
-          gameText={`${game.toString()}!`}
+          game={game}
         />
       )}
       <CreateRoomContainer>
