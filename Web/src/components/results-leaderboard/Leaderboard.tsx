@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { ChevronUp, Icon } from 'react-feather';
 import getClientId from 'utils/getClientId';
 import { smMin } from 'utils/media';
