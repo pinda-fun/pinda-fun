@@ -1,4 +1,4 @@
-import { keyframes } from 'styled-components';
+import { keyframes } from 'styled-components/macro';
 
 export const blinkRed = keyframes`
   0% {

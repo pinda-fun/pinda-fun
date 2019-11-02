@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';

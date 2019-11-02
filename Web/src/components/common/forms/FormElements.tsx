@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
 
 const SubmitButton = styled(BigButton)`

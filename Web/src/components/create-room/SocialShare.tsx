@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { TelegramButton, WhatsappButton } from '../common/SocialButton';
 
 const defaultPromoText = encodeURIComponent('Join a new game on Pinda!');
