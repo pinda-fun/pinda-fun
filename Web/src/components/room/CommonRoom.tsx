@@ -1,6 +1,7 @@
 import React, {
   useState, useContext, useEffect, lazy,
 } from 'react';
+import ReactGA from 'react-ga';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
 import BigButton from 'components/common/BigButton';
@@ -53,6 +54,12 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     comm.readyUp();
     setIsReady(true);
   };
+
+  useEffect(() => {
+    if (hostMeta != null && hostMeta.state === GameState.ONGOING) {
+      ReactGA.event({ category: 'game', action: game });
+    }
+  }, [game, hostMeta]);
 
   useEffect(() => {
     if (hostMeta === null) {
