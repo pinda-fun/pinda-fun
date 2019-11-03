@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import CommContext from 'components/room/comm/CommContext';
@@ -8,6 +9,7 @@ import useMotionPermissionsAccess from 'components/room/hooks/permission/useMoti
 import { MotionPermission } from 'components/games/GameStates';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
 import PermissionsDialog from '../room/PermissionsDialog';
+import ErrorDisplay from '../room/ErrorDisplay';
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -41,10 +43,11 @@ const ErrorText = styled.p`
 
 const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => {
   const comm = useContext(CommContext);
-  const { error } = commHooks;
+  const { room, error, errorDescription } = commHooks;
   const [selectedGame] = useState('shake');
   const [createRequested, setCreateRequested] = useState(false);
   const [hostName, setHostName] = useState('');
+  const [waitingForResponse, setWaitForResponse] = useState(false);
 
   const {
     permission, awaitingPermission, getUserPermission, getPermissionAvailability,
@@ -64,6 +67,7 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
       }
       if (createRequested && permission === MotionPermission.GRANTED) {
         comm.createRoom(hostName, selectedGame);
+        setWaitForResponse(true);
         // No need for cleanup - if the room creation is successful, redirect to the
         // HostRoom page. Cleanup/room leave to be executed on room cancellation.
         // See `CreateRoom`.
@@ -72,17 +76,22 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
     [permission, createRequested, hostName, selectedGame, comm, getPermissionAvailability],
   );
 
-  // TODO: stylise error
-  if (error !== null) {
-    return <p>Error: {error.toString()}</p>;
-  }
+  useEffect(
+    () => {
+      if (waitingForResponse && (error !== null || room !== null)) {
+        setWaitForResponse(false);
+        setCreateRequested(false);
+      }
+    },
+    [error, room, waitingForResponse],
+  );
 
   return (
     <CreateRoomContainer>
       <PindaHappySVG />
       <UsernameForm
         onSubmitName={onFormSubmit}
-        disabled={permission === MotionPermission.DENIED}
+        disabled={permission === MotionPermission.DENIED || waitingForResponse}
       />
       <PermissionsDialog
         isVisible={awaitingPermission}
@@ -94,6 +103,20 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
           <ErrorText>
             Unable to get permissions to play Pinda.
           </ErrorText>
+        )}
+      {waitingForResponse
+        && (
+          <ReactLoading
+            type="bubbles"
+            color="var(--green)"
+          />
+        )}
+      {!waitingForResponse
+        && (
+          <ErrorDisplay
+            error={error}
+            errorDescription={errorDescription}
+          />
         )}
     </CreateRoomContainer>
   );
