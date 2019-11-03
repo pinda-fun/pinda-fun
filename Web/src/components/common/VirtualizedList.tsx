@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-  List,
-  WindowScroller,
-  AutoSizer,
-  ListProps,
-} from 'react-virtualized';
+import { List, ListProps } from 'react-virtualized/dist/es/List';
+import { WindowScroller } from 'react-virtualized/dist/es/WindowScroller';
+import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 
 type WindowScrollVirtualizedListProps = Omit<ListProps, 'width' | 'height'>;
 

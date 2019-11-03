@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListRowProps } from 'react-virtualized';
+import { ListRowProps } from 'react-virtualized/dist/es/List';
 import styled from 'styled-components/macro';
 import { WindowScrollVirtualizedList } from 'components/common/VirtualizedList';
 import { smMin } from 'utils/media';
