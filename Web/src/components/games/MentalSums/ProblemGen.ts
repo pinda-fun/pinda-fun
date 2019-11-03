@@ -36,11 +36,11 @@ export const useQuestionStream = (rng: seedrandom.prng) => {
     Math.abs(rand.int32()),
   );
 
-  const [problem, setProblem] = useState(getProblem());
+  const [problem, setProblem] = useState(getProblem);
   const [problemText, setProblemText] = useState('');
   const [expectedAns, setExpectedAns] = useState<number | null>(null);
 
-  const nextProblem = () => setProblem(getProblem());
+  const nextProblem = () => setProblem(getProblem);
 
   useEffect(() => {
     setProblemText(problem.probAsString);
