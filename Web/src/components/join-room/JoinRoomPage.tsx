@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import ReactLoading from 'react-loading';
 import styled from 'styled-components/macro';
 import { MotionPermission } from 'components/games/GameStates';
 import CommContext from 'components/room/comm/CommContext';
@@ -7,6 +8,7 @@ import JoinRoomForm from './JoinRoomForm';
 import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import useMotionPermissionsAccess from '../room/hooks/permission';
 import PermissionsDialog from '../room/PermissionsDialog';
+import ErrorDisplay from '../room/ErrorDisplay';
 
 const PIN_LENGTH = 4;
 
@@ -21,7 +23,7 @@ const JoinRoomContainer = styled.div`
   text-align: center;
 
   h1 {
-    font-family: var(--primary);
+    font-family: var(--primary-font);
     font-size: 1.4rem;
     font-weight: normal;
   }
@@ -41,6 +43,7 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
 }) => {
   const [gamePin, setGamePin] = useState(roomId ? roomId.substring(0, PIN_LENGTH) : '');
   const [username, setUsername] = useState('');
+  const [waitingForResponse, setWaitForResponse] = useState(false);
 
   const {
     permission, awaitingPermission, getUserPermission, getPermissionAvailability,
@@ -48,7 +51,7 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
 
   const comm = useContext(CommContext);
-  const { error } = commHooks;
+  const { room, error, errorDescription } = commHooks;
 
   const onJoinRoomFormSubmit = (newGamePin: string, newUsername: string) => {
     if (joinRequested) return;
@@ -68,14 +71,21 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
       }
       if (joinRequested && permission === MotionPermission.GRANTED) {
         comm.joinRoom(gamePin, username);
+        setWaitForResponse(true);
       }
     },
     [permission, joinRequested, gamePin, username, comm, getPermissionAvailability],
   );
 
-  useEffect(() => {
-    if (error !== null) setJoinRequested(false);
-  }, [error]);
+  useEffect(
+    () => {
+      if (waitingForResponse && (error !== null || room !== null)) {
+        setWaitForResponse(false);
+        setJoinRequested(false);
+      }
+    },
+    [error, room, waitingForResponse],
+  );
 
   return (
     <JoinRoomContainer>
@@ -90,6 +100,20 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
         isVisible={awaitingPermission}
         onConfirm={getUserPermission}
       />
+      {waitingForResponse
+        && (
+          <ReactLoading
+            type="bubbles"
+            color="var(--green)"
+          />
+        )}
+      {!waitingForResponse
+        && (
+          <ErrorDisplay
+            error={error}
+            errorDescription={errorDescription}
+          />
+        )}
     </JoinRoomContainer>
   );
 };
