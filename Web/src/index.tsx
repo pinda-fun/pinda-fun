@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-duplicates
 import React from 'react';
+// eslint-disable-next-line import/no-duplicates
 import ReactDOM from 'react-dom';
 import './index.css';
 import smoothscroll from 'smoothscroll-polyfill';

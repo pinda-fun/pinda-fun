@@ -65,6 +65,13 @@ module.exports = {
     "import/resolver": {
       "node": {
         "paths": ["src"]
+      },
+      "alias": {
+        map: [
+          ['react', 'preact/compat'],
+          ['react-dom', 'preact/compat'],
+        ],
+        extensions: ['.ts', '.tsx'],
       }
     },
   },
