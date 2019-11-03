@@ -23,9 +23,9 @@ const JoinRoomContainer = styled.div`
   text-align: center;
 
   h1 {
-  font-family: var(--primary);
-  font-size: 1.4rem;
-  font-weight: normal;
+    font-family: var(--primary-font);
+    font-size: 1.4rem;
+    font-weight: normal;
   }
 `;
 

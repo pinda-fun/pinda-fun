@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { CommError } from './comm/Errors';
 
 const ErrorContainer = styled.div`
@@ -29,7 +29,7 @@ interface TitleMessage {
   message?: string;
 }
 
-const titleMessageMapping: { [error in CommError]: TitleMessage } = {
+const titleMessageMapping: Record<CommError, TitleMessage> = {
   [CommError.NoMorePin]: {
     title: 'No rooms left',
     message: 'Please try again later.',
