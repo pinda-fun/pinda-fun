@@ -66,8 +66,12 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
   INSTEAD OF JUST STUPIDLY SHOWING UP THE DIALOGUE EVEN WHEN THE FORM IS GONE?
 
   I CAN'T UNDO WHAT I WROTE WRONGLY IN THE EXAMS THAT I'VE SUBMITTED, CAN I?
+
+  AND NOW ANDROID CHROMIUM DECIDED TO ALSO JUST EMIT Unidentified for BACKSPACE
+  UGHHHHHH
   */
   const handleBeforeInput = (event: React.FormEvent) => {
+    if (window.navigator.userAgent.includes('Android')) return;
     event.preventDefault();
     const { data } = event as unknown as InputEvent;
     if (data == null) return;
@@ -85,6 +89,7 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
   }, [selectionRange]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (window.navigator.userAgent.includes('Android')) return;
     const target = event.target as HTMLInputElement;
     const [start, end] = [target.selectionStart, target.selectionEnd].sort();
     if (start == null || end == null) return;
@@ -92,8 +97,9 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
       event.preventDefault();
       setName((oldName) => {
         if (end - start === 0) {
-          setSelectionRange([target, start - 1]);
-          return filterName(oldName.slice(0, start - 1) + oldName.slice(start));
+          const newStart = Math.max(start - 1, 0);
+          setSelectionRange([target, newStart]);
+          return filterName(oldName.slice(0, newStart) + oldName.slice(start));
         }
         setSelectionRange([target, start]);
         return filterName(oldName.slice(0, start) + oldName.slice(end));
@@ -111,7 +117,6 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
     }
   };
 
-
   return (
     <Form
       onSubmit={(e) => {
@@ -127,7 +132,7 @@ const UsernameForm: React.FC<UsernameFormProps> = ({
         value={name}
         onBeforeInput={handleBeforeInput}
         onKeyDown={handleKeyDown}
-        onChange={(e) => e.preventDefault()}
+        onChange={(e) => setName(filterName(e.target.value))}
         autoFocus
       />
       {inputErrors.map((inputError) => (
