@@ -32,7 +32,7 @@
     "rxjs": "^6.5.3",
     "seedrandom": "^3.0.5",
     "smoothscroll-polyfill": "^0.4.4",
-    "styled-components": "^4.4.1",
+    "styled-components": "^5.0.0-rc.1",
     "typescript": "3.6.4",
     "uuid": "^3.3.3"
   },
