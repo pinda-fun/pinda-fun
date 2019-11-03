@@ -26,9 +26,6 @@ interface GamePinFormProps {
   disabled: boolean;
 }
 
-function filterGamePin(pin: string): string {
-  return pin.replace(/\D/g, '');
-}
 
 const GamePinForm: React.FC<GamePinFormProps> = ({
   onSubmitPin,
@@ -39,14 +36,24 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
   const [selectionRange, setSelectionRange] = useState<[HTMLInputElement, number] | null>(null);
   const [gamePin, setGamePin] = useState(initialPin);
 
+  const filterGamePin = (oldPin: string, newPin: string): string => {
+    const filteredNewPin = newPin.replace(/\D/g, '');
+    if (filteredNewPin.length > pinLength) return oldPin;
+    return filteredNewPin;
+  };
+
   /*
   TRYING TO PREVENT SHAKE TO UNDO FROM HAPPENING
   WHAT THE HECK APPLE. CAN YOU CHECK FOR INPUT ELEMENT EXISTENCE
   INSTEAD OF JUST STUPIDLY SHOWING UP THE DIALOGUE EVEN WHEN THE FORM IS GONE?
 
   I CAN'T UNDO WHAT I WROTE WRONGLY IN THE EXAMS THAT I'VE SUBMITTED, CAN I?
+
+  AND NOW ANDROID CHROMIUM DECIDED TO ALSO JUST EMIT Unidentified for BACKSPACE
+  UGHHHHHH
   */
   const handleBeforeInput = (event: React.FormEvent) => {
+    if (window.navigator.userAgent.includes('Android')) return;
     event.preventDefault();
     const { data } = event as unknown as InputEvent;
     if (data == null) return;
@@ -54,7 +61,10 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
     const [start, end] = [target.selectionStart, target.selectionEnd].sort();
     if (start == null || end == null) return;
     setGamePin(
-      (oldGamePin) => filterGamePin(oldGamePin.slice(0, start) + data + oldGamePin.slice(end)),
+      (oldGamePin) => filterGamePin(
+        oldGamePin,
+        oldGamePin.slice(0, start) + data + oldGamePin.slice(end),
+      ),
     );
     setSelectionRange([target, start + 1]);
   };
@@ -66,6 +76,7 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
   }, [selectionRange]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (window.navigator.userAgent.includes('Android')) return;
     const target = event.target as HTMLInputElement;
     const [start, end] = [target.selectionStart, target.selectionEnd].sort();
     if (start == null || end == null) return;
@@ -73,23 +84,32 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
       event.preventDefault();
       setGamePin((oldGamePin) => {
         if (end - start === 0) {
-          setSelectionRange([target, start - 1]);
-          return filterGamePin(oldGamePin.slice(0, start - 1) + oldGamePin.slice(start));
+          const newStart = Math.max(start - 1, 0);
+          setSelectionRange([target, newStart]);
+          return filterGamePin(oldGamePin, oldGamePin.slice(0, newStart) + oldGamePin.slice(start));
         }
         setSelectionRange([target, start]);
-        return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(end));
+        return filterGamePin(oldGamePin, oldGamePin.slice(0, start) + oldGamePin.slice(end));
       });
     } else if (event.key === 'Delete') {
       event.preventDefault();
       setGamePin((oldGamePin) => {
         if (end - start === 0) {
           setSelectionRange([target, start]);
-          return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(start + 1));
+          return filterGamePin(
+            oldGamePin,
+            oldGamePin.slice(0, start) + oldGamePin.slice(start + 1),
+          );
         }
         setSelectionRange([target, start]);
-        return filterGamePin(oldGamePin.slice(0, start) + oldGamePin.slice(end));
+        return filterGamePin(oldGamePin, oldGamePin.slice(0, start) + oldGamePin.slice(end));
       });
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPin = e.target.value;
+    setGamePin((oldPin) => filterGamePin(oldPin, newPin));
   };
 
 
@@ -106,13 +126,12 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
         type="text"
         pattern="[0-9]*"
         inputMode="numeric"
-        maxLength={pinLength}
         placeholder="XXXX"
         autoComplete="off"
         value={gamePin}
         onBeforeInput={handleBeforeInput}
         onKeyDown={handleKeyDown}
-        onChange={(e) => e.preventDefault()}
+        onChange={handleChange}
         autoFocus
       />
       <SubmitButton
