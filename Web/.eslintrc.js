@@ -40,12 +40,19 @@ module.exports = {
     "no-restricted-imports": [
       "error",
       {
-        "paths": [{
-          "name": "styled-components",
-          "message": "Please import from styled-components/macro."
-        }],
+        "paths": [
+          {
+            "name": "styled-components",
+            "message": "Please import from styled-components/macro."
+          },
+          {
+            "name": "react-virtualized",
+            "message": "Please import from react-virtualized/dist/es/<component> instead."
+          }
+        ],
         "patterns": [
-          "!styled-components/macro"
+          "!styled-components/macro",
+          "!react-virtualized/dist/es/*"
         ]
       }
     ]
