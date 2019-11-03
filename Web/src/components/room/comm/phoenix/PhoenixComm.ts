@@ -348,6 +348,18 @@ export default class PhoenixComm implements Comm {
     );
   }
 
+  refreshSeed(seed: string, onOk?: () => void, onError?: PushErrorHandler): void {
+    if (this.database == null) return;
+    if (this.database.hostId !== getClientId()) return;
+    const maybeHostMeta = this.database.getHostMeta();
+    if (maybeHostMeta == null) return;
+    this.pushHostCommand(
+      { message: HostMessage.SEED, payload: { seed } },
+      onOk || noOp,
+      onError || noOp,
+    );
+  }
+
   submitFeedback({
     isGood, title, body, game,
   }: Feedback, onOk: () => void = noOp, onError: PushErrorHandler = noOp): void {

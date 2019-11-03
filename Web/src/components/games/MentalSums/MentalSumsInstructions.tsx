@@ -18,7 +18,7 @@ const BalloonShakeInstructions: React.FC<GameInstructionsProps> = ({
   >
     <MentalSumsSVG />
     <p>
-        After the timer starts, you will be given 30 seconds to solve as many
+        After the timer starts, you will be given 20 seconds to solve as many
         problems as you can.
     </p>
   </GameInstructions>

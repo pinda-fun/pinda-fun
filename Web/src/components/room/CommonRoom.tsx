@@ -1,12 +1,13 @@
 import React, {
   useState, useContext, useEffect, lazy,
 } from 'react';
+import ReactGA from 'react-ga';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
 import BigButton from 'components/common/BigButton';
 import GameState from './comm/GameState';
 import Game from './Games';
-import { CommAttributes } from './comm/Comm';
+import { CommAttributes, ResultMap } from './comm/Comm';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
@@ -14,6 +15,7 @@ const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
 export interface FinishedComponentProps extends CommAttributes {
   game: Game;
+  resultMeta: ResultMap | null;
 }
 
 interface CommonRoomProps {
@@ -22,14 +24,14 @@ interface CommonRoomProps {
   NoHostComponent?: React.FC;
 }
 
-const GameComponent: React.FC<{ game: Game }> = ({ game }) => (
+const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
   <>
     {game === Game.SHAKE
       && <BalloonShake />}
     {game === Game.SUMS
-      && <MentalSums />}
+      && <MentalSums seed={seed} />}
     {game === Game.SEQUENCE
-      && <PandaSequence />}
+      && <PandaSequence seed={seed} />}
   </>
 );
 
@@ -41,18 +43,28 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   const comm = useContext(CommContext);
   const [game, setGame] = useState(Game.SHAKE);
   const [isReady, setIsReady] = useState(false);
+  const [resultMeta, setResultMeta] = useState<ResultMap | null>(null);
+  const [isResultSet, setIsResultSet] = useState(false);
 
   // general hook to disconnect host from room when he leaves.
   useEffect(() => () => {
     comm.leaveRoom();
   }, [comm]);
 
-  const { hostMeta, myMeta, room } = commHooks;
+  const {
+    hostMeta, myMeta, allMetas, room,
+  } = commHooks;
 
   const onReadyClick = () => {
     comm.readyUp();
     setIsReady(true);
   };
+
+  useEffect(() => {
+    if (hostMeta != null && hostMeta.state === GameState.ONGOING) {
+      ReactGA.event({ category: 'game', action: game });
+    }
+  }, [game, hostMeta]);
 
   useEffect(() => {
     if (hostMeta === null) {
@@ -66,6 +78,19 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     }
   }, [comm, hostMeta, myMeta, room]);
 
+  useEffect(() => {
+    if (hostMeta === null) {
+      return;
+    }
+
+    if (hostMeta.state === GameState.FINISHED && !isResultSet) {
+      setResultMeta(allMetas);
+      setIsResultSet(true);
+    } else if (hostMeta.state !== GameState.FINISHED) {
+      setIsResultSet(false);
+    }
+  }, [isResultSet, hostMeta, allMetas]);
+
   if (hostMeta === null) {
     return <NoHostComponent />;
   }
@@ -75,11 +100,11 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.FINISHED
         && (
           <FinishedComponent
-            {...{ ...commHooks, game }}
+            {...{ ...commHooks, game, resultMeta }}
           />
         )}
       {hostMeta.state === GameState.ONGOING
-        && <GameComponent game={game} />}
+        && <GameComponent game={game} seed={hostMeta.seed} />}
       {hostMeta.state === GameState.PREPARE
         && (
           <Loading>

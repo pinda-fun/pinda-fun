@@ -5,29 +5,34 @@
   "dependencies": {
     "@reactivex/rxjs": "^6.5.3",
     "@types/jest": "24.0.21",
-    "@types/node": "12.12.3",
+    "@types/node": "12.12.5",
     "@types/phoenix": "^1.4.3",
     "@types/qrcode.react": "^0.9.0",
     "@types/react": "^16.9.11",
     "@types/react-dom": "16.9.3",
     "@types/react-router": "^5.1.1",
-    "@types/react-router-dom": "^5.1.0",
+    "@types/react-router-dom": "^5.1.2",
     "@types/react-virtualized": "^9.21.5",
     "@types/seedrandom": "^2.4.28",
+    "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/styled-components": "^4.1.20",
     "@types/uuid": "^3.4.6",
+    "history": "^4.10.1",
+    "lodash.shuffle": "^4.2.0",
     "phoenix": "^1.4.10",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.2",
     "react-animations": "^1.0.0",
     "react-dom": "^16.10.2",
     "react-feather": "^2.0.3",
+    "react-ga": "^2.7.0",
     "react-loading": "^2.0.3",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.2.0",
     "react-virtualized": "^9.21.1",
     "rxjs": "^6.5.3",
     "seedrandom": "^3.0.5",
+    "smoothscroll-polyfill": "^0.4.4",
     "styled-components": "^4.4.1",
     "typescript": "3.6.4",
     "uuid": "^3.3.3"
@@ -38,7 +43,8 @@
     "test": "react-scripts test",
     "typecheck": "tsc --noEmit",
     "eject": "react-scripts eject",
-    "lint": "eslint './src/**/*.{ts,tsx}'"
+    "lint": "eslint './src/**/*.{ts,tsx}'",
+    "lint:css": "stylelint './src/**/*.{ts,tsx}'"
   },
   "browserslist": {
     "production": [
@@ -53,8 +59,11 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash.shuffle": "^4.2.6",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
     "@typescript-eslint/parser": "^2.6.0",
+    "babel-plugin-macros": "^2.6.1",
+    "bundlewatch": "^0.2.5",
     "eslint-config-airbnb-typescript": "^6.0.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-config-react": "^1.1.7",
@@ -64,11 +73,15 @@
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.1.2",
     "husky": "^3.0.9",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "stylelint": "^11.1.1",
+    "stylelint-config-standard": "^19.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.8.0"
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint"
+      "pre-push": "yarn lint && yarn lint:css"
     }
   }
 }

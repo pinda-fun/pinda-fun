@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import HeaderContent from './HeaderContent';
 import IntroductionContent from './IntroductionContent';
 import DetailsContent from './DetailsContent';

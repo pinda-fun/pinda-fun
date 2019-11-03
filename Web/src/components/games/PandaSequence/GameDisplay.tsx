@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components/macro';
 import TimerDisplay from 'components/games/TimerDisplay';
 import { smMin } from 'utils/media';
 import FeedbackModal from './FeedbackModal';
 import { PandaSequenceMode, Feedback } from './Sequence';
 import { InputPandaPot, DisplayPandaPot } from './PandaPot';
 
-const NUM_POTS = 6;
+export const NUM_POTS = 6;
 
 interface IProps {
   mode: PandaSequenceMode,
@@ -52,7 +52,7 @@ const GameContainer = styled(GameContainerElement)`
 
   color: white;
   font-size: 1.4rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const FlowerPotsContainer = styled.div`

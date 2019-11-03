@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ReactLoading from 'react-loading';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { MotionPermission } from 'components/games/GameStates';
 import CommContext from 'components/room/comm/CommContext';
 import { CommAttributes } from 'components/room/comm/Comm';

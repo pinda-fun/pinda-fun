@@ -1,11 +1,10 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 const BigButton = styled.button`
-  background: transparent;
   border: none;
   border-radius: 1rem;
   background: var(--purple);
-  box-shadow: 0px 6px 0px var(--dark-purple);
+  box-shadow: 0 6px 0 var(--dark-purple);
   color: white;
   font-size: 1.3rem;
 
@@ -15,16 +14,16 @@ const BigButton = styled.button`
 
   transition: 0.2s;
 
-  :hover:enabled,
-  :active:enabled {
-    transform: translateY(6px);
-    box-shadow: 0px 0px 0px var(--dark-purple);
-  }
-
   :disabled {
     cursor: not-allowed;
     background: darkgrey;
-    box-shadow: 0px 6px 0px grey;
+    box-shadow: 0 6px 0 grey;
+  }
+
+  :hover:enabled,
+  :active:enabled {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 var(--dark-purple);
   }
 `;
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import seedrandom from 'seedrandom';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import { smMin } from 'utils/media';
 import { useQuestionStream } from './ProblemGen';
 import TimerDisplay from '../TimerDisplay';
@@ -11,7 +11,7 @@ interface MentalSumsGameProps {
   incrementScore: () => void;
   score: number;
   timeLeft: number;
-  seed: string;
+  seed?: string;
 }
 
 const GameContainer = styled.div`
@@ -26,7 +26,7 @@ const GameContainer = styled.div`
 
   color: white;
   font-size: 1.2rem;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const GameplayContainer = styled.div`
@@ -65,10 +65,10 @@ const QuestionContainer = styled.div`
   }
 
   ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.CORRECT
-    && css`background-color: var(--green)`};
+    && css`background-color: var(--green);`};
 
   ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.WRONG
-    && css`background-color: var(--pink)`};
+    && css`background-color: var(--pink);`};
 `;
 
 const AnswerDiv = styled.div`
@@ -103,20 +103,24 @@ const BigText = styled.span`
 `;
 
 const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
-  incrementScore, score, seed, timeLeft,
+  incrementScore, score, seed = Date.now().toLocaleString(), timeLeft,
 }) => {
   const { problemText, expectedAns, nextProblem } = useQuestionStream(seedrandom(seed));
   const [feedback, setFeedback] = useState(FeedbackState.NONE);
   const [input, setInput] = useState('');
 
+  useEffect(() => {
+    if (feedback === FeedbackState.NONE) return undefined;
+    const timeout = setTimeout(() => setFeedback(FeedbackState.NONE), 500);
+    return () => clearTimeout(timeout);
+  }, [feedback]);
+
   const setCorrect = useCallback(() => {
     setFeedback(FeedbackState.CORRECT);
-    setTimeout(() => setFeedback(FeedbackState.NONE), 500);
   }, []);
 
   const setWrong = useCallback(() => {
     setFeedback(FeedbackState.WRONG);
-    setTimeout(() => setFeedback(FeedbackState.NONE), 500);
   }, []);
 
   const checkAns = useCallback((newInput: string) => {

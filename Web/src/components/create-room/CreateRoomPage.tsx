@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import CommContext from 'components/room/comm/CommContext';
 import { CommAttributes } from 'components/room/comm/Comm';
 import UsernameForm from 'components/common/forms/UsernameForm';
