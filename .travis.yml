@@ -27,7 +27,6 @@ jobs:
       before_install:
         - cd Web
       script:
-        - echo $TRAVIS_BRANCH $TRAVIS_PULL_REQUEST_BRANCH
         - yarn typecheck
         - yarn lint
         - yarn lint:css
