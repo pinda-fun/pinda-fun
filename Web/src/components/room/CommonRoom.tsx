@@ -24,16 +24,22 @@ interface CommonRoomProps {
   NoHostComponent?: React.FC;
 }
 
-const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
-  <>
-    {game === Game.SHAKE
-      && <BalloonShake />}
-    {game === Game.SUMS
-      && <MentalSums seed={seed} />}
-    {game === Game.SEQUENCE
-      && <PandaSequence seed={seed} />}
-  </>
-);
+const GameComponent: React.FC<{ game: Game, seed: string; }> = ({ game, seed }) => {
+  useEffect(() => {
+    ReactGA.event({ category: 'game', action: game });
+  }, [game]);
+
+  return (
+    <>
+      {game === Game.SHAKE
+        && <BalloonShake />}
+      {game === Game.SUMS
+        && <MentalSums seed={seed} />}
+      {game === Game.SEQUENCE
+        && <PandaSequence seed={seed} />}
+    </>
+  );
+};
 
 const CommonRoom: React.FC<CommonRoomProps> = ({
   commHooks,
@@ -59,12 +65,6 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     comm.readyUp();
     setIsReady(true);
   };
-
-  useEffect(() => {
-    if (hostMeta != null && hostMeta.state === GameState.ONGOING) {
-      ReactGA.event({ category: 'game', action: game });
-    }
-  }, [game, hostMeta]);
 
   useEffect(() => {
     if (hostMeta === null) {
