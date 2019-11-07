@@ -15,7 +15,7 @@
     "@types/react-virtualized": "^9.21.5",
     "@types/seedrandom": "^2.4.28",
     "@types/smoothscroll-polyfill": "^0.3.1",
-    "@types/styled-components": "^4.1.21",
+    "@types/styled-components": "^4.1.22",
     "@types/uuid": "^3.4.6",
     "history": "^4.10.1",
     "lodash.shuffle": "^4.2.0",
