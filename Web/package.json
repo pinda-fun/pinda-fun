@@ -20,7 +20,7 @@
     "history": "^4.10.1",
     "lodash.shuffle": "^4.2.0",
     "phoenix": "^1.4.10",
-    "qrcode.react": "^0.9.3",
+    "qrcode.react": "^1.0.0",
     "react": "^16.10.2",
     "react-animations": "^1.0.0",
     "react-dom": "^16.10.2",
