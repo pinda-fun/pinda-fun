@@ -19,7 +19,7 @@
     "@types/uuid": "^3.4.6",
     "history": "^4.10.1",
     "lodash.shuffle": "^4.2.0",
-    "phoenix": "^1.4.10",
+    "phoenix": "^1.4.11",
     "qrcode.react": "^1.0.0",
     "react": "^16.10.2",
     "react-animations": "^1.0.0",
