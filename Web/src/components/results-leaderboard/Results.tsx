@@ -33,6 +33,7 @@ const NextGameButton = styled(BigButton)`
   background: white;
   color: var(--dark-green);
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
 
   position: absolute;
   top: 0;
