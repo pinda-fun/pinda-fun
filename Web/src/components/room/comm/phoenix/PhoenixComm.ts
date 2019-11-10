@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this, @typescript-eslint/no-unused-vars */
-
 import { Socket, Channel } from 'phoenix';
 import isDeployPreview from 'utils/isDeployPreview';
 import getClientId from 'utils/getClientId';
