@@ -107,13 +107,10 @@ const JoinRoomPage: React.FC<JoinRoomPageProps> = ({
             color="var(--green)"
           />
         )}
-      {!waitingForResponse
-        && (
-          <ErrorDisplay
-            error={error}
-            errorDescription={errorDescription}
-          />
-        )}
+      <ErrorDisplay
+        error={error}
+        errorDescription={errorDescription}
+      />
     </JoinRoomContainer>
   );
 };

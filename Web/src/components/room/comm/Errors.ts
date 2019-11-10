@@ -3,6 +3,7 @@ export enum CommError {
   // When the room is not accepting new players anymore
   RoomNotAccepting = 'RoomNotAccepting',
   Timeout = 'Timeout',
+  HostLeft = 'HostLeft',
   Other = 'Other',
 }
 

@@ -69,7 +69,10 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   useEffect(() => {
     if (hostMeta === null) {
       // If host left, leave the room
-      if (myMeta !== null && !myMeta.isHost && room !== null) comm.leaveRoom();
+      if (myMeta !== null && !myMeta.isHost && room !== null) {
+        comm.leaveRoom();
+        comm.markHostLeft();
+      }
       return;
     }
     setGame(hostMeta.game);
