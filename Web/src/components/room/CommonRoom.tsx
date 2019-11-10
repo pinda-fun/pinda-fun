@@ -4,6 +4,7 @@ import React, {
 import ReactGA from 'react-ga';
 import CommContext from 'components/room/comm/CommContext';
 import BigButton from 'components/common/BigButton';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import GameState from './comm/GameState';
 import Game from './Games';
@@ -63,6 +64,10 @@ const InverseButton = styled(BigButton)`
   color: var(--purple);
 `;
 
+const WhiteLink = styled(Link)`
+  color: white;
+`;
+
 const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
   isReady, onReadyClick, game,
 }) => {
@@ -70,6 +75,7 @@ const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
     <>
       {isReady && <p>Waiting for other players</p>}
       {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
+      <WhiteLink to={{ pathname: '/' }}>Quit</WhiteLink>
     </>
   );
 
