@@ -1,7 +1,7 @@
 import React, { RefObject } from 'react';
 import styled from 'styled-components/macro';
 import ScrollDownButton from 'components/common/ScrollDownButton';
-import BigButton from 'components/common/BigButton';
+import Button from 'components/common/Button';
 
 interface ResultsProps {
   pageTopRef: RefObject<HTMLDivElement>,
@@ -29,11 +29,12 @@ const Container = styled.section`
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
-const NextGameButton = styled(BigButton)`
+const NextGameButton = styled(Button)`
   background: white;
   color: var(--dark-green);
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   white-space: nowrap;
+  border: 0;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 
   position: absolute;
   top: 0;
