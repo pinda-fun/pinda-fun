@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import styled from 'styled-components/macro';
-import { ChevronDown, Icon } from 'react-feather';
+import ScrollDownButton from 'components/common/ScrollDownButton';
 
 interface ResultsProps {
+  pageTopRef: RefObject<HTMLDivElement>,
+  scrollToRef: React.RefObject<HTMLDivElement>,
   score: number,
   gameText: string,
   rank: number | string,
   numPlayers: number,
 }
 
-const Container = styled.div`
+const Container = styled.section`
   background: var(--green);
   position: relative;
   overflow: hidden;
@@ -44,25 +46,10 @@ const BigNumber = styled.span`
   text-shadow: 10 10 0 rgba(0, 0, 0, 0.1);
 `;
 
-const Footer = styled.div`
-  width: 100vw;
-  align-items: center;
-  position: sticky;
-  bottom: 0;
-  text-align: center;
-  padding: 12px;
-  font-size: 1rem;
-`;
-
-const DownArrowIcon = styled(ChevronDown as React.FC<React.ComponentProps<Icon>>)`
-  width: 42px;
-  height: 42px;
-`;
-
 const Results: React.FC<ResultsProps> = ({
-  score, gameText, rank, numPlayers,
+  pageTopRef, scrollToRef, score, gameText, rank, numPlayers,
 }) => (
-  <Container>
+  <Container ref={pageTopRef}>
     <Group>
       <BigNumber>{score}</BigNumber>
       <span>{gameText}</span>
@@ -72,10 +59,13 @@ const Results: React.FC<ResultsProps> = ({
       <BigNumber>{rank}</BigNumber>
       <span>out of {numPlayers} of your friends!</span>
     </Group>
-    <Footer>
-      <div>Leaderboard</div>
-      <DownArrowIcon />
-    </Footer>
+    <ScrollDownButton
+      promptText="Leaderboard"
+      scrollToRef={scrollToRef}
+      color="white"
+      backgroundColor="var(--green)"
+      sticky={false}
+    />
   </Container>
 );
 

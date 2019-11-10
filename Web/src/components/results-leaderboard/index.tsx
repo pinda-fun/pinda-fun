@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ResultMap } from 'components/room/comm/Comm';
 import getClientId from 'utils/getClientId';
 import Game from 'components/room/Games';
@@ -11,6 +11,9 @@ interface ResultsLeaderboardProps {
 }
 
 const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, game }) => {
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const leaderboardRef = useRef<HTMLDivElement>(null);
+
   if (!allMetas) {
     return null;
   }
@@ -30,12 +33,15 @@ const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, game 
   return (
     <>
       <Results
+        pageTopRef={resultsRef}
+        scrollToRef={leaderboardRef}
         score={myScore}
         gameText={myScore === 1 ? game.toString() : `${game.toString()}s`}
         rank={myRank}
         numPlayers={sortedScores.length}
       />
       <Leaderboard
+        pageTopRef={leaderboardRef}
         playerScores={sortedScores}
       />
     </>

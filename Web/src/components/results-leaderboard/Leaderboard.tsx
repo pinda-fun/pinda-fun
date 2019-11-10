@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import styled from 'styled-components/macro';
 import { ChevronUp, Icon } from 'react-feather';
 import getClientId from 'utils/getClientId';
 import { smMin } from 'utils/media';
 
 interface LeaderboardProps {
+  pageTopRef: RefObject<HTMLDivElement>,
   playerScores: PlayerScore[];
 }
 
@@ -14,7 +15,7 @@ export interface PlayerScore {
   score: number,
 }
 
-const Container = styled.div`
+const Container = styled.section`
   background: var(--green);
   position: relative;
   min-height: ${window.innerHeight}px;
@@ -110,7 +111,7 @@ const SelectedListItem = styled.div`
   }
 `;
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
+const Leaderboard: React.FC<LeaderboardProps> = ({ pageTopRef, playerScores }) => {
   const listItems = playerScores.map(({ clientId, name, score }, index) => {
     if (clientId === getClientId()) {
       return (
@@ -131,7 +132,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ playerScores }) => {
   });
 
   return (
-    <Container>
+    <Container ref={pageTopRef}>
       <Header>
         <UpArrowIcon />
         <div>Back</div>

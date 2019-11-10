@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components/macro';
 import { ChevronDown } from 'react-feather';
 
 type ScrollDownDisplayProps = {
+  color?: string;
   backgroundColor?: string;
   sticky?: boolean;
 };
@@ -20,6 +21,7 @@ const ScrollDownPrompt = styled.button`
 
   z-index: 999;
 
+  color: ${({ color }: ScrollDownDisplayProps) => color || 'black'};
   background-color: ${({ backgroundColor }: ScrollDownDisplayProps) => backgroundColor || 'transparent'};
 
   ${({ sticky }: ScrollDownDisplayProps) => sticky
@@ -36,6 +38,7 @@ const ScrollDownPrompt = styled.button`
 type ScrollDownButtonProps = {
   promptText?: string;
   scrollToRef: React.RefObject<HTMLDivElement>;
+  color?: string;
   backgroundColor?: string;
   sticky?: boolean;
 };
@@ -43,6 +46,7 @@ type ScrollDownButtonProps = {
 const ScrollDownButton: React.FC<ScrollDownButtonProps> = ({
   promptText,
   scrollToRef,
+  color,
   backgroundColor,
   sticky = false,
 }) => {
@@ -58,6 +62,7 @@ const ScrollDownButton: React.FC<ScrollDownButtonProps> = ({
   return (
     <ScrollDownPrompt
       onClick={scrollRefIntoView}
+      color={color}
       backgroundColor={backgroundColor}
       sticky={sticky}
     >
