@@ -7,7 +7,7 @@ import { CommAttributes } from 'components/room/comm/Comm';
 import UsernameForm from 'components/common/forms/UsernameForm';
 import useMotionPermissionsAccess from 'components/room/hooks/permission/useMotionPermissionsAccess';
 import { MotionPermission } from 'components/games/GameStates';
-import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
+import { ReactComponent as PindaHeadSVG } from '../../svg/pinda-head-happy.svg';
 import PermissionsDialog from '../room/PermissionsDialog';
 import ErrorDisplay from '../room/ErrorDisplay';
 
@@ -35,6 +35,10 @@ const CreateRoomContainer = styled.div`
     font-weight: normal;
     font-size: 1.3rem;
   }
+`;
+
+const PindaHead = styled(PindaHeadSVG)`
+  height: 5.5rem;
 `;
 
 const ErrorText = styled.p`
@@ -88,7 +92,7 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
 
   return (
     <CreateRoomContainer>
-      <PindaHappySVG />
+      <PindaHead />
       <UsernameForm
         onSubmitName={onFormSubmit}
         disabled={permission === MotionPermission.DENIED || waitingForResponse}
@@ -111,13 +115,10 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
             color="var(--green)"
           />
         )}
-      {!waitingForResponse
-        && (
-          <ErrorDisplay
-            error={error}
-            errorDescription={errorDescription}
-          />
-        )}
+      <ErrorDisplay
+        error={error}
+        errorDescription={errorDescription}
+      />
     </CreateRoomContainer>
   );
 };

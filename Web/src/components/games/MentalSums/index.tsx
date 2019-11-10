@@ -3,7 +3,6 @@ import { share } from 'rxjs/operators';
 import CommContext from 'components/room/comm/CommContext';
 import MentalSumsGame from './MentalSumsGame';
 import { GameState } from '../GameStates';
-import MentalSumsInstructions from './MentalSumsInstructions';
 import Countdown from '../Countdown';
 import { createTimerObservable } from '../rxhelpers';
 import TimesUp from '../TimesUp';
@@ -15,7 +14,7 @@ interface MentalSumsProps {
 }
 
 const MentalSums: React.FC<MentalSumsProps> = ({ seed }) => {
-  const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
+  const [gameState, setGameState] = useState(GameState.COUNTING_DOWN);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [playerScore, setPlayerScore] = useState(0);
 
@@ -41,13 +40,6 @@ const MentalSums: React.FC<MentalSumsProps> = ({ seed }) => {
 
   return (
     <>
-      {gameState === GameState.INSTRUCTIONS
-        && (
-          <MentalSumsInstructions
-            onComplete={() => setGameState(GameState.COUNTING_DOWN)}
-            seconds={5}
-          />
-        )}
       {gameState === GameState.COUNTING_DOWN
         && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />}
       {gameState === GameState.IN_PROGRESS

@@ -3,9 +3,9 @@ import React, {
 } from 'react';
 import ReactGA from 'react-ga';
 import CommContext from 'components/room/comm/CommContext';
-import Loading from 'components/common/Loading';
 import BigButton from 'components/common/BigButton';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components/macro';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes, ResultMap } from './comm/Comm';
@@ -14,15 +14,25 @@ const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
+const BalloonShakeInstructions = lazy(() => import('components/games/BalloonShake/BalloonShakeInstructions'));
+const MentalSumsInstructions = lazy(() => import('components/games/MentalSums/MentalSumsInstructions'));
+const PandaSequenceInstructions = lazy(() => import('components/games/PandaSequence/PandaSequenceInstructions'));
+
 export interface FinishedComponentProps extends CommAttributes {
   game: Game;
   resultMeta: ResultMap | null;
 }
 
+export interface PreparedComponentProps {
+  isReady: boolean;
+  onReadyClick: () => void;
+  game: Game;
+}
+
 interface CommonRoomProps {
   commHooks: CommAttributes;
   FinishedComponent: React.FC<FinishedComponentProps>;
-  NoHostComponent?: React.FC;
+  PreparedComponent?: React.FC<PreparedComponentProps>;
 }
 
 const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
@@ -36,10 +46,42 @@ const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) =
   </>
 );
 
+const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode }> = ({
+  game, actions,
+}) => (
+  <>
+    {game === Game.SHAKE
+        && <BalloonShakeInstructions actions={actions} />}
+    {game === Game.SUMS
+        && <MentalSumsInstructions actions={actions} />}
+    {game === Game.SEQUENCE
+        && <PandaSequenceInstructions actions={actions} />}
+  </>
+);
+
+const InverseButton = styled(BigButton)`
+  background: white;
+  color: var(--purple);
+`;
+
+const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
+  isReady, onReadyClick, game,
+}) => {
+  const actions = (
+    <>
+      {isReady && <p>Waiting for other players</p>}
+      {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
+      <Link to={{ pathname: '/' }}>Quit</Link>
+    </>
+  );
+
+  return <GameInstructionComponent game={game} actions={actions} />;
+};
+
 const CommonRoom: React.FC<CommonRoomProps> = ({
   commHooks,
   FinishedComponent,
-  NoHostComponent = () => <p>No Host :(</p>,
+  PreparedComponent = defaultPreparedComponent,
 }) => {
   const comm = useContext(CommContext);
   const [game, setGame] = useState(Game.SHAKE);
@@ -70,7 +112,10 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   useEffect(() => {
     if (hostMeta === null) {
       // If host left, leave the room
-      if (myMeta !== null && !myMeta.isHost && room !== null) comm.leaveRoom();
+      if (myMeta !== null && !myMeta.isHost && room !== null) {
+        comm.leaveRoom();
+        comm.markHostLeft();
+      }
       return;
     }
     setGame(hostMeta.game);
@@ -92,9 +137,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     }
   }, [isResultSet, hostMeta, allMetas]);
 
-  if (hostMeta === null) {
-    return <NoHostComponent />;
-  }
+  if (hostMeta === null) return null;
 
   return (
     <>
@@ -108,11 +151,11 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
         && <GameComponent game={game} seed={hostMeta.seed} />}
       {hostMeta.state === GameState.PREPARE
         && (
-          <Loading>
-            {isReady && <p>You are ready!</p>}
-            {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
-            <Link to={{ pathname: '/' }}>Quit</Link>
-          </Loading>
+          <PreparedComponent
+            isReady={isReady}
+            onReadyClick={onReadyClick}
+            game={game}
+          />
         )}
     </>
   );

@@ -5,7 +5,6 @@ import { createTimerObservable } from '../rxhelpers';
 import { GameState } from '../GameStates';
 import Countdown from '../Countdown';
 import GameDisplay, { NUM_POTS } from './GameDisplay';
-import PandaSequenceInstructions from './PandaSequenceInstructions';
 import { randomWithinBounds, generate } from './SequenceGenerator';
 import TimesUp from '../TimesUp';
 
@@ -19,7 +18,7 @@ interface PandaSequenceProps {
 }
 
 const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
-  const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
+  const [gameState, setGameState] = useState(GameState.COUNTING_DOWN);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
   const [score, setScore] = useState(0);
   const [mode, setMode] = useState(PandaSequenceMode.DISPLAY);
@@ -118,13 +117,6 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
 
   return (
     <>
-      {gameState === GameState.INSTRUCTIONS
-        && (
-          <PandaSequenceInstructions
-            onComplete={() => setGameState(GameState.COUNTING_DOWN)}
-            seconds={5}
-          />
-        )}
       {gameState === GameState.COUNTING_DOWN
         && <Countdown seconds={3} onComplete={() => setGameState(GameState.IN_PROGRESS)} />}
       {gameState === GameState.IN_PROGRESS
