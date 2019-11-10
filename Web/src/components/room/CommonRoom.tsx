@@ -64,6 +64,10 @@ const InverseButton = styled(BigButton)`
   color: var(--purple);
 `;
 
+const WhiteLink = styled(Link)`
+  color: white;
+`;
+
 const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
   isReady, onReadyClick, game,
 }) => {
@@ -71,7 +75,7 @@ const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
     <>
       {isReady && <p>Waiting for other players</p>}
       {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
-      <Link to={{ pathname: '/' }}>Quit</Link>
+      <WhiteLink to={{ pathname: '/' }}>Quit</WhiteLink>
     </>
   );
 
