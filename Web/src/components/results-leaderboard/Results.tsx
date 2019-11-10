@@ -71,7 +71,8 @@ const Results: React.FC<ResultsProps> = ({
   pageTopRef, scrollToRef, score, gameText, rank, numPlayers, exitCallback,
 }) => (
   <Container ref={pageTopRef}>
-    {exitCallback !== undefined && <NextGameButton onClick={exitCallback}>Next Game</NextGameButton>}
+    {exitCallback !== undefined
+      && <NextGameButton onClick={exitCallback}>Next Game</NextGameButton>}
     <Group>
       <BigNumber>{score}</BigNumber>
       <span>{gameText}</span>
