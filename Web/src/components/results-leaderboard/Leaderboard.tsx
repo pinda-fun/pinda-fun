@@ -6,7 +6,7 @@ import ScrollUpButton from 'components/common/ScrollUpButton';
 
 interface LeaderboardProps {
   pageTopRef: RefObject<HTMLDivElement>,
-  scrollToRef: React.RefObject<HTMLDivElement>,
+  scrollToRef: RefObject<HTMLDivElement>,
   playerScores: PlayerScore[];
 }
 

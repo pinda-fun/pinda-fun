@@ -5,7 +5,7 @@ import BigButton from 'components/common/BigButton';
 
 interface ResultsProps {
   pageTopRef: RefObject<HTMLDivElement>,
-  scrollToRef: React.RefObject<HTMLDivElement>,
+  scrollToRef: RefObject<HTMLDivElement>,
   score: number,
   gameText: string,
   rank: number | string,
