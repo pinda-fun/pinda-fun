@@ -82,7 +82,6 @@ const HostLeft: React.FC = () => (
 const ParticipantRoom: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
   <CommonRoom
     commHooks={commHooks}
-    NoHostComponent={HostLeft}
     FinishedComponent={WaitingLobby}
   />
 );
