@@ -5,6 +5,7 @@ import ReactGA from 'react-ga';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
 import BigButton from 'components/common/BigButton';
+import { Link } from 'react-router-dom';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes, ResultMap } from './comm/Comm';
@@ -110,6 +111,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
           <Loading>
             {isReady && <p>You are ready!</p>}
             {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
+            <Link to={{ pathname: '/' }}>Quit</Link>
           </Loading>
         )}
     </>

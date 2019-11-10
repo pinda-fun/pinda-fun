@@ -62,6 +62,7 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
         {funMessage}
       </Heading>
       <PindaWaving />
+      <Link to={{ pathname: '/' }}>Exit</Link>
     </WaitingDiv>
   );
 };
