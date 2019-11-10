@@ -45,7 +45,7 @@ const BalloonShake: React.FC = () => {
   const [obs, setObs] = useState<Observable<number | never>>(EMPTY);
   const [permission, setPermission] = useState(MotionPermission.GRANTED);
   const [secondsLeft, setSecondsLeft] = useState(GAME_TIME);
-  const [gameState, setGameState] = useState(GameState.INSTRUCTIONS);
+  const [gameState, setGameState] = useState(GameState.COUNTING_DOWN);
   const { count } = useCounter(obs, -1);
 
   const comm = useContext(CommContext);
