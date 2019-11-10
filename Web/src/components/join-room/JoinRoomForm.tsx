@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import LinkButton from 'components/common/LinkButton';
 import { MotionPermission } from 'components/games/GameStates';
 import GamePinForm from 'components/common/forms/GamePinForm';
 import UsernameForm from 'components/common/forms/UsernameForm';
+import CommContext from 'components/room/comm/CommContext';
 
 const ErrorText = styled.p`
   color: red;
@@ -25,6 +26,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
 }) => {
   const [isGamePinSet, setIsGamePinSet] = useState(false);
   const [gamePin, setGamePin] = useState(initialId || '');
+  const comm = useContext(CommContext);
 
   const handleSubmitGamePin = (pin: string) => {
     setGamePin(pin);
@@ -33,6 +35,11 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
 
   const handleSubmitUsername = (name: string) => {
     submitJoinRoomForm(gamePin, name);
+  };
+
+  const backButtonHandler = () => {
+    setIsGamePinSet(false);
+    comm.cleanup();
   };
 
   return (
@@ -58,7 +65,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = ({
             />
             <LinkButton
               underline
-              onClick={() => setIsGamePinSet(false)}
+              onClick={backButtonHandler}
             >
               Back
             </LinkButton>
