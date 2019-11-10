@@ -11,6 +11,10 @@ import Game from './Games';
 import { CommAttributes, ResultMap } from './comm/Comm';
 import { GameComponent, GameInstructionComponent } from './GameComponents';
 
+const BalloonShakeInstructions = lazy(() => import('components/games/BalloonShake/BalloonShakeInstructions'));
+const MentalSumsInstructions = lazy(() => import('components/games/MentalSums/MentalSumsInstructions'));
+const PandaSequenceInstructions = lazy(() => import('components/games/PandaSequence/PandaSequenceInstructions'));
+
 export interface FinishedComponentProps extends CommAttributes {
   game: Game;
   resultMeta: ResultMap | null;
@@ -56,6 +60,37 @@ const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
       {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
     </>
   );
+  return <GameInstructionComponent game={game} actions={actions} />;
+};
+
+const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode }> = ({
+  game, actions,
+}) => (
+  <>
+    {game === Game.SHAKE
+        && <BalloonShakeInstructions actions={actions} />}
+    {game === Game.SUMS
+        && <MentalSumsInstructions actions={actions} />}
+    {game === Game.SEQUENCE
+        && <PandaSequenceInstructions actions={actions} />}
+  </>
+);
+
+const InverseButton = styled(BigButton)`
+  background: white;
+  color: var(--purple);
+`;
+
+const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
+  isReady, onReadyClick, game,
+}) => {
+  const actions = (
+    <>
+      {isReady && <p>Waiting for other players</p>}
+      {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
+    </>
+  );
+
   return <GameInstructionComponent game={game} actions={actions} />;
 };
 
