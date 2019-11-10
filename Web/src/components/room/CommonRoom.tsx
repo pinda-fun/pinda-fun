@@ -34,8 +34,8 @@ const InverseButton = styled(BigButton)`
 `;
 
 const CustomLoading = styled(ReactLoading)`
-  svg {
-    height: 4em !important; /* Caryn told me to do this */
+  && > svg {
+    height: 4em; /* Caryn told me to do this */
   }
 `;
 

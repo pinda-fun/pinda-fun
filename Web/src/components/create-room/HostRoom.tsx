@@ -1,8 +1,9 @@
 import React, {
   useContext, useRef, RefObject, useEffect,
 } from 'react';
+import { Users, Icon } from 'react-feather';
 import { Link, Redirect } from 'react-router-dom';
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
 import ScrollDownButton from 'components/common/ScrollDownButton';
 import CommContext from 'components/room/comm/CommContext';
@@ -225,9 +226,52 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   );
 };
 
+type ContainerProps = {
+  hideOnMedium?: boolean;
+  hideOnLarge?: boolean;
+};
+
+const NumPlayersContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  & > * {
+    margin: 0 0.25rem;
+  }
+
+  && > svg {
+    height: 2em;
+  }
+
+  @media (max-width: ${mdMin}) {
+    justify-content: center;
+  }
+
+  ${(props: ContainerProps) => props.hideOnLarge
+    && css`
+      display: none;
+
+      @media (max-width: ${mdMin}) {
+        display: flex;
+      }
+  `};
+
+  ${(props: ContainerProps) => props.hideOnMedium
+    && css`
+      @media (max-width: ${mdMin}) {
+        display: none;
+      }
+  `};
+`;
+
 const InverseButton = styled(BigButton)`
   background: white;
   color: var(--purple);
+`;
+
+const UsersIcon = styled(Users as React.FC<React.ComponentProps<Icon>>)`
+  stroke-width: 3;
 `;
 
 const HostRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => {
@@ -246,7 +290,10 @@ const HostRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) =>
   }) => {
     const actions = isReady === null ? null : (
       <>
-        <p>{readyCount}/{totalCount} Players Ready</p>
+        <NumPlayersContainer>
+          <UsersIcon />
+          <span>{readyCount}/{totalCount} Players Ready</span>
+        </NumPlayersContainer>
         <InverseButton onClick={() => comm.startGame()}>
           {readyCount < totalCount ? 'Start anyway' : 'Start'}
         </InverseButton>
