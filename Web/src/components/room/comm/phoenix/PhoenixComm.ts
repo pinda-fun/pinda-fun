@@ -116,7 +116,7 @@ export default class PhoenixComm implements Comm {
     });
   }
 
-  private cleanup(): void {
+  cleanup(): void {
     if (this.channel != null) {
       this.channel.leave();
       this.socket.remove(this.channel);
