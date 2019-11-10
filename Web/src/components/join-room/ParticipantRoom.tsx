@@ -3,6 +3,7 @@ import styled from 'styled-components/macro';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
+import { Link } from 'react-router-dom';
 import { mdMin } from '../../utils/media';
 import ResultsLeaderboard from '../results-leaderboard';
 
@@ -57,6 +58,7 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
         {funMessage}
       </Heading>
       <PindaWaving />
+      <Link to={{ pathname: '/' }}>Exit</Link>
     </WaitingDiv>
   );
 };
