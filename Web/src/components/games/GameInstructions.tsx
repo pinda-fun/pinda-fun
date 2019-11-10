@@ -47,6 +47,7 @@ type GameInstructionsProps = {
   title: string;
   seconds?: number;
   onComplete?: () => void;
+  actions: React.ReactNode;
 };
 
 const GameInstructions: React.FC<GameInstructionsProps> = ({
@@ -54,6 +55,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({
   title,
   seconds,
   onComplete,
+  actions,
 }) => {
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -78,6 +80,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({
       <GameTitle>{title}</GameTitle>
       <InstructionsTitle>Instructions:</InstructionsTitle>
       {children}
+      {actions}
     </InstructionsDiv>
   );
 };

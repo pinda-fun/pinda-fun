@@ -45,6 +45,10 @@ const titleMessageMapping: Record<CommError, TitleMessage> = {
   [CommError.Other]: {
     title: 'Something bad happened',
   },
+  [CommError.HostLeft]: {
+    title: 'Host left',
+    message: 'Please create a new game and join the room',
+  },
 };
 
 const ErrorDisplay: React.FC<ErrorDisplayProps> = ({

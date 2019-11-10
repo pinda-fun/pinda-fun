@@ -5,16 +5,19 @@ import GameInstructions from '../GameInstructions';
 type GameInstructionsProps = {
   seconds?: number;
   onComplete?: () => void;
+  actions: React.ReactNode;
 };
 
 const BalloonShakeInstructions: React.FC<GameInstructionsProps> = ({
   seconds,
   onComplete,
+  actions,
 }) => (
   <GameInstructions
     title="Pinda Sums"
     seconds={seconds}
     onComplete={onComplete}
+    actions={actions}
   >
     <MentalSumsSVG />
     <p>
