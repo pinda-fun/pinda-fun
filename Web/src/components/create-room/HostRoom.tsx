@@ -1,4 +1,6 @@
-import React, { useContext, useRef, RefObject } from 'react';
+import React, {
+  useState, useContext, useRef, RefObject,
+} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
@@ -146,6 +148,7 @@ const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   room, error, users, allMetas, resultMeta, game,
 }) => {
+  const [displayResults, setDisplayResults] = useState(true);
   const comm = useContext(CommContext);
   const membersListRef = useRef<HTMLDivElement>(null);
   const roomDetailsRef = useRef<HTMLDivElement>(null);
@@ -154,6 +157,10 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
     const nextGame = gameSequenceGenerator.getNext();
     comm.refreshSeed(Date.now().toLocaleString());
     comm.changeGame(nextGame, () => comm.prepare());
+  };
+
+  const onExitResultsButtonClick = () => {
+    setDisplayResults(false);
   };
 
   const sharableLink = `${window.location.origin}/join/${room}`;
@@ -171,51 +178,60 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   return (
     <>
-      {resultsExist(allMetas) && (
+      {resultsExist(allMetas) && displayResults && (
         <ResultsLeaderboard
           allMetas={resultMeta}
           game={game}
+          exitCallback={onExitResultsButtonClick}
         />
       )}
-      <CreateRoomContainer>
-        <RoomDetailsContainer>
-          <RoomDetailsSection ref={roomDetailsRef}>
-            <TwoColumnDiv>
-              <div>
-                <GamePinSection>
-                  <h2>Game PIN:</h2>
-                  <h1>{room}</h1>
-                </GamePinSection>
-                <NumPlayers numPlayers={users.length} hideOnMedium />
-              </div>
-              <ShareSection>
-                <h2>Share via</h2>
-                <ShareContent>
-                  <QrCode sharableLink={sharableLink} />
-                  <SocialShare sharableLink={sharableLink} />
-                </ShareContent>
-                <NumPlayers numPlayers={users.length} hideOnLarge />
-              </ShareSection>
-            </TwoColumnDiv>
-            <StartButton
-              onClick={onStartButtonClick}
-            >
-              START!
-            </StartButton>
-            <Link to={{ pathname: '/' }}>Cancel</Link>
-          </RoomDetailsSection>
-          <ScrollDownButton
-            promptText="View Players"
-            scrollToRef={membersListRef}
-            backgroundColor="var(--pale-yellow)"
-            sticky={isStickyScrollPrompt(roomDetailsRef)}
-          />
-        </RoomDetailsContainer>
-        <MembersSection ref={membersListRef}>
-          <RoomMembers users={users} />
-        </MembersSection>
-        <PindaHappy />
-      </CreateRoomContainer>
+      {(!resultsExist(allMetas) || !displayResults)
+        && (
+        <CreateRoomContainer>
+          <RoomDetailsContainer>
+            <RoomDetailsSection ref={roomDetailsRef}>
+              <TwoColumnDiv>
+                <div>
+                  <GamePinSection>
+                    <h2>Game PIN:</h2>
+                    <h1>{room}</h1>
+                  </GamePinSection>
+                  <NumPlayers numPlayers={users.length} hideOnMedium />
+                </div>
+                <ShareSection>
+                  <h2>Share via</h2>
+                  <ShareContent>
+                    <QrCode sharableLink={sharableLink} />
+                    <SocialShare sharableLink={sharableLink} />
+                  </ShareContent>
+                  <NumPlayers numPlayers={users.length} hideOnLarge />
+                </ShareSection>
+              </TwoColumnDiv>
+              <StartButton
+                onClick={onStartButtonClick}
+              >
+                START!
+              </StartButton>
+              <Link
+                to={resultsExist(allMetas) ? {} : { pathname: '/' }}
+                onClick={resultsExist(allMetas) ? () => setDisplayResults(true) : undefined}
+              >
+                Cancel
+              </Link>
+            </RoomDetailsSection>
+            <ScrollDownButton
+              promptText="View Players"
+              scrollToRef={membersListRef}
+              backgroundColor="var(--pale-yellow)"
+              sticky={isStickyScrollPrompt(roomDetailsRef)}
+            />
+          </RoomDetailsContainer>
+          <MembersSection ref={membersListRef}>
+            <RoomMembers users={users} />
+          </MembersSection>
+          <PindaHappy />
+        </CreateRoomContainer>
+        )}
     </>
   );
 };

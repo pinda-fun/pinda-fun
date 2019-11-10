@@ -1,11 +1,12 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, useRef } from 'react';
 import styled from 'styled-components/macro';
-import { ChevronUp, Icon } from 'react-feather';
 import getClientId from 'utils/getClientId';
 import { smMin } from 'utils/media';
+import ScrollUpButton from 'components/common/ScrollUpButton';
 
 interface LeaderboardProps {
   pageTopRef: RefObject<HTMLDivElement>,
+  scrollToRef: React.RefObject<HTMLDivElement>,
   playerScores: PlayerScore[];
 }
 
@@ -48,25 +49,7 @@ const BigText = styled.span`
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
-const Header = styled.div`
-  background: var(--green);
-  align-items: center;
-  position: sticky;
-  top: 0;
-  text-align: center;
-  width: 100%;
-  margin: 12px;
-  padding: 0 0 12px 0;
-  font-size: 1rem;
-  z-index: 999;
-`;
-
-const UpArrowIcon = styled(ChevronUp as React.FC<React.ComponentProps<Icon>>)`
-  width: 42px;
-  height: 42px;
-`;
-
-const ListItemContainer = styled.div`
+const ListItemContainer = styled.section`
   width: ${smMin};
   overflow-x: hidden;
   margin: 1rem 0;
@@ -111,7 +94,18 @@ const SelectedListItem = styled.div`
   }
 `;
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ pageTopRef, playerScores }) => {
+const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
+  const spaceAroundContent = 50;
+  if (contentRef.current != null) {
+    return contentRef.current.clientHeight > (window.innerHeight - spaceAroundContent);
+  }
+  return false;
+};
+
+const Leaderboard: React.FC<LeaderboardProps> = (
+  { pageTopRef, scrollToRef, playerScores },
+) => {
+  const listRef = useRef<HTMLDivElement>(null);
   const listItems = playerScores.map(({ clientId, name, score }, index) => {
     if (clientId === getClientId()) {
       return (
@@ -133,13 +127,16 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ pageTopRef, playerScores }) =
 
   return (
     <Container ref={pageTopRef}>
-      <Header>
-        <UpArrowIcon />
-        <div>Back</div>
-      </Header>
+      <ScrollUpButton
+        promptText="Back"
+        scrollToRef={scrollToRef}
+        color="white"
+        backgroundColor="var(--green)"
+        sticky={isStickyScrollPrompt(listRef)}
+      />
       <Group>
         <BigText>Leaderboard</BigText>
-        <ListItemContainer>{listItems}</ListItemContainer>
+        <ListItemContainer ref={listRef}>{listItems}</ListItemContainer>
       </Group>
     </Container>
   );

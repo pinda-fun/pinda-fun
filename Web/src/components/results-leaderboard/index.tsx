@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import styled from 'styled-components/macro';
 import { ResultMap } from 'components/room/comm/Comm';
 import getClientId from 'utils/getClientId';
 import Game from 'components/room/Games';
@@ -8,9 +9,17 @@ import Leaderboard, { PlayerScore } from './Leaderboard';
 interface ResultsLeaderboardProps {
   allMetas: ResultMap | null,
   game: Game,
+  exitCallback?: () => void,
 }
 
-const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, game }) => {
+const Container = styled.div`
+  height: 100%;
+  overflow: hidden;
+`;
+
+const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = (
+  { allMetas, game, exitCallback },
+) => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const leaderboardRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +40,7 @@ const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, game 
   const myRank = index >= 0 ? index + 1 : '??';
 
   return (
-    <>
+    <Container>
       <Results
         pageTopRef={resultsRef}
         scrollToRef={leaderboardRef}
@@ -39,12 +48,14 @@ const ResultsLeaderboard: React.FC<ResultsLeaderboardProps> = ({ allMetas, game 
         gameText={myScore === 1 ? game.toString() : `${game.toString()}s`}
         rank={myRank}
         numPlayers={sortedScores.length}
+        exitCallback={exitCallback}
       />
       <Leaderboard
         pageTopRef={leaderboardRef}
+        scrollToRef={resultsRef}
         playerScores={sortedScores}
       />
-    </>
+    </Container>
   );
 };
 

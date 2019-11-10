@@ -1,6 +1,7 @@
 import React, { RefObject } from 'react';
 import styled from 'styled-components/macro';
 import ScrollDownButton from 'components/common/ScrollDownButton';
+import BigButton from 'components/common/BigButton';
 
 interface ResultsProps {
   pageTopRef: RefObject<HTMLDivElement>,
@@ -9,6 +10,7 @@ interface ResultsProps {
   gameText: string,
   rank: number | string,
   numPlayers: number,
+  exitCallback?: () => void,
 }
 
 const Container = styled.section`
@@ -25,6 +27,20 @@ const Container = styled.section`
   color: white;
   font-size: 1.4rem;
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+`;
+
+const NextGameButton = styled(BigButton)`
+  background: white;
+  color: var(--dark-green);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 1rem;
+  padding: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 `;
 
 const Group = styled.span`
@@ -47,9 +63,10 @@ const BigNumber = styled.span`
 `;
 
 const Results: React.FC<ResultsProps> = ({
-  pageTopRef, scrollToRef, score, gameText, rank, numPlayers,
+  pageTopRef, scrollToRef, score, gameText, rank, numPlayers, exitCallback,
 }) => (
   <Container ref={pageTopRef}>
+    {typeof exitCallback !== 'undefined' && <NextGameButton onClick={exitCallback}>Next Game</NextGameButton>}
     <Group>
       <BigNumber>{score}</BigNumber>
       <span>{gameText}</span>
