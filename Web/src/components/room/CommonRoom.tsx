@@ -13,14 +13,28 @@ const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
+const BalloonShakeInstructions = lazy(() =>
+  import('components/games/BalloonShake/BalloonShakeInstructions'));
+const MentalSumsInstructions = lazy(() =>
+  import('components/games/MentalSums/MentalSumsInstructions'));
+const PandaSequenceInstructions = lazy(() =>
+  import('components/games/PandaSequence/PandaSequenceInstructions'));
+
 export interface FinishedComponentProps extends CommAttributes {
   game: Game;
   resultMeta: ResultMap | null;
 }
 
+export interface PreparedComponentProps {
+  isReady: boolean;
+  onReadyClick: () => void;
+  game: Game;
+}
+
 interface CommonRoomProps {
   commHooks: CommAttributes;
   FinishedComponent: React.FC<FinishedComponentProps>;
+  PreparedComponent?: React.FC<PreparedComponentProps>;
 }
 
 const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
@@ -34,9 +48,30 @@ const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) =
   </>
 );
 
+const GameInstructionComponent: React.FC<{ game: Game }> = ({ game }) => (
+  <>
+    {game === Game.SHAKE
+      && <BalloonShakeInstructions />}
+    {game === Game.SUMS
+      && <MentalSumsInstructions />}
+    {game === Game.SEQUENCE
+      && <PandaSequenceInstructions />}
+  </>
+);
+
+const defaultPreparedComponent: React.FC<PreparedComponentProps> =
+  ({ isReady, onReadyClick, game }) => (
+    <Loading>
+      {isReady && <p>You are ready!</p>}
+      {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
+      <GameInstructionComponent game={game} />
+    </Loading>
+  );
+
 const CommonRoom: React.FC<CommonRoomProps> = ({
   commHooks,
   FinishedComponent,
+  PreparedComponent = defaultPreparedComponent,
 }) => {
   const comm = useContext(CommContext);
   const [game, setGame] = useState(Game.SHAKE);
@@ -106,10 +141,11 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
         && <GameComponent game={game} seed={hostMeta.seed} />}
       {hostMeta.state === GameState.PREPARE
         && (
-          <Loading>
-            {isReady && <p>You are ready!</p>}
-            {!isReady && <BigButton onClick={onReadyClick}>I am ready!</BigButton>}
-          </Loading>
+          <PreparedComponent
+            isReady={isReady}
+            onReadyClick={onReadyClick}
+            game={game}
+          />
         )}
     </>
   );
