@@ -41,6 +41,7 @@ export default interface Comm {
   joinRoom(pin: string, name: string, game?: string): void
   leaveRoom(): void
   cleanup(): void
+  markHostLeft(): void
 
   // For useCommHooks use
   _register(handler: (attributes: CommAttributes) => void): void
