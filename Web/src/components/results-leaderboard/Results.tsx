@@ -55,6 +55,10 @@ const Group = styled.span`
   text-align: center;
 `;
 
+const PaddedBottomGroup = styled(Group)`
+  padding-bottom: 3rem;
+`;
+
 const BigNumber = styled.span`
   height: auto;
   font-size: 8rem;
@@ -72,11 +76,11 @@ const Results: React.FC<ResultsProps> = ({
       <BigNumber>{score}</BigNumber>
       <span>{gameText}</span>
     </Group>
-    <Group>
+    <PaddedBottomGroup>
       <span>That&apos;s</span>
       <BigNumber>{rank}</BigNumber>
       <span>out of {numPlayers} of your friends!</span>
-    </Group>
+    </PaddedBottomGroup>
     <ScrollDownButton
       promptText="Leaderboard"
       scrollToRef={scrollToRef}

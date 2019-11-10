@@ -1,5 +1,5 @@
 import React, {
-  useState, useContext, useRef, RefObject,
+  useState, useContext, useRef,
 } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
@@ -137,21 +137,13 @@ const PindaHappy = styled(PindaHappySVG)`
 
 const gameSequenceGenerator = new GameSequenceGenerator();
 
-const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
-  const spaceAroundContent = 50;
-  if (contentRef.current != null) {
-    return contentRef.current.clientHeight > (window.innerHeight - spaceAroundContent);
-  }
-  return false;
-};
-
 const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   room, error, users, allMetas, resultMeta, game,
 }) => {
   const [displayResults, setDisplayResults] = useState(true);
+  const [isScrollPromptSticky, setIsScrollPromptSticky] = useState(false);
   const comm = useContext(CommContext);
   const membersListRef = useRef<HTMLDivElement>(null);
-  const roomDetailsRef = useRef<HTMLDivElement>(null);
 
   const onStartButtonClick = () => {
     const nextGame = gameSequenceGenerator.getNext();
@@ -161,6 +153,13 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 
   const onExitResultsButtonClick = () => {
     setDisplayResults(false);
+  };
+
+  const handleRefChange = (element: HTMLElement | null) => {
+    const spaceAroundContent = 50;
+    if (element != null) {
+      setIsScrollPromptSticky(element.clientHeight > (window.innerHeight - spaceAroundContent));
+    }
   };
 
   const sharableLink = `${window.location.origin}/join/${room}`;
@@ -185,11 +184,11 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
           exitCallback={onExitResultsButtonClick}
         />
       )}
-      {(!resultsExist(allMetas) || !displayResults)
+      {!(resultsExist(allMetas) && displayResults)
         && (
         <CreateRoomContainer>
           <RoomDetailsContainer>
-            <RoomDetailsSection ref={roomDetailsRef}>
+            <RoomDetailsSection ref={handleRefChange}>
               <TwoColumnDiv>
                 <div>
                   <GamePinSection>
@@ -223,7 +222,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
               promptText="View Players"
               scrollToRef={membersListRef}
               backgroundColor="var(--pale-yellow)"
-              sticky={isStickyScrollPrompt(roomDetailsRef)}
+              sticky={isScrollPromptSticky}
             />
           </RoomDetailsContainer>
           <MembersSection ref={membersListRef}>
