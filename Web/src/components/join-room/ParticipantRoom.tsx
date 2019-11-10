@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/macro';
-import { Link } from 'react-router-dom';
 import { ReactComponent as PindaWavingSVG } from 'svg/pinda-waving-badge.svg';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
@@ -35,10 +34,6 @@ const PindaWaving = styled(PindaWavingSVG)`
   }
 `;
 
-const ErrorHeading = styled(Heading)`
-  color: var(--red);
-`;
-
 const WaitingLobby: React.FC<FinishedComponentProps> = ({
   users, allMetas, resultMeta, game,
 }) => {
@@ -66,23 +61,9 @@ const WaitingLobby: React.FC<FinishedComponentProps> = ({
   );
 };
 
-const HostLeft: React.FC = () => (
-  <WaitingDiv>
-    <ErrorHeading>
-      Oh no! <br />
-      Looks like host has left!
-    </ErrorHeading>
-    <Link to="/join">
-      Go Back
-    </Link>
-    <PindaWaving />
-  </WaitingDiv>
-);
-
 const ParticipantRoom: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
   <CommonRoom
     commHooks={commHooks}
-    NoHostComponent={HostLeft}
     FinishedComponent={WaitingLobby}
   />
 );

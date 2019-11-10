@@ -111,13 +111,10 @@ const CreateRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) 
             color="var(--green)"
           />
         )}
-      {!waitingForResponse
-        && (
-          <ErrorDisplay
-            error={error}
-            errorDescription={errorDescription}
-          />
-        )}
+      <ErrorDisplay
+        error={error}
+        errorDescription={errorDescription}
+      />
     </CreateRoomContainer>
   );
 };

@@ -21,7 +21,6 @@ export interface FinishedComponentProps extends CommAttributes {
 interface CommonRoomProps {
   commHooks: CommAttributes;
   FinishedComponent: React.FC<FinishedComponentProps>;
-  NoHostComponent?: React.FC;
 }
 
 const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
@@ -38,7 +37,6 @@ const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) =
 const CommonRoom: React.FC<CommonRoomProps> = ({
   commHooks,
   FinishedComponent,
-  NoHostComponent = () => <p>No Host :(</p>,
 }) => {
   const comm = useContext(CommContext);
   const [game, setGame] = useState(Game.SHAKE);
@@ -69,7 +67,10 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   useEffect(() => {
     if (hostMeta === null) {
       // If host left, leave the room
-      if (myMeta !== null && !myMeta.isHost && room !== null) comm.leaveRoom();
+      if (myMeta !== null && !myMeta.isHost && room !== null) {
+        comm.leaveRoom();
+        comm.markHostLeft();
+      }
       return;
     }
     setGame(hostMeta.game);
@@ -91,9 +92,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     }
   }, [isResultSet, hostMeta, allMetas]);
 
-  if (hostMeta === null) {
-    return <NoHostComponent />;
-  }
+  if (hostMeta === null) return null;
 
   return (
     <>
