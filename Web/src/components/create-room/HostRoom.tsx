@@ -1,11 +1,16 @@
-import React, { useContext, useRef, RefObject } from 'react';
+import React, {
+  useContext, useRef, RefObject, useEffect,
+} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
 import ScrollDownButton from 'components/common/ScrollDownButton';
 import CommContext from 'components/room/comm/CommContext';
-import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
+import CommonRoom, {
+  FinishedComponentProps, PreparedComponentProps,
+} from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
+import { GameInstructionComponent } from 'components/room/GameComponents';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -220,10 +225,42 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   );
 };
 
-const HostRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => (
-  <CommonRoom
-    commHooks={commHooks}
-    FinishedComponent={HostRoomLobby}
-  />
-);
+const InverseButton = styled(BigButton)`
+  background: white;
+  color: var(--purple);
+`;
+
+const HostRoomPage: React.FC<{ commHooks: CommAttributes }> = ({ commHooks }) => {
+  const comm = useContext(CommContext);
+  const { allMetas } = commHooks;
+
+  const readyCount = allMetas !== null
+    ? Object.values(allMetas).filter((x) => x.result === null).length
+    : 0;
+  const totalCount = allMetas !== null ? Object.values(allMetas).length : 0;
+
+  useEffect(() => comm.readyUp(), [comm]);
+
+  const hostPreparedComponent: React.FC<PreparedComponentProps> = ({
+    isReady, game,
+  }) => {
+    const actions = isReady === null ? null : (
+      <>
+        <p>{readyCount}/{totalCount} Players Ready</p>
+        <InverseButton onClick={() => comm.startGame()}>
+          {readyCount < totalCount ? 'Start anyway' : 'Start'}
+        </InverseButton>
+      </>
+    );
+    return <GameInstructionComponent game={game} actions={actions} />;
+  };
+
+  return (
+    <CommonRoom
+      commHooks={commHooks}
+      FinishedComponent={HostRoomLobby}
+      PreparedComponent={hostPreparedComponent}
+    />
+  );
+};
 export default HostRoomPage;

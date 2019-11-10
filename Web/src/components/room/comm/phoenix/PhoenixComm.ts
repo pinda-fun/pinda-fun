@@ -141,6 +141,8 @@ export default class PhoenixComm implements Comm {
 
   private hostWatcher(state: GameState): void {
     if (this.database == null) return;
+    /*
+    // Disabled in favour of manual starting
     if (state === GameState.PREPARE) {
       // `result` being null is indication that the client is ready
       const allReady = (Object
@@ -155,6 +157,7 @@ export default class PhoenixComm implements Comm {
         );
       }
     }
+    */
     if (state === GameState.ONGOING) {
       const allFinished = (Object
         .values(this.database.getMetas())
@@ -333,6 +336,21 @@ export default class PhoenixComm implements Comm {
       { message: HostMessage.STATE, payload: { state: GameState.PREPARE } },
       onOk || noOp,
       onError || noOp,
+    );
+  }
+
+  startGame(onOk = noOp, onError = noOp as PushErrorHandler): void {
+    if (this.database == null) return;
+    if (this.database.hostId !== getClientId()) return;
+    const maybeHostMeta = this.database.getHostMeta();
+    if (maybeHostMeta == null) return;
+    if (maybeHostMeta.state !== GameState.PREPARE) {
+      throw new Error(`Cannot invoke startGame() when state is ${maybeHostMeta.state.toString()}`);
+    }
+    this.pushHostCommand(
+      { message: HostMessage.STATE, payload: { state: GameState.ONGOING } },
+      onOk,
+      onError,
     );
   }
 

@@ -1,21 +1,15 @@
 import React, {
-  useState, useContext, useEffect, lazy,
+  useState, useContext, useEffect,
 } from 'react';
 import ReactGA from 'react-ga';
+import ReactLoading from 'react-loading';
 import CommContext from 'components/room/comm/CommContext';
 import BigButton from 'components/common/BigButton';
 import styled from 'styled-components/macro';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes, ResultMap } from './comm/Comm';
-
-const BalloonShake = lazy(() => import('components/games/BalloonShake'));
-const MentalSums = lazy(() => import('components/games/MentalSums'));
-const PandaSequence = lazy(() => import('components/games/PandaSequence'));
-
-const BalloonShakeInstructions = lazy(() => import('components/games/BalloonShake/BalloonShakeInstructions'));
-const MentalSumsInstructions = lazy(() => import('components/games/MentalSums/MentalSumsInstructions'));
-const PandaSequenceInstructions = lazy(() => import('components/games/PandaSequence/PandaSequenceInstructions'));
+import { GameComponent, GameInstructionComponent } from './GameComponents';
 
 export interface FinishedComponentProps extends CommAttributes {
   game: Game;
@@ -34,33 +28,15 @@ interface CommonRoomProps {
   PreparedComponent?: React.FC<PreparedComponentProps>;
 }
 
-const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) => (
-  <>
-    {game === Game.SHAKE
-      && <BalloonShake />}
-    {game === Game.SUMS
-      && <MentalSums seed={seed} />}
-    {game === Game.SEQUENCE
-      && <PandaSequence seed={seed} />}
-  </>
-);
-
-const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode }> = ({
-  game, actions,
-}) => (
-  <>
-    {game === Game.SHAKE
-        && <BalloonShakeInstructions actions={actions} />}
-    {game === Game.SUMS
-        && <MentalSumsInstructions actions={actions} />}
-    {game === Game.SEQUENCE
-        && <PandaSequenceInstructions actions={actions} />}
-  </>
-);
-
 const InverseButton = styled(BigButton)`
   background: white;
   color: var(--purple);
+`;
+
+const CustomLoading = styled(ReactLoading)`
+  svg {
+    height: 4em !important; /* Caryn told me to do this */
+  }
 `;
 
 const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
@@ -68,11 +44,18 @@ const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
 }) => {
   const actions = (
     <>
-      {isReady && <p>Waiting for other players</p>}
+      {isReady && (
+        <>
+          <CustomLoading
+            type="bubbles"
+            color="white"
+          />
+          <p>Waiting for game to start...</p>
+        </>
+      )}
       {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
     </>
   );
-
   return <GameInstructionComponent game={game} actions={actions} />;
 };
 
