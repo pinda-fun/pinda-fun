@@ -1,17 +1,17 @@
 import React from 'react';
 import styled, { css } from 'styled-components/macro';
-import { ChevronDown } from 'react-feather';
+import { ChevronUp } from 'react-feather';
 
-type ScrollDownDisplayProps = {
+type ScrollUpDisplayProps = {
   color?: string;
   backgroundColor?: string;
   sticky?: boolean;
 };
 
-const ScrollDownPrompt = styled.button`
+const ScrollUpPrompt = styled.button`
   position: absolute;
   width: 100%;
-  bottom: 0;
+  top: 0;
   font-size: 1rem;
 
   display: flex;
@@ -21,10 +21,10 @@ const ScrollDownPrompt = styled.button`
 
   z-index: 999;
 
-  color: ${({ color }: ScrollDownDisplayProps) => color || 'black'};
-  background-color: ${({ backgroundColor }: ScrollDownDisplayProps) => backgroundColor || 'transparent'};
+  color: ${({ color }: ScrollUpDisplayProps) => color || 'black'};
+  background-color: ${({ backgroundColor }: ScrollUpDisplayProps) => backgroundColor || 'transparent'};
 
-  ${({ sticky }: ScrollDownDisplayProps) => sticky
+  ${({ sticky }: ScrollUpDisplayProps) => sticky
     && css`
       position: sticky;
     `};
@@ -35,7 +35,7 @@ const ScrollDownPrompt = styled.button`
   }
 `;
 
-type ScrollDownButtonProps = {
+type ScrollUpButtonProps = {
   promptText?: string;
   scrollToRef: React.RefObject<HTMLDivElement>;
   color?: string;
@@ -43,7 +43,7 @@ type ScrollDownButtonProps = {
   sticky?: boolean;
 };
 
-const ScrollDownButton: React.FC<ScrollDownButtonProps> = ({
+const ScrollUpButton: React.FC<ScrollUpButtonProps> = ({
   promptText,
   scrollToRef,
   color,
@@ -60,16 +60,16 @@ const ScrollDownButton: React.FC<ScrollDownButtonProps> = ({
   };
 
   return (
-    <ScrollDownPrompt
+    <ScrollUpPrompt
       onClick={scrollRefIntoView}
       color={color}
       backgroundColor={backgroundColor}
       sticky={sticky}
     >
+      <ChevronUp />
       {promptText}
-      <ChevronDown />
-    </ScrollDownPrompt>
+    </ScrollUpPrompt>
   );
 };
 
-export default ScrollDownButton;
+export default ScrollUpButton;
