@@ -48,6 +48,10 @@ defmodule ApiWeb.RoomChannel do
     {:ok, socket}
   end
 
+  defp join(_, %{"name" => name}, _, :host) when is_binary(name) do
+    {:error, %{reason: "Room with that PIN does not exist"}}
+  end
+
   defp join(_topic, payload = %{"name" => name}, socket, :non_host) when is_binary(name) do
     send(self(), {:after_join, :non_host, payload})
     {:ok, socket}

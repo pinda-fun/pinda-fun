@@ -57,10 +57,12 @@ defmodule ApiWeb.RoomChannelTest do
                  socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}")
 
-        assert {:error, %{reason: "Bad request"}} =
+        # Connecting like a non-host results in appropriate error message
+        assert {:error, %{reason: "Room with that PIN does not exist"}} =
                  socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name})
 
+        # Good
         assert {:ok, %{}, socket} =
                  socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @host_name, "game" => @game})
@@ -150,6 +152,11 @@ defmodule ApiWeb.RoomChannelTest do
         assert {:error, %{reason: "Existing connection"}} =
                  socket(ApiWeb.UserSocket, "", %{client_id: @non_host_client_id})
                  |> join(RoomChannel, "room:#{pin}", %{"name" => @non_host_name})
+
+        # And invalid pin has an appropriate error message
+        assert {:error, %{reason: "Room with that PIN does not exist"}} =
+                 socket(ApiWeb.UserSocket, "", %{client_id: @non_host_client_id})
+                 |> join(RoomChannel, "room:0000", %{"name" => @non_host_name})
 
         send(tester_pid, {:non_host, :host, :connected})
 
