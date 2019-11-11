@@ -7,8 +7,10 @@ import * as serviceWorker from './serviceWorker';
 
 // Polyfills
 
+const fromEntries = require('object.fromentries');
+
 smoothscroll.polyfill();
-if (!Object.fromEntries) require('object.fromentries').shim();
+if (!Object.fromEntries) fromEntries.shim();
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
