@@ -20,14 +20,16 @@ const RoutesWithCommContext: React.FC = () => (
       <Route path="/new" component={CreateRoomPage} />
       <Route exact path="/join" component={JoinRoomPage} />
       <Route path="/join/:id" component={JoinRoomPage} />
-      <Route exact path="/balloon-game" component={BalloonShake} />
-      <Route exact path="/panda-sequence" component={PandaSequence} />
-      <Route exact path="/sums-game" component={MentalSums} />
       {
-        // Do not include /feedback route on real production website
-        // TODO: Remove once we implement feedback in te game itself
-        // TODO: Also remove Web/components/FeedbackPage/
-        !window.location.origin.includes('pinda.fun') && <Route exact path="/feedback" component={FeedbackPage} />
+        // Do not include some routes on real production website (still allow on deploy previews)
+        !window.location.origin.includes('pinda.fun') && (
+          <>
+            <Route exact path="/balloon-game" component={BalloonShake} />
+            <Route exact path="/panda-sequence" component={PandaSequence} />
+            <Route exact path="/sums-game" component={MentalSums} />
+            <Route exact path="/feedback" component={FeedbackPage} />
+          </>
+        )
       }
       <Redirect to="/" />
     </Switch>
