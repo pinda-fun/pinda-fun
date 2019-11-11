@@ -34,6 +34,7 @@ type NumKeypadProps = {
 const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey, disabled = false }) => {
   const actionHandler = (e: React.SyntheticEvent, val: string) => {
     e.preventDefault();
+    if (disabled) return;
     onClickKey(val);
   };
   return (
