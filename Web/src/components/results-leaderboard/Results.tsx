@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import styled from 'styled-components/macro';
-import { ChevronDown, Icon } from 'react-feather';
+import ScrollDownButton from 'components/common/ScrollDownButton';
+import Button from 'components/common/Button';
 
 interface ResultsProps {
+  pageTopRef: RefObject<HTMLDivElement>,
+  scrollToRef: RefObject<HTMLDivElement>,
   score: number,
   gameText: string,
   rank: number | string,
   numPlayers: number,
+  exitCallback?: () => void,
 }
 
-const Container = styled.div`
+const Container = styled.section`
   background: var(--green);
   position: relative;
   overflow: hidden;
@@ -25,6 +29,22 @@ const Container = styled.div`
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
+const NextGameButton = styled(Button)`
+  background: white;
+  color: var(--dark-green);
+  white-space: nowrap;
+  border: 0;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 1rem;
+  padding: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+`;
+
 const Group = styled.span`
   overflow: hidden;
   height: 100%;
@@ -36,6 +56,10 @@ const Group = styled.span`
   text-align: center;
 `;
 
+const PaddedBottomGroup = styled(Group)`
+  padding-bottom: 3rem;
+`;
+
 const BigNumber = styled.span`
   height: auto;
   font-size: 8rem;
@@ -44,38 +68,28 @@ const BigNumber = styled.span`
   text-shadow: 10 10 0 rgba(0, 0, 0, 0.1);
 `;
 
-const Footer = styled.div`
-  width: 100vw;
-  align-items: center;
-  position: sticky;
-  bottom: 0;
-  text-align: center;
-  padding: 12px;
-  font-size: 1rem;
-`;
-
-const DownArrowIcon = styled(ChevronDown as React.FC<React.ComponentProps<Icon>>)`
-  width: 42px;
-  height: 42px;
-`;
-
 const Results: React.FC<ResultsProps> = ({
-  score, gameText, rank, numPlayers,
+  pageTopRef, scrollToRef, score, gameText, rank, numPlayers, exitCallback,
 }) => (
-  <Container>
+  <Container ref={pageTopRef}>
+    {exitCallback !== undefined
+      && <NextGameButton onClick={exitCallback}>Next Game</NextGameButton>}
     <Group>
       <BigNumber>{score}</BigNumber>
       <span>{gameText}</span>
     </Group>
-    <Group>
+    <PaddedBottomGroup>
       <span>That&apos;s</span>
       <BigNumber>{rank}</BigNumber>
       <span>out of {numPlayers} of your friends!</span>
-    </Group>
-    <Footer>
-      <div>Leaderboard</div>
-      <DownArrowIcon />
-    </Footer>
+    </PaddedBottomGroup>
+    <ScrollDownButton
+      promptText="Leaderboard"
+      scrollToRef={scrollToRef}
+      color="white"
+      backgroundColor="var(--green)"
+      sticky={false}
+    />
   </Container>
 );
 
