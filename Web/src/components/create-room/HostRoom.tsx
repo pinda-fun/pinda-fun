@@ -1,6 +1,4 @@
-import React, {
-  useState, useContext, useRef,
-} from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
@@ -8,6 +6,7 @@ import ScrollDownButton from 'components/common/ScrollDownButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
+import useWindowSize from 'utils/useWindowSize';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
@@ -155,6 +154,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 }) => {
   const [displayResults, setDisplayResults] = useState(true);
   const [isScrollPromptSticky, setIsScrollPromptSticky] = useState(false);
+  const [, windowHeight] = useWindowSize();
   const comm = useContext(CommContext);
   const membersListRef = useRef<HTMLDivElement>(null);
 
@@ -169,9 +169,9 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   };
 
   const handleRefChange = (element: HTMLElement | null) => {
-    const spaceAroundContent = 50;
+    const spaceAroundContent = 100;
     if (element != null) {
-      setIsScrollPromptSticky(element.clientHeight > (window.innerHeight - spaceAroundContent));
+      setIsScrollPromptSticky(element.clientHeight > (windowHeight - spaceAroundContent));
     }
   };
 
@@ -200,7 +200,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       {!(resultsExist(allMetas) && displayResults)
         && (
         <CreateRoomContainer>
-          <RoomDetailsContainer windowInnerHeight={window.innerHeight}>
+          <RoomDetailsContainer windowInnerHeight={windowHeight}>
             <RoomDetailsSection ref={handleRefChange}>
               <TwoColumnDiv>
                 <div>
