@@ -108,6 +108,7 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
   const { problemText, expectedAns, nextProblem } = useQuestionStream(seedrandom(seed));
   const [feedback, setFeedback] = useState(FeedbackState.NONE);
   const [input, setInput] = useState('');
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     if (feedback === FeedbackState.NONE) return undefined;
@@ -115,12 +116,19 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
     return () => clearTimeout(timeout);
   }, [feedback]);
 
+  useEffect(() => {
+    if (!disabled) return undefined;
+    const timeout = setTimeout(() => setDisabled(false), 500);
+    return () => clearTimeout(timeout);
+  }, [disabled]);
+
   const setCorrect = useCallback(() => {
     setFeedback(FeedbackState.CORRECT);
   }, []);
 
   const setWrong = useCallback(() => {
     setFeedback(FeedbackState.WRONG);
+    setDisabled(true);
   }, []);
 
   const checkAns = useCallback((newInput: string) => {
@@ -168,6 +176,7 @@ const MentalSumsGame: React.FC<MentalSumsGameProps> = ({
           </AnswerDiv>
         </QuestionContainer>
         <NumKeypad
+          disabled={disabled}
           onClickKey={(key) => {
             const newInput = input + key;
             setInput(newInput);

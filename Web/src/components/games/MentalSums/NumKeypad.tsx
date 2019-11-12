@@ -28,11 +28,13 @@ const KeyButton = styled.button`
 
 type NumKeypadProps = {
   onClickKey: (key: string) => void;
+  disabled?: boolean;
 };
 
-const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey }) => {
+const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey, disabled = false }) => {
   const actionHandler = (e: React.SyntheticEvent, val: string) => {
     e.preventDefault();
+    if (disabled) return;
     onClickKey(val);
   };
   return (
@@ -46,6 +48,7 @@ const NumKeypad: React.FC<NumKeypadProps> = ({ onClickKey }) => {
               onMouseDown={(e) => actionHandler(e, val)}
               onTouchStart={(e) => actionHandler(e, val)}
               onTouchEnd={(e) => e.preventDefault()}
+              disabled={disabled}
             >
               {val}
             </KeyButton>
