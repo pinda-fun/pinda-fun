@@ -30,7 +30,7 @@
     "react-loading": "^2.0.3",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.2.0",
-    "react-virtualized": "^9.21.1",
+    "react-virtualized": "^9.21.2",
     "rxjs": "^6.5.3",
     "seedrandom": "^3.0.5",
     "smoothscroll-polyfill": "^0.4.4",
