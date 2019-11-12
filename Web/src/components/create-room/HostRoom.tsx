@@ -27,8 +27,21 @@ const CreateRoomContainer = styled.div`
   align-items: center;
 `;
 
-const RoomDetailsContainer = styled.div`
-  min-height: ${window.innerHeight}px;
+interface RoomDetailsProps extends React.HTMLAttributes<HTMLDivElement> {
+  windowInnerHeight: number;
+}
+
+/**
+ * Wrapper to remove custom DOM attributes before rendering HTML DOM
+ * See: https://www.styled-components.com/docs/faqs#why-am-i-getting-html-attribute-warnings
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const RoomDetails = ({ windowInnerHeight, ...props }: RoomDetailsProps) => (
+  <div {...props} />
+);
+
+const RoomDetailsContainer = styled(RoomDetails)`
+  min-height: ${({ windowInnerHeight }: RoomDetailsProps) => windowInnerHeight}px;
   position: relative;
 
   display: flex;
@@ -187,7 +200,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       {!(resultsExist(allMetas) && displayResults)
         && (
         <CreateRoomContainer>
-          <RoomDetailsContainer>
+          <RoomDetailsContainer windowInnerHeight={window.innerHeight}>
             <RoomDetailsSection ref={handleRefChange}>
               <TwoColumnDiv>
                 <div>
