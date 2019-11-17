@@ -44,7 +44,10 @@ const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {
     const timerSub = timer.subscribe(
       (left) => setSecondsLeft(left),
       null,
-      () => setGameState(GameState.TIMES_UP),
+      () => {
+        setFeedback(() => Feedback.NONE);
+        setGameState(GameState.TIMES_UP);
+      },
     );
     setSequence((oldSeq) => generate(oldSeq, generator));
     return () => timerSub.unsubscribe();
