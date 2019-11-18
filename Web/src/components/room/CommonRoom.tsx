@@ -109,6 +109,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.PREPARE
         && (
           <PreparedComponent
+            allMetas={allMetas}
             isReady={isReady}
             onReadyClick={onReadyClick}
             game={game}
