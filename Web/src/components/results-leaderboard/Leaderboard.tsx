@@ -3,6 +3,7 @@ import styled from 'styled-components/macro';
 import getClientId from 'utils/getClientId';
 import ScrollUpButton from 'components/common/ScrollUpButton';
 import { ListItemContainer, ListItem, SelectedListItem } from 'components/common/list';
+import { smMin } from 'utils/media';
 
 interface LeaderboardProps {
   pageTopRef: RefObject<HTMLDivElement>,
@@ -49,6 +50,14 @@ const BigText = styled.span`
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
+const ResultsListContainer = styled(ListItemContainer)`
+  width: ${smMin};
+
+  @media (max-width: ${smMin}) {
+    width: 75vw;
+  }
+`;
+
 const isStickyScrollPrompt = (contentRef: RefObject<HTMLDivElement>) => {
   const spaceAroundContent = 50;
   if (contentRef.current != null) {
@@ -91,7 +100,9 @@ const Leaderboard: React.FC<LeaderboardProps> = (
       />
       <Group>
         <BigText>Leaderboard</BigText>
-        <ListItemContainer ref={listRef}>{listItems}</ListItemContainer>
+        <ResultsListContainer ref={listRef}>
+          {listItems}
+        </ResultsListContainer>
       </Group>
     </Container>
   );
