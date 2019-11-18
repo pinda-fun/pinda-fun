@@ -1,0 +1,14 @@
+digraph protocol_state {
+  rankdir = LR;
+  dpi = 600;
+
+  node [shape = point] Start [xlabel=Start];
+  node [shape = oval] Ongoing;
+  node [shape = oval] Prepare;
+  node [shape = oval] Finished;
+
+  Start -> Finished;
+  Finished -> Prepare;
+  Prepare -> Ongoing;
+  Ongoing -> Finished;
+}

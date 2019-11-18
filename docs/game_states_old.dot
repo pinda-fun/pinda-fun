@@ -1,0 +1,14 @@
+digraph game_states {
+    rankdir=LR
+    overlap=scale
+    dpi=600
+
+    node [shape=point] Start [xlabel="Start Game"];
+    node [shape=oval] InProgress;
+    node [shape=oval] WaitingForResults;
+    node [shape=point, xlabel="End Game"] EndGame;
+
+    Start -> InProgress;
+    InProgress -> WaitingForResults;
+    WaitingForResults -> EndGame;
+}
