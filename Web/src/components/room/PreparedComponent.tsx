@@ -1,4 +1,4 @@
-import React, { lazy, useState, useEffect } from 'react';
+import React, { lazy, useState } from 'react';
 import {
   Users, UserX, UserCheck, Icon,
 } from 'react-feather';
@@ -117,9 +117,6 @@ const PreparedComponent: React.FC<PreparedComponentProps> = ({
     : 0;
   const totalCount = allMetas !== null ? Object.values(allMetas).length : 0;
   const [modalOpen, setModalOpen] = useState(false);
-
-  // Add modal closing event on dismount to prevent game component half width bug
-  useEffect(() => () => setModalOpen(false), []);
 
   const actions = (
     <>
