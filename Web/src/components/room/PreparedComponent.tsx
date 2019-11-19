@@ -1,4 +1,4 @@
-import React, { lazy, useState } from 'react';
+import React, { lazy, useState, useEffect } from 'react';
 import {
   Users, UserX, UserCheck, Icon,
 } from 'react-feather';
@@ -6,7 +6,7 @@ import BigButton from 'components/common/BigButton';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Modal from 'components/common/Modal';
-import { ListItemContainer, ListItem } from 'components/common/list';
+import { ListItemContainer, ListItem } from 'components/List';
 import Game from './Games';
 import { ResultMap } from './comm/Comm';
 
@@ -65,11 +65,11 @@ const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode 
 }) => (
   <>
     {game === Game.SHAKE
-      && <BalloonShakeInstructions actions={actions} />}
+        && <BalloonShakeInstructions actions={actions} />}
     {game === Game.SUMS
-      && <MentalSumsInstructions actions={actions} />}
+        && <MentalSumsInstructions actions={actions} />}
     {game === Game.SEQUENCE
-      && <PandaSequenceInstructions actions={actions} />}
+        && <PandaSequenceInstructions actions={actions} />}
   </>
 );
 
@@ -117,6 +117,9 @@ const PreparedComponent: React.FC<PreparedComponentProps> = ({
     : 0;
   const totalCount = allMetas !== null ? Object.values(allMetas).length : 0;
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Add modal closing event on dismount to prevent game component half width bug
+  useEffect(() => () => setModalOpen(false), []);
 
   const actions = (
     <>

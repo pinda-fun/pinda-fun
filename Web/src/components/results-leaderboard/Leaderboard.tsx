@@ -2,7 +2,7 @@ import React, { RefObject, useRef } from 'react';
 import styled from 'styled-components/macro';
 import getClientId from 'utils/getClientId';
 import ScrollUpButton from 'components/common/ScrollUpButton';
-import { ListItemContainer, ListItem, SelectedListItem } from 'components/common/list';
+import { ListItemContainer, ListItem, SelectedListItem } from 'components/List';
 import { smMin } from 'utils/media';
 
 interface LeaderboardProps {

@@ -6,7 +6,7 @@ import CommContext from 'components/room/comm/CommContext';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes, ResultMap } from './comm/Comm';
-import defaultPreparedComponent, { PreparedComponentProps } from './PrepareComponent';
+import defaultPreparedComponent, { PreparedComponentProps } from './PreparedComponent';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
