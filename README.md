@@ -21,4 +21,4 @@ Look at `Web/src/components/room/Meta.ts`
 Production frontend is hosted at https://pinda.fun/
 
 # API
-Production backend is hosted at https://api.dokku.julius.sg/
+Production backend is hosted at https://sizzling-tiny-wrenchbird.gigalixirapp.com/
