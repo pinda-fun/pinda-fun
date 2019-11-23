@@ -98,6 +98,7 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({
     title="Player Statuses"
     confirmationButtonText="Ok"
     onConfirm={closeAction}
+    wider
   >
     <PlayerListContainer>
       {Object.values(allMetas).map(({ name, result }) => (
