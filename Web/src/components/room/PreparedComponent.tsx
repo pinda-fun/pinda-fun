@@ -79,6 +79,7 @@ const NumPlayersContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  cursor: pointer;
 
   & > * {
     margin: 0 0.25rem;
