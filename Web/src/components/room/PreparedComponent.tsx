@@ -58,6 +58,8 @@ const NameSpan = styled.span`
 
 const PlayerListContainer = styled(ListItemContainer)`
   width: 100%;
+  max-height: 50vh;
+  overflow-y: auto;
 `;
 
 const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode }> = ({
