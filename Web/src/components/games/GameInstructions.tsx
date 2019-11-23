@@ -6,6 +6,7 @@ const InstructionsDiv = styled.div`
   background-color: var(--deep-purple);
   color: white;
   min-height: ${window.innerHeight}px;
+  width: 100vw;
   text-align: center;
   overflow: hidden;
 
