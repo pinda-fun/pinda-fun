@@ -3,30 +3,18 @@ import React, {
 } from 'react';
 import ReactGA from 'react-ga';
 import CommContext from 'components/room/comm/CommContext';
-import BigButton from 'components/common/BigButton';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components/macro';
 import GameState from './comm/GameState';
 import Game from './Games';
 import { CommAttributes, ResultMap } from './comm/Comm';
+import defaultPreparedComponent, { PreparedComponentProps } from './PreparedComponent';
 
 const BalloonShake = lazy(() => import('components/games/BalloonShake'));
 const MentalSums = lazy(() => import('components/games/MentalSums'));
 const PandaSequence = lazy(() => import('components/games/PandaSequence'));
 
-const BalloonShakeInstructions = lazy(() => import('components/games/BalloonShake/BalloonShakeInstructions'));
-const MentalSumsInstructions = lazy(() => import('components/games/MentalSums/MentalSumsInstructions'));
-const PandaSequenceInstructions = lazy(() => import('components/games/PandaSequence/PandaSequenceInstructions'));
-
 export interface FinishedComponentProps extends CommAttributes {
   game: Game;
   resultMeta: ResultMap | null;
-}
-
-export interface PreparedComponentProps {
-  isReady: boolean;
-  onReadyClick: () => void;
-  game: Game;
 }
 
 interface CommonRoomProps {
@@ -45,42 +33,6 @@ const GameComponent: React.FC<{ game: Game, seed: string }> = ({ game, seed }) =
       && <PandaSequence seed={seed} />}
   </>
 );
-
-const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode }> = ({
-  game, actions,
-}) => (
-  <>
-    {game === Game.SHAKE
-        && <BalloonShakeInstructions actions={actions} />}
-    {game === Game.SUMS
-        && <MentalSumsInstructions actions={actions} />}
-    {game === Game.SEQUENCE
-        && <PandaSequenceInstructions actions={actions} />}
-  </>
-);
-
-const InverseButton = styled(BigButton)`
-  background: white;
-  color: var(--purple);
-`;
-
-const WhiteLink = styled(Link)`
-  color: white;
-`;
-
-const defaultPreparedComponent: React.FC<PreparedComponentProps> = ({
-  isReady, onReadyClick, game,
-}) => {
-  const actions = (
-    <>
-      {isReady && <p>Waiting for other players</p>}
-      {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
-      <WhiteLink to={{ pathname: '/' }}>Quit</WhiteLink>
-    </>
-  );
-
-  return <GameInstructionComponent game={game} actions={actions} />;
-};
 
 const CommonRoom: React.FC<CommonRoomProps> = ({
   commHooks,
@@ -101,6 +53,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
   const {
     hostMeta, myMeta, allMetas, room,
   } = commHooks;
+
 
   const onReadyClick = () => {
     comm.readyUp();
@@ -156,6 +109,7 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
       {hostMeta.state === GameState.PREPARE
         && (
           <PreparedComponent
+            allMetas={allMetas}
             isReady={isReady}
             onReadyClick={onReadyClick}
             game={game}

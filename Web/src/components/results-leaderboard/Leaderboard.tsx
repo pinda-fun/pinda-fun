@@ -1,8 +1,9 @@
 import React, { RefObject, useRef } from 'react';
 import styled from 'styled-components/macro';
 import getClientId from 'utils/getClientId';
-import { smMin } from 'utils/media';
 import ScrollUpButton from 'components/common/ScrollUpButton';
+import { ListItemContainer, ListItem, SelectedListItem } from 'components/List';
+import { smMin } from 'utils/media';
 
 interface LeaderboardProps {
   pageTopRef: RefObject<HTMLDivElement>,
@@ -49,48 +50,11 @@ const BigText = styled.span`
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
-const ListItemContainer = styled.section`
+const ResultsListContainer = styled(ListItemContainer)`
   width: ${smMin};
-  overflow-x: hidden;
-  margin: 1rem 0;
-  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
 
   @media (max-width: ${smMin}) {
     width: 75vw;
-  }
-`;
-
-const ListItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  width: auto;
-  font-size: 1.1rem;
-  color: black;
-  padding: 18px 18px;
-  border-top: 1px solid var(--light-grey);
-
-  :first-child {
-    border: none;
-  }
-`;
-
-// separate component so we can have a more divergent styling in future
-const SelectedListItem = styled.div`
-  background: var(--pale-yellow);
-  width: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 18px;
-  border-top: 1px solid var(--light-grey);
-  color: var(--red);
-
-  :first-child {
-    border: none;
   }
 `;
 
@@ -136,7 +100,9 @@ const Leaderboard: React.FC<LeaderboardProps> = (
       />
       <Group>
         <BigText>Leaderboard</BigText>
-        <ListItemContainer ref={listRef}>{listItems}</ListItemContainer>
+        <ResultsListContainer ref={listRef}>
+          {listItems}
+        </ResultsListContainer>
       </Group>
     </Container>
   );

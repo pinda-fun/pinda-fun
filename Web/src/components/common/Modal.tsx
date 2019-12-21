@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { smMin } from 'utils/media';
 import Button from './Button';
@@ -102,11 +102,15 @@ const Modal: React.FC<ModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  if (isVisible) {
-    preventBodyScroll();
-  } else {
-    enableBodyScroll();
-  }
+  useEffect(() => {
+    if (isVisible) {
+      preventBodyScroll();
+    } else {
+      enableBodyScroll();
+    }
+  }, [isVisible]);
+
+  useEffect(() => () => enableBodyScroll(), []);
 
   return (
     <ModalBackground isVisible={isVisible}>
