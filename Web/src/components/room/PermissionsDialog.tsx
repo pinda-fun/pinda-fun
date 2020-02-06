@@ -15,7 +15,7 @@ const PermissionsDialog: React.FC<PermissionsDialogProps> = ({
     onConfirm={onConfirm}
     confirmationButtonText="Sure!"
   >
-      Pinda requires some device permissions in order to play some games.
+    Pinda requires some device permissions in order to play some games.
   </Modal>
 );
 

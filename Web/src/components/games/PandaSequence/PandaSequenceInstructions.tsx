@@ -21,8 +21,8 @@ const PandaSequenceInstructions: React.FC<GameInstructionsProps> = ({
   >
     <MemoryGameSVG />
     <p>
-        Watch carefully as the pandas emerge from their flower pots. Repeat the sequence
-        when the background turns purple.
+      Watch carefully as the pandas emerge from their flower pots. Repeat the sequence
+      when the background turns purple.
     </p>
   </GameInstructions>
 );
