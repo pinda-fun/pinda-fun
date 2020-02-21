@@ -8,7 +8,7 @@
     "@types/node": "13.7.4",
     "@types/phoenix": "^1.4.3",
     "@types/qrcode.react": "^1.0.0",
-    "@types/react": "^16.9.21",
+    "@types/react": "^16.9.22",
     "@types/react-dom": "16.9.5",
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.3",
