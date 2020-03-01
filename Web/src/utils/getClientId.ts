@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 const CLIENT_ID_LOCAL_STORAGE_KEY = 'client_id';
 
