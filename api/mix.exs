@@ -53,7 +53,7 @@ defmodule Api.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:sentry, "~> 7.0"},
-      {:credo, "~> 1.2.1", only: :test, runtime: false},
+      {:credo, "~> 1.3.2", only: :test, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.13", only: :test},
       {:mock, "~> 0.3.0", only: :test},
