@@ -13,6 +13,12 @@
     "block-closing-brace-space-before": null,
     "block-opening-brace-space-after": null,
     "declaration-colon-newline-after": null,
-    "declaration-empty-line-before": null
+    "declaration-empty-line-before": null,
+    "value-keyword-case": [
+      "lower",
+      {
+        "ignoreKeywords": ["dummyValue"]
+      }
+    ]
   }
 }

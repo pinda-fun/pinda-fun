@@ -4,6 +4,9 @@ module.exports = {
   "extends": [
     "airbnb-typescript"
   ],
+  "parserOptions": {
+    "project": './tsconfig.json',
+  },
   "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
   "env": {
     "browser": true,
