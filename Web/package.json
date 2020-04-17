@@ -12,7 +12,7 @@
     "@types/react-dom": "16.9.6",
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.4",
-    "@types/react-virtualized": "^9.21.8",
+    "@types/react-virtualized": "^9.21.9",
     "@types/seedrandom": "^2.4.28",
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/styled-components": "^5.1.0",
