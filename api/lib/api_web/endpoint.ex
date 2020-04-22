@@ -44,7 +44,12 @@ defmodule ApiWeb.Endpoint do
   plug ApiWeb.Router
 
   def origin_ok?(%URI{host: host}) do
-    host_regexes = [~r/(.+\.)?pinda\.fun/, ~r/.*--pinda-fun\.netlify\.com/]
+    host_regexes = [
+      ~r/(.+\.)?pinda\.fun/,
+      ~r/.*--pinda-fun\.netlify\.com/,
+      ~r/.*--pinda-fun\.netlify\.app/
+    ]
+
     Enum.any?(host_regexes, &String.match?(host, &1))
   end
 end
