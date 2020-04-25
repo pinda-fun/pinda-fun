@@ -9261,10 +9261,10 @@ react-error-overlay@^6.0.7:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
   integrity sha512-TAv1KJFh3RhqxNvhzxj6LeT5NWklP6rDr2a0jaTfsZ5wSZWHOGeqQyejUp3xxLfPt2UpyJEcVQB/zyPcmonNFA==
 
-react-feather@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/react-feather/-/react-feather-2.0.4.tgz#42f974ade8d2a7ce113aa8ede37f7ca3752f3b1d"
-  integrity sha512-XX+it8flg7ht3bjc5vvGC1RwqIf0YBdEzgGeTm6hNWkT613uTr/F4aah2cgY1n83/8W6qml5J9t+lAUQAUBlJQ==
+react-feather@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/react-feather/-/react-feather-2.0.6.tgz#189de475c7858ffe7822a0138974a9bb9b77fbde"
+  integrity sha512-U0ZakHBqYCY5IrswxBEGqh/1E3coCmYypQ3oS39Ap6bU45jzc3iOo0XLKxbnBHUKTb4Un5pCW6j0yXXIaMdchQ==
   dependencies:
     prop-types "^15.7.2"
 
