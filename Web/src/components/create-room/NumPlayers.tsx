@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components/macro';
-import { Users, Icon } from 'react-feather';
+import { Users } from 'react-feather';
 import { mdMin } from '../../utils/media';
 
 type ContainerProps = {
@@ -38,7 +38,7 @@ const NumPlayersContainer = styled.div`
     `};
 `;
 
-const UsersIcon = styled(Users as React.FC<React.ComponentProps<Icon>>)`
+const UsersIcon = styled(Users)`
   stroke-width: 3;
 `;
 
