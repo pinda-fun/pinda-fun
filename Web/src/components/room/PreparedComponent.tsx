@@ -1,7 +1,5 @@
 import React, { lazy, useState } from 'react';
-import {
-  Users, UserX, UserCheck, Icon,
-} from 'react-feather';
+import { Users, UserX, UserCheck } from 'react-feather';
 import BigButton from 'components/common/BigButton';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
@@ -36,16 +34,16 @@ const WhiteLink = styled(Link)`
   color: white;
 `;
 
-const UsersIcon = styled(Users as React.FC<React.ComponentProps<Icon>>)`
+const UsersIcon = styled(Users)`
   stroke-width: 3;
 `;
 
-const UserCheckIcon = styled(UserCheck as React.FC<React.ComponentProps<Icon>>)`
+const UserCheckIcon = styled(UserCheck)`
   stroke-width: 3;
   color: var(--green);
 `;
 
-const UserXIcon = styled(UserX as React.FC<React.ComponentProps<Icon>>)`
+const UserXIcon = styled(UserX)`
   stroke-width: 3;
   color: var(--red);
 `;
@@ -62,16 +60,14 @@ const PlayerListContainer = styled(ListItemContainer)`
   overflow-y: auto;
 `;
 
-const GameInstructionComponent: React.FC<{ game: Game, actions: React.ReactNode }> = ({
-  game, actions,
-}) => (
+const GameInstructionComponent: React.FC<{
+  game: Game;
+  actions: React.ReactNode;
+}> = ({ game, actions }) => (
   <>
-    {game === Game.SHAKE
-        && <BalloonShakeInstructions actions={actions} />}
-    {game === Game.SUMS
-        && <MentalSumsInstructions actions={actions} />}
-    {game === Game.SEQUENCE
-        && <PandaSequenceInstructions actions={actions} />}
+    {game === Game.SHAKE && <BalloonShakeInstructions actions={actions} />}
+    {game === Game.SUMS && <MentalSumsInstructions actions={actions} />}
+    {game === Game.SEQUENCE && <PandaSequenceInstructions actions={actions} />}
   </>
 );
 
@@ -91,7 +87,9 @@ const NumPlayersContainer = styled.div`
 `;
 
 const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({
-  isVisible, allMetas, closeAction,
+  isVisible,
+  allMetas,
+  closeAction,
 }) => (
   <Modal
     isVisible={isVisible}
@@ -103,9 +101,7 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({
     <PlayerListContainer>
       {Object.values(allMetas).map(({ name, result }) => (
         <ListItem>
-          <NameSpan>
-            {name}
-          </NameSpan>
+          <NameSpan>{name}</NameSpan>
           {result === null ? <UserCheckIcon /> : <UserXIcon />}
         </ListItem>
       ))}
@@ -114,7 +110,10 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({
 );
 
 const PreparedComponent: React.FC<PreparedComponentProps> = ({
-  isReady, onReadyClick, game, allMetas = {},
+  isReady,
+  onReadyClick,
+  game,
+  allMetas = {},
 }) => {
   const readyCount = allMetas !== null
     ? Object.values(allMetas).filter((x) => x.result === null).length
@@ -126,23 +125,26 @@ const PreparedComponent: React.FC<PreparedComponentProps> = ({
     <>
       <NumPlayersContainer onClick={() => setModalOpen(true)}>
         <UsersIcon />
-        <span>{readyCount}/{totalCount} Players Ready</span>
+        <span>
+          {readyCount}/{totalCount} Players Ready
+        </span>
       </NumPlayersContainer>
-      {!isReady && <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>}
+      {!isReady && (
+        <InverseButton onClick={onReadyClick}>I am ready!</InverseButton>
+      )}
       <WhiteLink to={{ pathname: '/' }}>Quit</WhiteLink>
     </>
   );
 
   return (
     <>
-      {allMetas !== null
-        && (
-          <PlayerInfoModal
-            isVisible={modalOpen}
-            allMetas={allMetas}
-            closeAction={() => setModalOpen(false)}
-          />
-        )}
+      {allMetas !== null && (
+        <PlayerInfoModal
+          isVisible={modalOpen}
+          allMetas={allMetas}
+          closeAction={() => setModalOpen(false)}
+        />
+      )}
       <GameInstructionComponent game={game} actions={actions} />
     </>
   );
