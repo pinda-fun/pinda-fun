@@ -36,7 +36,7 @@
     "smoothscroll-polyfill": "^0.4.4",
     "styled-components": "^5.1.1",
     "typescript": "3.9.5",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
