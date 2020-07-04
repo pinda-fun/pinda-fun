@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@reactivex/rxjs": "^6.5.4",
+    "@reactivex/rxjs": "^6.6.0",
     "@types/jest": "26.0.3",
     "@types/node": "14.0.14",
     "@types/phoenix": "^1.4.4",
