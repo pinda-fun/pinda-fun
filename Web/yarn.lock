@@ -1481,10 +1481,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/phoenix@^1.4.4":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@types/phoenix/-/phoenix-1.4.4.tgz#2f27bcdc19741f276d6409d9b52452f7f09767a9"
-  integrity sha512-ZXStCzImEr/GYTb6GRENFm4sRhbpNbHjFTCMrdHSFc+Az85urbwnsMBtvmFXDOEeOLXyWl7W810HtG5QWXbazQ==
+"@types/phoenix@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@types/phoenix/-/phoenix-1.5.0.tgz#588a87fb29e8cfc7d1c346b939a6d624aff17a81"
+  integrity sha512-GeYodP7A7mjK739EWJVCQNfOiQuWWpmzMigQ4i1GbRKuAzs7fTJwi23AW1ulx/rs9XSkW2pbl9vmeHVYY9Y6Jg==
 
 "@types/prop-types@*":
   version "15.7.3"
