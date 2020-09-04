@@ -52,7 +52,7 @@ defmodule Api.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
-      {:sentry, "~> 7.0"},
+      {:sentry, "~> 8.0"},
       {:credo, "~> 1.4", only: :test, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.13", only: :test},
