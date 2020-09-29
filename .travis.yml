@@ -4,7 +4,7 @@ jobs:
       language: elixir
       sudo: false
       elixir: 1.10
-      otp_release: 23
+      otp_release: 23.0
       cache:
         directories:
           - api/_build
