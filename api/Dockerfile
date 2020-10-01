@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.9.1
+FROM bitwalker/alpine-elixir:1.10.4
 
 WORKDIR /api
 RUN mix local.hex --force && mix local.rebar --force
