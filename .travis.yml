@@ -33,7 +33,6 @@ jobs:
         - yarn test
         - yarn build
         - for i in build/static/*/*; do mv "$i" "$(echo "$i" | sed -E 's/(.*)\.[a-f0-9]{8}(.*)/\1\2/')"; done
-        - mv build/precache-manifest.*.js build/precache-manifest.js
           # bundlewatch is wrong ugh
         - export CI_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} && CI_BRANCH_BASE=$TRAVIS_BRANCH
         - unset TRAVIS_BRANCH && unset TRAVIS_PULL_REQUEST_BRANCH
