@@ -23,6 +23,9 @@ module.exports = {
     // See: https://github.com/typescript-eslint/typescript-eslint/issues/342
     'no-undef': 'off',
 
+    'no-shadow': 'off', // replaced by ts-eslint rule below
+    '@typescript-eslint/no-shadow': 'error',
+
     'no-alert': 'off',
     'no-underscore-dangle': 'off',
 
@@ -30,6 +33,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-one-expression-per-line': 'off',
+    'react/require-default-props': 'off',
     'max-classes-per-file': 'warn',
 
     '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],

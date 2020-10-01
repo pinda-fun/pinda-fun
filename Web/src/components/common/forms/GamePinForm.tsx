@@ -26,7 +26,6 @@ interface GamePinFormProps {
   disabled: boolean;
 }
 
-
 const GamePinForm: React.FC<GamePinFormProps> = ({
   onSubmitPin,
   pinLength,
@@ -111,7 +110,6 @@ const GamePinForm: React.FC<GamePinFormProps> = ({
     const newPin = e.target.value;
     setGamePin((oldPin) => filterGamePin(oldPin, newPin));
   };
-
 
   return (
     <Form

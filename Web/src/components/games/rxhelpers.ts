@@ -3,7 +3,6 @@ import {
   map, take,
 } from 'rxjs/operators';
 
-
 /** Unwraps Optional (`T | null`) types to `T`, or filters out if `null`. */
 export function unwrap<T>(observable: Observable<T | null>) {
   return new Observable<T>((newObserver) => {
