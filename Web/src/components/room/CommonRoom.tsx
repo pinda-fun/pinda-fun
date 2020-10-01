@@ -54,7 +54,6 @@ const CommonRoom: React.FC<CommonRoomProps> = ({
     hostMeta, myMeta, allMetas, room,
   } = commHooks;
 
-
   const onReadyClick = () => {
     comm.readyUp();
     setIsReady(true);
