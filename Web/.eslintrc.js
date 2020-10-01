@@ -23,6 +23,9 @@ module.exports = {
     // See: https://github.com/typescript-eslint/typescript-eslint/issues/342
     'no-undef': 'off',
 
+    'no-shadow': 'off', // replaced by ts-eslint rule below
+    '@typescript-eslint/no-shadow': 'error',
+
     'no-alert': 'off',
     'no-underscore-dangle': 'off',
 
