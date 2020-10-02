@@ -10,5 +10,5 @@ export enum GameState {
 export enum MotionPermission {
   NOT_SET,
   DENIED,
-  GRANTED
+  GRANTED,
 }

@@ -1,5 +1,5 @@
 export enum ClientMessage {
-  RESULT = 'result'
+  RESULT = 'result',
 }
 
 export interface ClientCommandPayload { }
