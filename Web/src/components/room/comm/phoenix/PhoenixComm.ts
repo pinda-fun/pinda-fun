@@ -22,7 +22,7 @@ const TIMEOUT_DURATION = 5000;
 enum ChannelResponse {
   OK = 'ok',
   ERROR = 'error',
-  TIMEOUT = 'timeout'
+  TIMEOUT = 'timeout',
 }
 
 interface PINReturnPayload {

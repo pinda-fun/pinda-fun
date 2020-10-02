@@ -29,6 +29,8 @@ module.exports = {
     'no-alert': 'off',
     'no-underscore-dangle': 'off',
 
+    '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
+
     // TypeScript lints this for us
     'react/prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
