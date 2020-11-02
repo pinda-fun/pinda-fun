@@ -153,11 +153,12 @@
         {Credo.Check.Refactor.PipeChainStart, false},
         {Credo.Check.Refactor.VariableRebinding, false},
         {Credo.Check.Warning.MapGetUnsafePass, false},
-        {Credo.Check.Warning.UnsafeToAtom, false}
+        {Credo.Check.Warning.UnsafeToAtom, false},
 
         #
         # Custom checks can be created using `mix credo.gen.check`.
         #
+        {Credo.Check.Warning.ApplicationConfigInModuleAttribute, false}
       ]
     }
   ]
