@@ -57,3 +57,5 @@ jobs:
         run: for i in build/static/*/*; do mv "$i" "$(echo "$i" | sed -E 's/(.*)\.[a-f0-9]{8}(.*)/\1\2/')"; done
       - name: Run bundlewatch
         run: yarn run bundlewatch --max-size 100kb ./build/**/*.js
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
