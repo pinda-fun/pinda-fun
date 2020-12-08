@@ -1,8 +1,7 @@
 # pinda-fun
 
-[![Build Status](https://travis-ci.com/pinda-fun/pinda-fun.svg?branch=master)](https://travis-ci.com/pinda-fun/pinda-fun)
-![API Build Status](https://github.com/pinda-fun/pinda-fun/workflows/api%20-%20Elixir/badge.svg)]
-![Web Build Status](https://github.com/pinda-fun/pinda-fun/workflows/Web%20-%20Node/badge.svg)]
+![API Build Status](https://github.com/pinda-fun/pinda-fun/workflows/api%20-%20Elixir/badge.svg)
+![Web Build Status](https://github.com/pinda-fun/pinda-fun/workflows/Web%20-%20Node/badge.svg)
 
 ## Requirements
 - OpenSSL
