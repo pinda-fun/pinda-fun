@@ -1470,10 +1470,10 @@
     schema-utils "^2.6.5"
     source-map "^0.7.3"
 
-"@reactivex/rxjs@^6.6.3":
-  version "6.6.3"
-  resolved "https://registry.yarnpkg.com/@reactivex/rxjs/-/rxjs-6.6.3.tgz#a418c29d499f97cd6edb012edee516bc429d6310"
-  integrity sha512-lBOOVU6stB3Mb6EYXnzPjK6ZiOG9/oumb8hF93KbU4AntcaAhNcvhFxzmSM77HQV/xSM/nSrE+S8sRIybXpyDw==
+"@reactivex/rxjs@^6.6.4":
+  version "6.6.4"
+  resolved "https://registry.yarnpkg.com/@reactivex/rxjs/-/rxjs-6.6.4.tgz#decf9733a86e13c80fc28ace8a2c07b45fb7414f"
+  integrity sha512-TZKBCJ8G92+4eoy+d/ryHElovEtiVn0NPsqXBdFwwVTZI9bAsRfK5DjmrrW3TBwMhpUXzkQszCQnUrYeJQvSBA==
   dependencies:
     tslib "^1.9.0"
 
