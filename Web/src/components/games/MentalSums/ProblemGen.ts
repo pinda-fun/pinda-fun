@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import seedrandom from 'seedrandom';
 
 export interface Problem {
   probAsString: string;
@@ -27,7 +28,7 @@ const generateProblem = (opRand: number, termRand1: number, termRand2: number): 
   };
 };
 
-export const useQuestionStream = (rng: seedrandom.prng) => {
+export const useQuestionStream = (rng: ReturnType<typeof seedrandom>) => {
   const rand = useRef(rng).current;
 
   const getProblem = () => generateProblem(
