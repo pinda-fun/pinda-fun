@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install libssl
-      run: sudo apt install libssl-dev
+      run: sudo apt install libssl1.0.0
     - name: Set up Elixir
       uses: actions/setup-elixir@v1
       with:
