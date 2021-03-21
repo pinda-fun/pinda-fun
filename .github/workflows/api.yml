@@ -43,13 +43,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install libssl
+      run: sudo apt install libssl-dev
     - name: Set up Elixir
       uses: actions/setup-elixir@v1
       with:
         elixir-version: ${{ matrix.elixir }}
         otp-version: ${{ matrix.otp }}
-    - name: Install libssl
-      run: sudo apt install libssl-dev
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
