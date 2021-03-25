@@ -5,7 +5,7 @@
   "dependencies": {
     "@reactivex/rxjs": "^6.6.6",
     "@types/jest": "26.0.21",
-    "@types/node": "14.14.35",
+    "@types/node": "14.14.36",
     "@types/phoenix": "^1.5.1",
     "@types/qrcode.react": "^1.0.1",
     "@types/react": "^17.0.3",
