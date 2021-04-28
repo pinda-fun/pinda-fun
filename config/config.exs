@@ -15,7 +15,7 @@ config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "6akfUKibcEHprWGGY84q5+mNfc7kMuIB6pJSifiY2RD4yNubvNEoEHOhOgrRNylj",
   render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Api.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Api.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,
