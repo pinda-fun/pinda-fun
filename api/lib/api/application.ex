@@ -10,6 +10,8 @@ defmodule Api.Application do
     children = [
       # Start the Ecto repository
       Api.Repo,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Api.PubSub},
       # Start the endpoint when the application starts
       ApiWeb.Endpoint,
       ApiWeb.Presence,

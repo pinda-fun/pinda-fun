@@ -15,7 +15,7 @@ defmodule Api.Feedback.GitHubTest do
   describe "submit/1" do
     test "happy path" do
       post = fn "https://api.github.com/repos/#{@repo}/issues", issue_json, headers ->
-        assert %{"title" => @title, "body" => body, "labels" => labels} =
+        assert %{"title" => @title, "body" => _body, "labels" => labels} =
                  Jason.decode!(issue_json)
 
         assert MapSet.new(labels) ==

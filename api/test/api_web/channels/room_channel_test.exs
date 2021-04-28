@@ -23,7 +23,7 @@ defmodule ApiWeb.RoomChannelTest do
 
   test "Lobby returns pin" do
     Enum.each(1..10, fn _ ->
-      assert {:ok, %{"pin" => pin}, socket} =
+      assert {:ok, %{"pin" => pin}, _socket} =
                socket(ApiWeb.UserSocket, "", %{client_id: @host_client_id})
                |> subscribe_and_join(RoomChannel, "room:lobby")
 
