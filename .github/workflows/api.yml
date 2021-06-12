@@ -34,8 +34,8 @@ jobs:
 
     strategy:
       matrix:
-        otp: ['23.0.4']
-        elixir: ['1.11.0']
+        otp: ['24.0.2']
+        elixir: ['1.12.1']
 
     defaults:
       run:
