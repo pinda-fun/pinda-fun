@@ -1,0 +1,90 @@
+version: 2
+updates:
+- package-ecosystem: mix
+  directory: "/api"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: postgrex
+    versions:
+    - 0.15.9
+  - dependency-name: plug_cowboy
+    versions:
+    - 2.5.0
+  - dependency-name: ecto_sql
+    versions:
+    - 3.6.0
+    - 3.6.1
+  - dependency-name: hackney
+    versions:
+    - 1.17.1
+    - 1.17.2
+    - 1.17.3
+    - 1.17.4
+  - dependency-name: dialyxir
+    versions:
+    - 1.1.0
+  - dependency-name: sentry
+    versions:
+    - 8.0.5
+  - dependency-name: excoveralls
+    versions:
+    - 0.14.0
+  - dependency-name: credo
+    versions:
+    - 1.5.5
+- package-ecosystem: npm
+  directory: "/Web"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/node"
+    versions:
+    - 14.14.23
+    - 14.14.24
+    - 14.14.26
+    - 14.14.33
+    - 14.14.36
+    - 14.14.39
+    - 14.14.41
+    - 15.0.0
+  - dependency-name: eslint-config-prettier
+    versions:
+    - 8.2.0
+  - dependency-name: styled-components
+    versions:
+    - 5.2.2
+  - dependency-name: "@typescript-eslint/eslint-plugin"
+    versions:
+    - 4.16.0
+    - 4.20.0
+  - dependency-name: "@typescript-eslint/parser"
+    versions:
+    - 4.16.0
+    - 4.20.0
+  - dependency-name: eslint-plugin-react
+    versions:
+    - 7.23.0
+  - dependency-name: husky
+    versions:
+    - 5.1.0
+    - 5.1.2
+  - dependency-name: rxjs
+    versions:
+    - 6.6.4
+  - dependency-name: "@reactivex/rxjs"
+    versions:
+    - 6.6.4
+  - dependency-name: react-dom
+    versions:
+    - 17.0.1
+  - dependency-name: react
+    versions:
+    - 17.0.1
+  - dependency-name: eslint-config-airbnb-typescript
+    versions:
+    - 12.0.1
+    - 12.2.0
+    - 12.3.0
