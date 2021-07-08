@@ -1,6 +1,4 @@
-import React, {
-  useState, useContext, useRef,
-} from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
@@ -8,14 +6,26 @@ import ScrollDownButton from 'components/common/ScrollDownButton';
 import CommContext from 'components/room/comm/CommContext';
 import CommonRoom, { FinishedComponentProps } from 'components/room/CommonRoom';
 import { resultsExist, CommAttributes } from 'components/room/comm/Comm';
+import { mdMin } from 'utils/media';
+import useWindowSize from 'utils/useWindowSize';
 import NumPlayers from './NumPlayers';
 import SocialShare from './SocialShare';
 import QrCode from './QrCode';
-import { mdMin } from '../../utils/media';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
 import ResultsLeaderboard from '../results-leaderboard';
 import RoomMembers from './RoomMembers';
 import GameSequenceGenerator from './GameSequenceGenerator';
+
+const SafariForceNavbarContainer = styled.div`
+  /* Allows content to fill the viewport and go beyond the bottom */
+  height: 100%;
+
+  /* Allows you to scroll below the viewport; default value is visible */
+  overflow-y: scroll;
+
+  /* To smooth any scrolling behavior */
+  -webkit-overflow-scrolling: touch;
+`;
 
 const CreateRoomContainer = styled.div`
   background: var(--pale-yellow);
@@ -27,8 +37,21 @@ const CreateRoomContainer = styled.div`
   align-items: center;
 `;
 
-const RoomDetailsContainer = styled.div`
-  min-height: ${window.innerHeight}px;
+interface RoomDetailsProps extends React.HTMLAttributes<HTMLDivElement> {
+  windowInnerHeight: number;
+}
+
+/**
+ * Wrapper to remove custom DOM attributes before rendering HTML DOM
+ * See: https://www.styled-components.com/docs/faqs#why-am-i-getting-html-attribute-warnings
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const RoomDetails = ({ windowInnerHeight, ...props }: RoomDetailsProps) => (
+  <div {...props} />
+);
+
+const RoomDetailsContainer = styled(RoomDetails)`
+  min-height: ${({ windowInnerHeight }: RoomDetailsProps) => windowInnerHeight}px;
   position: relative;
 
   display: flex;
@@ -142,6 +165,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
 }) => {
   const [displayResults, setDisplayResults] = useState(true);
   const [isScrollPromptSticky, setIsScrollPromptSticky] = useState(false);
+  const [, windowHeight] = useWindowSize();
   const comm = useContext(CommContext);
   const membersListRef = useRef<HTMLDivElement>(null);
 
@@ -156,9 +180,9 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   };
 
   const handleRefChange = (element: HTMLElement | null) => {
-    const spaceAroundContent = 50;
+    const spaceAroundContent = 100;
     if (element != null) {
-      setIsScrollPromptSticky(element.clientHeight > (window.innerHeight - spaceAroundContent));
+      setIsScrollPromptSticky(element.clientHeight > (windowHeight - spaceAroundContent));
     }
   };
 
@@ -186,50 +210,52 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
       )}
       {!(resultsExist(allMetas) && displayResults)
         && (
-        <CreateRoomContainer>
-          <RoomDetailsContainer>
-            <RoomDetailsSection ref={handleRefChange}>
-              <TwoColumnDiv>
-                <div>
-                  <GamePinSection>
-                    <h2>Game PIN:</h2>
-                    <h1>{room}</h1>
-                  </GamePinSection>
-                  <NumPlayers numPlayers={users.length} hideOnMedium />
-                </div>
-                <ShareSection>
-                  <h2>Share via</h2>
-                  <ShareContent>
-                    <QrCode sharableLink={sharableLink} />
-                    <SocialShare sharableLink={sharableLink} />
-                  </ShareContent>
-                  <NumPlayers numPlayers={users.length} hideOnLarge />
-                </ShareSection>
-              </TwoColumnDiv>
-              <StartButton
-                onClick={onStartButtonClick}
-              >
-                START!
-              </StartButton>
-              <Link
-                to={resultsExist(allMetas) ? {} : { pathname: '/' }}
-                onClick={resultsExist(allMetas) ? () => setDisplayResults(true) : undefined}
-              >
-                Cancel
-              </Link>
-            </RoomDetailsSection>
-            <ScrollDownButton
-              promptText="View Players"
-              scrollToRef={membersListRef}
-              backgroundColor="var(--pale-yellow)"
-              sticky={isScrollPromptSticky}
-            />
-          </RoomDetailsContainer>
-          <MembersSection ref={membersListRef}>
-            <RoomMembers users={users} />
-          </MembersSection>
-          <PindaHappy />
-        </CreateRoomContainer>
+        <SafariForceNavbarContainer>
+          <CreateRoomContainer>
+            <RoomDetailsContainer windowInnerHeight={windowHeight}>
+              <RoomDetailsSection ref={handleRefChange}>
+                <TwoColumnDiv>
+                  <div>
+                    <GamePinSection>
+                      <h2>Game PIN:</h2>
+                      <h1>{room}</h1>
+                    </GamePinSection>
+                    <NumPlayers numPlayers={users.length} hideOnMedium />
+                  </div>
+                  <ShareSection>
+                    <h2>Share via</h2>
+                    <ShareContent>
+                      <QrCode sharableLink={sharableLink} />
+                      <SocialShare sharableLink={sharableLink} />
+                    </ShareContent>
+                    <NumPlayers numPlayers={users.length} hideOnLarge />
+                  </ShareSection>
+                </TwoColumnDiv>
+                <StartButton
+                  onClick={onStartButtonClick}
+                >
+                  START!
+                </StartButton>
+                <Link
+                  to={resultsExist(allMetas) ? {} : { pathname: '/' }}
+                  onClick={resultsExist(allMetas) ? () => setDisplayResults(true) : undefined}
+                >
+                  Cancel
+                </Link>
+              </RoomDetailsSection>
+              <ScrollDownButton
+                promptText="View Players"
+                scrollToRef={membersListRef}
+                backgroundColor="var(--pale-yellow)"
+                sticky={isScrollPromptSticky}
+              />
+            </RoomDetailsContainer>
+            <MembersSection ref={membersListRef}>
+              <RoomMembers users={users} />
+            </MembersSection>
+            <PindaHappy />
+          </CreateRoomContainer>
+        </SafariForceNavbarContainer>
         )}
     </>
   );
