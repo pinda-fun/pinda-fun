@@ -17,7 +17,7 @@
     "@types/smoothscroll-polyfill": "^0.3",
     "@types/styled-components": "^5.1",
     "@types/uuid": "^8.3",
-    "history": "^4.10",
+    "history": "^5.0",
     "lodash.shuffle": "^4.2",
     "object.fromentries": "^2.0",
     "phoenix": "^1.5",
