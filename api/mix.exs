@@ -51,7 +51,7 @@ defmodule Api.MixProject do
       {:phoenix, "~> 1.5.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:plug_cowboy, "~> 2.3"},
+      {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:sentry, "~> 8.0"},
       {:credo, "~> 1.4", only: :test, runtime: false},
