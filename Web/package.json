@@ -20,7 +20,7 @@
     "history": "^4.10",
     "lodash.shuffle": "^4.2",
     "object.fromentries": "^2.0",
-    "phoenix": "^1.5",
+    "phoenix": "^1.6",
     "qrcode.react": "^1.0",
     "react": "^17.0",
     "react-animations": "^1.0",
