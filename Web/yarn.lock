@@ -1887,9 +1887,9 @@
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
 "@types/phoenix@^1.5":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@types/phoenix/-/phoenix-1.5.2.tgz#9846009959b752e04b3560e31f213ddbc137e499"
-  integrity sha512-eAr6f4apLMY0COa1WIZikziSUBq4plqE5TwzzUeDyXvfuWLnLckeMF43byOwbk6W5ioIJXSHP42iR3Wo7U3RiQ==
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@types/phoenix/-/phoenix-1.5.3.tgz#80706952320b3bf49b5f138504dbfd0f7875650e"
+  integrity sha512-7fasDSyLIU0GAeVqaFNY3qQU4Ki5ZUUqF8L01EeFHbY3Qazo1pGZFjMkxMd1vZCS66tEBArC7zi7WKo6ZpOCNw==
 
 "@types/prettier@^2.0.0":
   version "2.3.1"
@@ -1987,9 +1987,9 @@
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
 "@types/styled-components@^5.1":
-  version "5.1.14"
-  resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.14.tgz#e9cf8cdb5eef9d139628183a84c083f630635d67"
-  integrity sha512-d6P1/tyNytqKwam3cQXq7a9uPtovc/mdAs7dBiz1YbDdNIT3X4WmuFU78YdSYh84TXVuhOwezZ3EeKuNBhwsHQ==
+  version "5.1.15"
+  resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.15.tgz#30855b40aa80b3b4e4c0e43a4af366e7c246d148"
+  integrity sha512-4evch8BRI3AKgb0GAZ/sn+mSeB+Dq7meYtMi7J/0Mg98Dt1+r8fySOek7Sjw1W+Wskyjc93565o5xWAT/FdY0Q==
   dependencies:
     "@types/hoist-non-react-statics" "*"
     "@types/react" "*"
