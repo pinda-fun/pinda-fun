@@ -12,7 +12,7 @@ const CountdownDiv = styled.div`
   text-align: center;
 `;
 
-const Text = styled.h1`
+const GameText = styled.h1`
   font-size: 10rem;
   color: white;
   text-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
@@ -45,7 +45,7 @@ const Countdown: React.FC<CountdownProps> = ({ seconds, onComplete }) => {
 
   return (
     <CountdownDiv>
-      <Text>{display}</Text>
+      <GameText>{display}</GameText>
     </CountdownDiv>
   );
 };
