@@ -13,7 +13,7 @@ const TimesUpDiv = styled.div`
   text-align: center;
 `;
 
-const Text = styled.h1`
+const GameText = styled.h1`
   font-size: 6rem;
   color: white;
   text-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
@@ -43,7 +43,7 @@ const TimesUp: React.FC<TimesUpProps> = ({ onComplete }) => {
 
   return (
     <TimesUpDiv>
-      <Text>TIME&apos;S UP!</Text>
+      <GameText>TIME&apos;S UP!</GameText>
     </TimesUpDiv>
   );
 };

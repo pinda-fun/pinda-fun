@@ -27,7 +27,7 @@ const IconContainer = styled.div`
   }
 `;
 
-const Text = styled.p`
+const GameText = styled.p`
   font-size: 1.7rem !important;
   text-align: center;
   text-shadow: none;
@@ -54,10 +54,10 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
       {isCorrect && <Check />}
       {!isCorrect && <X />}
     </IconContainer>
-    <Text isCorrect={isCorrect}>
+    <GameText isCorrect={isCorrect}>
       {isCorrect && 'Well Done!'}
       {!isCorrect && 'Nah Uh!'}
-    </Text>
+    </GameText>
   </Modal>
 );
 

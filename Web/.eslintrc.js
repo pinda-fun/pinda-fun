@@ -7,7 +7,8 @@ module.exports = {
   "parserOptions": {
     "project": './tsconfig.json',
   },
-  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
+  "ignorePatterns": ['.eslintrc.js'],
+  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks", "import"],
   "env": {
     "browser": true,
     "jasmine": true,
