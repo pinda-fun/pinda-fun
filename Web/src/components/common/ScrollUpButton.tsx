@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 import { ChevronUp } from 'react-feather';
 
 type ScrollUpDisplayProps = {
@@ -24,10 +24,7 @@ const ScrollUpPrompt = styled.button`
   color: ${({ color }: ScrollUpDisplayProps) => color || 'black'};
   background-color: ${({ backgroundColor }: ScrollUpDisplayProps) => backgroundColor || 'transparent'};
 
-  ${({ sticky }: ScrollUpDisplayProps) => sticky
-    && css`
-      position: sticky;
-    `};
+  ${({ sticky }: ScrollUpDisplayProps) => sticky && 'position: sticky;'};
 
   & > svg {
     width: 2rem;

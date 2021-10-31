@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 
 const TimerDiv = styled.div`
   display: flex;
@@ -26,16 +26,14 @@ const TimerText = styled.span`
   /* Increase line-height to curb font rendering bug */
   line-height: 1.2;
 
-  ${(props: TextProps) => props.small
-    && css`font-size: 3.5rem;`};
+  ${(props: TextProps) => props.small && 'font-size: 3.5rem;'};
 `;
 
 const UnitsText = styled.span`
   font-size: 2rem;
   font-family: var(--secondary-font);
 
-  ${(props: TextProps) => props.small
-    && css`font-size: 1.5rem;`};
+  ${(props: TextProps) => props.small && 'font-size: 1.5rem;'};
 `;
 
 type TimerProps = {

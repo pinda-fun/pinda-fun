@@ -1,15 +1,15 @@
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 
 type ButtonProps = {
   primary?: boolean;
 };
 
-const FillStyle = css`
+const FillStyle = `
   background: var(--dark-purple);
   color: white;
 `;
 
-const NoFillStyle = css`
+const NoFillStyle = `
   background: transparent;
   color: var(--dark-purple);
 `;
@@ -30,7 +30,7 @@ const Button = styled.button`
   }
 
   ${(props: ButtonProps) => props.primary
-    && css`
+    && `
       ${FillStyle}
 
       :hover,

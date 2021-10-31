@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import seedrandom from 'seedrandom';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 import { smMin } from 'utils/media';
 import { useQuestionStream } from './ProblemGen';
 import TimerDisplay from '../TimerDisplay';
@@ -64,11 +64,9 @@ const QuestionContainer = styled.div`
     margin: 0.5rem 1rem;
   }
 
-  ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.CORRECT
-    && css`background-color: var(--green);`};
+  ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.CORRECT && 'background-color: var(--green);'};
 
-  ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.WRONG
-    && css`background-color: var(--pink);`};
+  ${({ feedbackState }: QuestionContainerProps) => feedbackState === FeedbackState.WRONG && 'background-color: var(--pink);'};
 `;
 
 const AnswerDiv = styled.div`
