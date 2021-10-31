@@ -1,12 +1,12 @@
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import ReactGA from 'react-ga';
-import { Update } from 'history';
+import { Location } from 'history';
 import getClientId from 'utils/getClientId';
 
 const TRACKING_ID = 'UA-151199787-1';
 
-function sendPageView({ location }: Update) {
+function sendPageView(location: Location) {
   ReactGA.set({ page: location.pathname });
   ReactGA.pageview(location.pathname);
 }
