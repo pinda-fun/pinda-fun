@@ -24,8 +24,8 @@ const FlowerPot = styled(FlowerPotSVG)`
 `;
 
 interface PandaHeadProps extends React.ComponentProps<typeof PandaHeadSVG> {
-  duration?: number,
-  isSelected?: boolean,
+  duration?: number, // eslint-disable-line react/no-unused-prop-types
+  isSelected?: boolean, // eslint-disable-line react/no-unused-prop-types
 }
 
 /**
