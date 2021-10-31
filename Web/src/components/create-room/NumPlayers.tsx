@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 import { Users } from 'react-feather';
 import { mdMin } from '../../utils/media';
 
@@ -22,7 +22,7 @@ const NumPlayersContainer = styled.div`
   }
 
   ${(props: ContainerProps) => props.hideOnLarge
-    && css`
+    && `
       display: none;
 
       @media (max-width: ${mdMin}) {
@@ -31,7 +31,7 @@ const NumPlayersContainer = styled.div`
     `};
 
   ${(props: ContainerProps) => props.hideOnMedium
-    && css`
+    && `
       @media (max-width: ${mdMin}) {
         display: none;
       }

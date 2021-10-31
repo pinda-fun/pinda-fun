@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 import HeaderContent from './HeaderContent';
 import IntroductionContent from './IntroductionContent';
 import DetailsContent from './DetailsContent';
@@ -9,7 +9,7 @@ import { ReactComponent as PindaHappyBadgeSVG } from '../../svg/pinda-happy-badg
 import { ReactComponent as PindaShockedBadgeSVG } from '../../svg/pinda-shocked-badge.svg';
 import { ReactComponent as PindaHappySVG } from '../../svg/pinda-happy.svg';
 
-const SectionStyle = css`
+const SectionStyle = `
   display: flex;
   justify-content: center;
   padding: 7rem 1rem;
@@ -23,7 +23,7 @@ const SectionStyle = css`
   }
 `;
 
-const BadgeStyle = css`
+const BadgeStyle = `
   height: 270px;
 
   @media (max-width: ${mdMin}) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 import { ChevronDown } from 'react-feather';
 
 type ScrollDownDisplayProps = {
@@ -24,10 +24,7 @@ const ScrollDownPrompt = styled.button`
   color: ${({ color }: ScrollDownDisplayProps) => color || 'black'};
   background-color: ${({ backgroundColor }: ScrollDownDisplayProps) => backgroundColor || 'transparent'};
 
-  ${({ sticky }: ScrollDownDisplayProps) => sticky
-    && css`
-      position: sticky;
-    `};
+  ${({ sticky }: ScrollDownDisplayProps) => sticky && 'position: sticky;'};
 
   & > svg {
     width: 2rem;
