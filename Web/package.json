@@ -28,7 +28,7 @@
     "react-feather": "^2.0",
     "react-ga": "^3.2",
     "react-loading": "^2.0",
-    "react-router-dom": "^5.3",
+    "react-router-dom": "^6.0",
     "react-scripts": "4.0",
     "react-virtualized": "^9.22",
     "rxjs": "^7.4",
