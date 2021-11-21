@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 import { jump } from 'utils/animations';
 import { ReactComponent as FlowerPotSVG } from 'svg/flower-pot.svg';
 import { ReactComponent as PandaHeadSVG } from 'svg/panda-head-flower.svg';
@@ -46,7 +46,7 @@ interface InputProps extends PandaHeadProps {
 }
 
 const DisplayPandaHead = styled(PandaHead)`
-  ${({ duration }: DisplayProps) => duration !== 0 && { animation: `${duration / 1000}s ${jump} ease-in-out infinite` }};
+  ${({ duration }: DisplayProps) => duration !== 0 && css`animation: ${duration / 1000}s ${jump} ease-in-out infinite;`}
 `;
 
 // touch-action set to none to inform chrome that no scrolling is performed on this element,

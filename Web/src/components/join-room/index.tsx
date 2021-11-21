@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import useCommHooks from 'components/room/comm/useCommHooks';
 import CommContext from 'components/room/comm/CommContext';
 import JoinRoomPage from './JoinRoomPage';
@@ -9,11 +9,9 @@ interface JoinRoomMatchParams {
   id?: string
 }
 
-const JoinRoom: React.FC<RouteComponentProps<JoinRoomMatchParams>> = ({
-  match: {
-    params: { id },
-  }, history,
-}) => {
+const JoinRoom = () => {
+  const { id } = useParams<JoinRoomMatchParams>();
+  const history = useHistory();
   const [initialId] = useState(id);
   const comm = useContext(CommContext);
   const commHooks = useCommHooks(comm);

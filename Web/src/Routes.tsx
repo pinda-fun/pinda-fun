@@ -17,21 +17,34 @@ const comm = new PhoenixComm();
 const RoutesWithCommContext: React.FC = () => (
   <CommContext.Provider value={comm}>
     <Switch>
-      <Route path="/new" component={CreateRoomPage} />
-      <Route exact path="/join" component={JoinRoomPage} />
-      <Route path="/join/:id" component={JoinRoomPage} />
+      <Route path="/new">
+        <CreateRoomPage />
+      </Route>
+      <Route exact path="/join">
+        <JoinRoomPage />
+      </Route>
+      <Route path="/join/:id">
+        <JoinRoomPage />
+      </Route>
       {
         // Do not include some routes on real production website (still allow on deploy previews)
-        !window.location.origin.includes('pinda.fun') && (
-          <>
-            <Route exact path="/balloon-game" component={BalloonShake} />
-            <Route exact path="/panda-sequence" component={PandaSequence} />
-            <Route exact path="/sums-game" component={MentalSums} />
-            <Route exact path="/feedback" component={FeedbackPage} />
-          </>
-        )
+        // Return an array following https://stackoverflow.com/questions/58169397/redirect-doesnt-work-inside-switch-when-fragment-has-been-used
+        !window.location.origin.includes('pinda.fun') && [
+          <Route exact path="/balloon-game">
+            <BalloonShake />
+          </Route>,
+          <Route exact path="/panda-sequence">
+            <PandaSequence />
+          </Route>,
+          <Route exact path="/sums-game">
+            <MentalSums />
+          </Route>,
+          <Route exact path="/feedback">
+            <FeedbackPage />
+          </Route>,
+        ]
       }
-      <Redirect to="/" />
+      <Route path="*" render={() => <Redirect to="/" />} />
     </Switch>
   </CommContext.Provider>
 );
@@ -39,7 +52,9 @@ const RoutesWithCommContext: React.FC = () => (
 const Routes: React.FC = () => (
   <Suspense fallback={<Loading />}>
     <Switch>
-      <Route exact path="/" component={LandingPage} />
+      <Route exact path="/">
+        <LandingPage />
+      </Route>
       <RoutesWithCommContext />
     </Switch>
   </Suspense>
