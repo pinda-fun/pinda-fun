@@ -46,7 +46,7 @@ interface InputProps extends PandaHeadProps {
 }
 
 const DisplayPandaHead = styled(PandaHead)`
-  ${({ duration }: DisplayProps) => duration !== 0 && css`animation: ${duration / 1000}s ${jump} ease-in-out infinite`};
+  ${({ duration }: DisplayProps) => duration !== 0 && css`animation: ${duration / 1000}s ${jump} ease-in-out infinite;`}
 `;
 
 // touch-action set to none to inform chrome that no scrolling is performed on this element,
