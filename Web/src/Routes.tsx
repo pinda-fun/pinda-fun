@@ -4,6 +4,7 @@ import PhoenixComm from 'components/room/comm/phoenix/PhoenixComm';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
 import FeedbackPage from 'components/feedback';
+import usePageTracking from 'utils/usePageTracking';
 
 const LandingPage = lazy(() => import('components/landing'));
 const CreateRoomPage = lazy(() => import('components/create-room'));
@@ -49,15 +50,19 @@ const RoutesWithCommContext: React.FC = () => (
   </CommContext.Provider>
 );
 
-const Routes: React.FC = () => (
-  <Suspense fallback={<Loading />}>
-    <Switch>
-      <Route exact path="/">
-        <LandingPage />
-      </Route>
-      <RoutesWithCommContext />
-    </Switch>
-  </Suspense>
-);
+const Routes: React.FC = () => {
+  usePageTracking();
+
+  return (
+    <Suspense fallback={<Loading />}>
+      <Switch>
+        <Route exact path="/">
+          <LandingPage />
+        </Route>
+        <RoutesWithCommContext />
+      </Switch>
+    </Suspense>
+  );
+};
 
 export default Routes;
