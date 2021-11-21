@@ -13,7 +13,7 @@ const INIT_SEQUENCE = { timestep: 1000, numbers: [0, 0] };
 const POST_FEEDBACK_DELAY = 700;
 
 interface PandaSequenceProps {
-  seed: string,
+  seed?: string,
 }
 
 const PandaSequence: React.FC<PandaSequenceProps> = ({ seed }) => {

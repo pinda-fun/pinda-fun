@@ -10,7 +10,7 @@ import TimesUp from '../TimesUp';
 const GAME_TIME = 20;
 
 interface MentalSumsProps {
-  seed: string,
+  seed?: string,
 }
 
 const MentalSums: React.FC<MentalSumsProps> = ({ seed }) => {
