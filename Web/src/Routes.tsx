@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Routes as ReactRouterRoutes, Route, Navigate } from 'react-router-dom';
 import PhoenixComm from 'components/room/comm/phoenix/PhoenixComm';
 import CommContext from 'components/room/comm/CommContext';
 import Loading from 'components/common/Loading';
@@ -15,52 +15,30 @@ const MentalSums = lazy(() => import('components/games/MentalSums'));
 
 const comm = new PhoenixComm();
 
-const RoutesWithCommContext: React.FC = () => (
-  <CommContext.Provider value={comm}>
-    <Switch>
-      <Route path="/new">
-        <CreateRoomPage />
-      </Route>
-      <Route exact path="/join">
-        <JoinRoomPage />
-      </Route>
-      <Route path="/join/:id">
-        <JoinRoomPage />
-      </Route>
-      {
-        // Do not include some routes on real production website (still allow on deploy previews)
-        // Return an array following https://stackoverflow.com/questions/58169397/redirect-doesnt-work-inside-switch-when-fragment-has-been-used
-        !window.location.origin.includes('pinda.fun') && [
-          <Route exact path="/balloon-game">
-            <BalloonShake />
-          </Route>,
-          <Route exact path="/panda-sequence">
-            <PandaSequence />
-          </Route>,
-          <Route exact path="/sums-game">
-            <MentalSums />
-          </Route>,
-          <Route exact path="/feedback">
-            <FeedbackPage />
-          </Route>,
-        ]
-      }
-      <Route path="*" render={() => <Redirect to="/" />} />
-    </Switch>
-  </CommContext.Provider>
-);
-
 const Routes: React.FC = () => {
   usePageTracking();
 
   return (
     <Suspense fallback={<Loading />}>
-      <Switch>
-        <Route exact path="/">
-          <LandingPage />
-        </Route>
-        <RoutesWithCommContext />
-      </Switch>
+      <CommContext.Provider value={comm}>
+        <ReactRouterRoutes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/new" element={<CreateRoomPage />} />
+          <Route path="/join" element={<JoinRoomPage />} />
+          <Route path="/join/:id" element={<JoinRoomPage />} />
+          {
+            // Do not include some routes on real production website (still allow on deploy previews)
+            // Return an array following https://stackoverflow.com/questions/58169397/redirect-doesnt-work-inside-switch-when-fragment-has-been-used
+            !window.location.origin.includes('pinda.fun') && [
+              <Route path="/balloon-game" element={<BalloonShake />} />,
+              <Route path="/panda-sequence" element={<PandaSequence />} />,
+              <Route path="/sums-game" element={<MentalSums />} />,
+              <Route path="/feedback" element={<FeedbackPage />} />,
+            ]
+          }
+          <Route path="*" element={<Navigate to="/" />} />
+        </ReactRouterRoutes>
+      </CommContext.Provider>
     </Suspense>
   );
 };
