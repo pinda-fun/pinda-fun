@@ -1,7 +1,7 @@
 import React, {
   useState, useContext, useRef,
 } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import BigButton from 'components/common/BigButton';
 import ScrollDownButton from 'components/common/ScrollDownButton';
@@ -172,7 +172,7 @@ const HostRoomLobby: React.FC<FinishedComponentProps> = ({
   if (room === null) {
     // This means that the host is not connected to any room,
     // Or I am not the host of this room.
-    return <Redirect to="/join" />;
+    return <Navigate to="/join" />;
   }
 
   return (
