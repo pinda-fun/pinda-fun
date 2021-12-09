@@ -8682,9 +8682,9 @@ performance-now@^2.1.0:
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
 phoenix@^1.6:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.6.2.tgz#8d1d9f06e51cb893d08059e80488cd0de328e01a"
-  integrity sha512-VjR27NETvrLSj8rI6DlpVAfo7pCYth/9+1OCoTof4LKEbq0141ze/tdxFHHZzVQSok3gqJUo2h/tqbxR3r8eyw==
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.6.4.tgz#1bc701cc0a51ca15bc940339233a350839b75826"
+  integrity sha512-RXtt0zmz43pCr6jHqj1djSLcj4UJER2q3JXOKPqQngcmZDNhp+9/YIu/arl93Go+GquI9Lc2kKrPAt112Luwrg==
 
 picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.2, picomatch@^2.2.3:
   version "2.3.0"
