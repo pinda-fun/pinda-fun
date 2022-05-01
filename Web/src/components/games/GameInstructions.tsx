@@ -45,6 +45,7 @@ const InstructionsTitle = styled.h2`
 `;
 
 type GameInstructionsProps = {
+  children?: React.ReactNode;
   title: string;
   seconds?: number;
   onComplete?: () => void;

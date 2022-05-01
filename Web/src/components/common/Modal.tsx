@@ -81,6 +81,7 @@ const enableBodyScroll = () => {
 /* end prevent body scroll code from https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/ */
 
 type ModalProps = {
+  children?: React.ReactNode;
   isVisible: boolean;
   title?: string;
   showConfirmation?: boolean;

@@ -17,7 +17,7 @@ const PindaHead = styled(PindaHeadSVG)`
   height: 5rem;
 `;
 
-const Loading: React.FC = ({ children }) => (
+const Loading: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
   <LoadingDiv>
     <PindaHead />
     <ReactLoading type="bubbles" color="var(--purple)" />
