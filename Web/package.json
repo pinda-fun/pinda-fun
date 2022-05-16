@@ -64,7 +64,7 @@
     "@typescript-eslint/parser": "^4.33.0",
     "babel-plugin-macros": "^3.0.1",
     "bundlewatch": "^0.3.3",
-    "eslint-config-airbnb-typescript": "^14.0",
+    "eslint-config-airbnb-typescript": "^17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-import": "^2.26.0",
