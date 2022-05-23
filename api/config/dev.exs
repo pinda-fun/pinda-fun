@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 database_credential =
   if System.get_env("DATABASE_URL"),
