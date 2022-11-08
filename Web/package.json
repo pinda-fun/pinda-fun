@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@types/lodash.shuffle": "^4.2.7",
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.40.1",
     "babel-plugin-macros": "^3.0.1",
     "bundlewatch": "^0.3.3",
