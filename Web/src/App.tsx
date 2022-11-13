@@ -1,11 +1,12 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import Routes from './Routes';
+import React, { Suspense } from 'react';
+import Loading from 'components/common/Loading';
+
+const Router = React.lazy(() => import('./Router'));
 
 const App: React.FC = () => (
-  <BrowserRouter>
-    <Routes />
-  </BrowserRouter>
+  <Suspense fallback={<Loading />}>
+    <Router />
+  </Suspense>
 );
 
 export default App;
