@@ -1,3 +1,1 @@
-declare module 'object.fromentries'{
-  export function shim(): void;
-}
+declare module 'object.fromentries/shim';

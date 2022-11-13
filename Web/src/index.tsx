@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 // Polyfills
 smoothscroll.polyfill();
 const polyfills = [];
-if (!Object.fromEntries) polyfills.push(import('object.fromentries').then(fromEntries => fromEntries.shim()));
+if (!Object.fromEntries) polyfills.push(import('object.fromentries/shim').then(fromEntriesShim => fromEntriesShim.default()));
 
 Promise.all(polyfills).then(() => ReactDOM.render(<App />, document.getElementById('root')));
 
