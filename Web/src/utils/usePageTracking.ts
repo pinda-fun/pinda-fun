@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga/core';
 import { useLocation } from 'react-router-dom';
 import getClientId from 'utils/getClientId';
 
