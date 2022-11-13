@@ -27,12 +27,12 @@ const Routes: React.FC = () => {
         {
           // Do not include some routes on real production website (still allow on deploy previews)
           // Return an array following https://stackoverflow.com/questions/58169397/redirect-doesnt-work-inside-switch-when-fragment-has-been-used
-          !window.location.origin.includes('pinda.fun') && [
-            <Route path="/balloon-game" element={<BalloonShake />} />,
-            <Route path="/panda-sequence" element={<PandaSequence />} />,
-            <Route path="/sums-game" element={<MentalSums />} />,
-            <Route path="/feedback" element={<FeedbackPage />} />,
-          ]
+          !window.location.origin.includes('pinda.fun') && <>
+            <Route path="/balloon-game" element={<BalloonShake />} />
+            <Route path="/panda-sequence" element={<PandaSequence />} />
+            <Route path="/sums-game" element={<MentalSums />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+          </>
         }
         <Route path="*" element={<Navigate to="/" />} />
       </ReactRouterRoutes>
