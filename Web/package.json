@@ -62,7 +62,7 @@
     "@types/styled-components": "^5.1",
     "@types/uuid": "^8.3",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.40.1",
+    "@typescript-eslint/parser": "^5.42.1",
     "babel-plugin-macros": "^3.0.1",
     "bundlewatch": "^0.3.3",
     "eslint-config-airbnb-typescript": "^17.0",
