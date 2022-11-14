@@ -56,7 +56,7 @@ jobs:
       - name: Remove bundle hash
         run: for i in build/static/*/*; do mv "$i" "$(echo "$i" | sed -E 's/(.*)\.[a-f0-9]{8}(.*)/\1\2/')"; done
       - name: Run bundlewatch
-        run: yarn run bundlewatch --max-size 100kb ./build/**/*.js
+        run: yarn run bundlewatch --max-size 70kb ./build/**/*.js
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
           CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
