@@ -46,7 +46,7 @@ defmodule Api.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:gettext, "~> 0.11"},
       {:hackney, "~> 1.8"},
-      {:httpoison, "~> 1.6"},
+      {:httpoison, "~> 2.0"},
       {:jason, "~> 1.1"},
       {:phoenix, "~> 1.6.0"},
       {:phoenix_ecto, "~> 4.0"},
