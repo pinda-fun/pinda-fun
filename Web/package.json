@@ -73,7 +73,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "husky": "^8.0.2",
+    "husky": "^8.0.3",
     "source-map-explorer": "^2.5.3",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
