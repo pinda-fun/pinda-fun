@@ -58,7 +58,7 @@ defmodule Api.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.13", only: :test},
       {:mock, "~> 0.3.0", only: :test},
-      {:dialyxir, "~> 1.2.0", only: :test, runtime: false}
+      {:dialyxir, "~> 1.3.0", only: :test, runtime: false}
     ]
   end
 
